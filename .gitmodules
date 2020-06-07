@@ -1,0 +1,3 @@
+[submodule "Library/MoneyForwardViewer"]
+	path = Library/MoneyForwardViewer
+	url = https://github.com/southernwind/MoneyForwardViewer
