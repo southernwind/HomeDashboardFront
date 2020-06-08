@@ -1,5 +1,6 @@
 
 using System;
+using Back.Models.Financial;
 using DataBase;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,6 +44,7 @@ namespace Back {
 					.AddConsole()
 					.AddDebug();
 			});
+			services.AddSingleton<Updater>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
