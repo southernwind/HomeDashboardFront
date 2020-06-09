@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Back.Controllers;
 using DataBase;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -11,11 +9,27 @@ using MoneyForwardViewer.DataBase.Tables;
 using MoneyForwardViewer.Scraper;
 
 namespace Back.Models.Financial {
+	/// <summary>
+	/// 財務データベースの更新
+	/// </summary>
 	public class Updater {
+		/// <summary>
+		/// サービススコープ
+		/// </summary>
 		private readonly IServiceScope _scope;
+		/// <summary>
+		/// ログ
+		/// </summary>
 		private readonly ILogger<Updater> _logger;
+		/// <summary>
+		/// 処理中リスト
+		/// </summary>
 		private readonly ConcurrentDictionary<int, (Task task, ProgressObject<long> progress)> _executingTasks = new ConcurrentDictionary<int, (Task task, ProgressObject<long> progress)>();
 
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="serviceScopeFactory">サービススコープファクトリー</param>
 		public Updater(IServiceScopeFactory serviceScopeFactory) {
 			this._scope = serviceScopeFactory.CreateScope();
 			this._logger = this._scope.ServiceProvider.GetService<ILogger<Updater>>();
@@ -24,9 +38,16 @@ namespace Back.Models.Financial {
 			this._scope.ServiceProvider.GetService<HomeServerDbContext>().Database.EnsureCreated();
 		}
 
+		/// <summary>
+		/// 更新処理開始
+		/// </summary>
+		/// <param name="from">取得対象開始日</param>
+		/// <param name="to">取得対象終了日</param>
+		/// <returns>更新キー</returns>
 		public int Update(DateTime from,DateTime to) {
 			var progress = new ProgressObject<long>();
 			var task = this.UpdateCore(from, to,progress);
+			// Taskのハッシュ値を更新キーとする
 			var hash = task.GetHashCode();
 			if (this._executingTasks.TryAdd(hash, (task, progress))) {
 				return hash;
@@ -34,6 +55,13 @@ namespace Back.Models.Financial {
 			throw new Exception();
 		}
 
+		/// <summary>
+		/// 更新処理
+		/// </summary>
+		/// <param name="from">取得対象開始日</param>
+		/// <param name="to">取得対象終了日</param>
+		/// <param name="progress">進捗率オブジェクト</param>
+		/// <returns>Task</returns>
 		private async Task UpdateCore(DateTime from, DateTime to, ProgressObject<long> progress) {
 			// 進捗率計算の分母
 			var denominator = Math.Max(1,to.Ticks - from.Ticks);
@@ -88,6 +116,11 @@ namespace Back.Models.Financial {
 			progress.Report(101);
 		}
 
+		/// <summary>
+		/// 処理状況取得
+		/// </summary>
+		/// <param name="key">更新キー</param>
+		/// <returns>処理状況(0～100: 進捗率 101:完了)</returns>
 		public long GetUpdateStatus(int key) {
 			// 完了済みタスクの削除
 			foreach(var et in this._executingTasks.Where(x => x.Value.progress.Progress == 101)) {
@@ -102,12 +135,23 @@ namespace Back.Models.Financial {
 			return 101;
 		}
 
+		/// <summary>
+		/// 処理状況オブジェクト
+		/// </summary>
+		/// <typeparam name="T">進捗率を表す型</typeparam>
 		private class ProgressObject<T> {
+			/// <summary>
+			/// 進捗率
+			/// </summary>
 			public T Progress {
 				get;
 				private set;
 			}
 
+			/// <summary>
+			/// 進捗率更新
+			/// </summary>
+			/// <param name="progress">進捗率</param>
 			public void Report(T progress) {
 				this.Progress = progress;
 			}
