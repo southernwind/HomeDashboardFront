@@ -8,7 +8,7 @@ namespace Back.Models.Financial.RequestDto {
 		/// <summary>
 		/// から
 		/// </summary>
-		public string From {
+		public string? From {
 			get;
 			set;
 		}
@@ -16,7 +16,7 @@ namespace Back.Models.Financial.RequestDto {
 		/// <summary>
 		/// まで
 		/// </summary>
-		public string To {
+		public string? To {
 			get;
 			set;
 		}
@@ -26,6 +26,9 @@ namespace Back.Models.Financial.RequestDto {
 		/// </summary>
 		/// <returns>変換後値</returns>
 		public DateTime GetFrom() {
+			if (this.From == null) {
+				throw new ArgumentException();
+			}
 			return DateTime.Parse(this.From);
 		}
 
@@ -34,6 +37,9 @@ namespace Back.Models.Financial.RequestDto {
 		/// </summary>
 		/// <returns>変換後値</returns>
 		public DateTime GetTo() {
+			if (this.To == null) {
+				throw new ArgumentException();
+			}
 			return DateTime.Parse(this.To);
 		}
 	}

@@ -6,7 +6,7 @@ namespace Database.Tables {
 		/// <summary>
 		/// ID
 		/// </summary>
-		public string Id {
+		public string? Id {
 			get;
 			set;
 		}
@@ -14,7 +14,7 @@ namespace Database.Tables {
 		/// <summary>
 		/// マネーフォワードID
 		/// </summary>
-		public string MoneyForwardId {
+		public string? MoneyForwardId {
 			get;
 			set;
 		}
@@ -22,7 +22,7 @@ namespace Database.Tables {
 		/// <summary>
 		/// マネーフォワードパスワード
 		/// </summary>
-		public string MoneyForwardPassword {
+		public string? MoneyForwardPassword {
 			get;
 			set;
 		}

@@ -39,8 +39,11 @@ namespace Back.Controllers {
 		[HttpPost]
 		[ActionName("post-update-by-span-request/")]
 		public JsonResult PostUpdateBySpanRequest([FromBody] Span span) {
+			if (!(span.Days is { } days)) {
+				throw new ArgumentException();
+			}
 			var to = DateTime.Now;
-			var from = to.AddDays(-span.Days);
+			var from = to.AddDays(-days);
 			return new JsonResult(new {
 				key = this._updater.Update(from, to)
 			});

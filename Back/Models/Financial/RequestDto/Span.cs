@@ -6,7 +6,7 @@ namespace Back.Models.Financial.RequestDto {
 		/// <summary>
 		/// ○日
 		/// </summary>
-		public int Days {
+		public int? Days {
 			get;
 			set;
 		}

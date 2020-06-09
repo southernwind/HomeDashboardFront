@@ -13,7 +13,7 @@ namespace DataBase {
 		public DbSet<MfTransaction> MfTransactions {
 			get;
 			set;
-		}
+		} = null!;
 
 		/// <summary>
 		/// 資産推移
@@ -21,7 +21,7 @@ namespace DataBase {
 		public DbSet<MfAsset> MfAssets {
 			get;
 			set;
-		}
+		} = null!;
 
 		/// <summary>
 		/// ユーザー設定
@@ -29,7 +29,7 @@ namespace DataBase {
 		public DbSet<UserSetting> UserSettings {
 			get;
 			set;
-		}
+		} = null!;
 
 		/// <summary>
 		/// コンストラクタ

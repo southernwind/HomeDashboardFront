@@ -2,9 +2,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
+
 using DataBase;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
 using MoneyForwardViewer.DataBase.Tables;
 using MoneyForwardViewer.Scraper;
 
@@ -44,9 +47,9 @@ namespace Back.Models.Financial {
 		/// <param name="from">取得対象開始日</param>
 		/// <param name="to">取得対象終了日</param>
 		/// <returns>更新キー</returns>
-		public int Update(DateTime from,DateTime to) {
-			var progress = new ProgressObject<long>();
-			var task = this.UpdateCore(from, to,progress);
+		public int Update(DateTime from, DateTime to) {
+			var progress = new ProgressObject<long>(0);
+			var task = this.UpdateCore(from, to, progress);
 			// Taskのハッシュ値を更新キーとする
 			var hash = task.GetHashCode();
 			if (this._executingTasks.TryAdd(hash, (task, progress))) {
@@ -64,7 +67,7 @@ namespace Back.Models.Financial {
 		/// <returns>Task</returns>
 		private async Task UpdateCore(DateTime from, DateTime to, ProgressObject<long> progress) {
 			// 進捗率計算の分母
-			var denominator = Math.Max(1,to.Ticks - from.Ticks);
+			var denominator = Math.Max(1, to.Ticks - from.Ticks);
 			progress.Report(0);
 			this._logger.LogInformation($"{from}-{to}の財務データベース更新開始");
 
@@ -123,12 +126,12 @@ namespace Back.Models.Financial {
 		/// <returns>処理状況(0～100: 進捗率 101:完了)</returns>
 		public long GetUpdateStatus(int key) {
 			// 完了済みタスクの削除
-			foreach(var et in this._executingTasks.Where(x => x.Value.progress.Progress == 101)) {
-				this._executingTasks.TryRemove(et.Key,out _);
+			foreach (var et in this._executingTasks.Where(x => x.Value.progress.Progress == 101)) {
+				this._executingTasks.TryRemove(et.Key, out _);
 			}
 
 			// 指定タスクの進捗率返却
-			if (this._executingTasks.TryGetValue(key,out var value)) {
+			if (this._executingTasks.TryGetValue(key, out var value)) {
 				return value.progress.Progress;
 			}
 
@@ -146,6 +149,10 @@ namespace Back.Models.Financial {
 			public T Progress {
 				get;
 				private set;
+			}
+
+			public ProgressObject(T initialValue) {
+				this.Progress = initialValue;
 			}
 
 			/// <summary>
