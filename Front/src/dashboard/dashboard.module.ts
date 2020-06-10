@@ -2,12 +2,14 @@ import { NgModule } from "@angular/core";
 import { DashboardRoutingModule } from "./dashboard-routing.module";
 import { DashboardComponent } from "./dashboard.component";
 import { NgZorroAntdModule } from "ng-zorro-antd";
-
 import { NZ_ICONS, NzIconModule } from "ng-zorro-antd/icon";
-import { NZ_I18N, en_US } from "ng-zorro-antd/i18n";
 import { IconDefinition } from "@ant-design/icons-angular";
 import * as AllIcons from "@ant-design/icons-angular/icons";
-
+import { FinancialComponent } from "./pages/financial/financial.component";
+import { ChartsModule } from "ng2-charts";
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { AssetsComponent } from './pages/financial/assets/assets.component';
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
 };
@@ -16,11 +18,14 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
 );
 
 @NgModule({
-  declarations: [DashboardComponent],
+  declarations: [DashboardComponent, FinancialComponent, AssetsComponent],
   imports: [
+    FormsModule,
     DashboardRoutingModule,
     NgZorroAntdModule,
+    ChartsModule,
     NzIconModule.forRoot(icons),
-  ],
+    CommonModule
+  ]
 })
-export class DashboardModule {}
+export class DashboardModule { }

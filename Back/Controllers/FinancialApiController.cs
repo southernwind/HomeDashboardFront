@@ -1,5 +1,6 @@
 using System;
 using System.Net.Mime;
+using System.Threading.Tasks;
 
 using Back.Models.Financial;
 using Back.Models.Financial.RequestDto;
@@ -12,8 +13,10 @@ namespace Back.Controllers {
 	[Route("api/financial-api/[action]")]
 	public class FinancialApiController : ControllerBase {
 		private readonly Updater _updater;
-		public FinancialApiController(Updater updater) {
+		private readonly Getter _getter;
+		public FinancialApiController(Updater updater, Getter getter) {
 			this._updater = updater;
+			this._getter = getter;
 		}
 
 		/// <summary>
@@ -62,5 +65,17 @@ namespace Back.Controllers {
 			});
 		}
 
+		/// <summary>
+		/// 資産推移取得API
+		/// </summary>
+		/// <param name="term">期間</param>
+		/// <returns>資産推移データ</returns>
+		[HttpGet]
+		[ActionName("get-assets")]
+		public async Task<JsonResult> GetAssetsAsync(string from, string to) {
+			var fromDate = DateTime.Parse(from);
+			var toDate = DateTime.Parse(to);
+			return new JsonResult(await this._getter.GetAssetsAsync(fromDate, toDate));
+		}
 	}
 }

@@ -8,7 +8,11 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientJsonpModule, HttpClientModule } from "@angular/common/http";
 import { BrowserModule } from "@angular/platform-browser";
+import ja from '@angular/common/locales/ja';
+import { registerLocaleData } from '@angular/common';
 
+import { NZ_I18N, ja_JP } from 'ng-zorro-antd/i18n';
+registerLocaleData(ja);
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -23,5 +27,8 @@ import { BrowserModule } from "@angular/platform-browser";
     DragDropModule,
   ],
   bootstrap: [AppComponent],
+  providers: [
+    { provide: NZ_I18N, useValue: ja_JP }
+  ]
 })
-export class AppModule {}
+export class AppModule { }

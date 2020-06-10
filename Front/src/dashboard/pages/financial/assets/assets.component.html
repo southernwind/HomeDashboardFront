@@ -1,0 +1,7 @@
+<div>
+  <canvas baseChart
+    *ngIf="assetsChartData"
+    [datasets]="assetsChartData"
+    [options]="assetsChartOptions"
+    [chartType]="'bar'"></canvas>
+</div>

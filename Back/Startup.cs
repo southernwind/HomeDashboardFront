@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Back {
 	public class Startup {
+		private readonly string _crossOriginPolicyName = "anyOrigin";
 		public IConfiguration Configuration {
 			get;
 		}
@@ -37,6 +38,13 @@ namespace Back {
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services) {
+			// クロスドメインの許可
+			services.AddCors(options => {
+				options.AddPolicy(this._crossOriginPolicyName, builder => {
+					builder.AllowAnyOrigin();
+				});
+			});
+
 			services.AddMvc();
 			services.AddDbContext<HomeServerDbContext>(optionsBuilder => {
 				optionsBuilder.UseMySql(this.Configuration.GetConnectionString("Database"));
@@ -47,6 +55,7 @@ namespace Back {
 					.AddDebug();
 			});
 			services.AddSingleton<Updater>();
+			services.AddTransient<Getter>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,6 +65,8 @@ namespace Back {
 			}
 
 			app.UseRouting();
+
+			app.UseCors(this._crossOriginPolicyName);
 
 			app.UseEndpoints(routes => {
 				routes.MapControllers();

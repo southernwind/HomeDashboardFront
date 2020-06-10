@@ -1,10 +1,17 @@
 {
-    "cSpell.words": [
-        "antd",
-        "cascader",
-        "popconfirm",
-        "sider",
-        "submenu",
-        "subnav"
-    ]
+  "cSpell.words": [
+    "antd",
+    "cascader",
+    "devkit",
+    "linq",
+    "popconfirm",
+    "sider",
+    "submenu",
+    "subnav",
+    "tslib"
+  ],
+  "html.format.indentInnerHtml": true,
+  "html.format.wrapAttributes": "preserve",
+  "html.format.maxPreserveNewLines": 1,
+  "html.format.preserveNewLines": false
 }

@@ -2,7 +2,11 @@
   <nz-sider nzCollapsible nzWidth="200px">
     <div class="logo"></div>
     <ul nz-menu nzTheme="dark" nzMode="inline">
-      <li nz-submenu nzTitle="Menu1" nzIcon="user">
+      <li nz-menu-item routerLink="financial">
+        <i nz-icon nzType="fund-projection-screen"></i>
+        <span>家計簿</span>
+      </li>
+      <li nz-submenu nzTitle=" Menu1" nzIcon="user">
         <ul>
           <li nz-menu-item>Menu1-1</li>
           <li nz-menu-item>Menu1-2</li>
@@ -15,22 +19,12 @@
           <li nz-menu-item>Menu2-2</li>
         </ul>
       </li>
-      <li nz-menu-item>
-        <i nz-icon nzType="file"></i>
-        <span>Menu3</span>
-      </li>
     </ul>
   </nz-sider>
   <nz-layout class="right-layout">
     <nz-header></nz-header>
     <nz-content>
-      <nz-breadcrumb>
-        <nz-breadcrumb-item>Menu1</nz-breadcrumb-item>
-        <nz-breadcrumb-item>Menu1-1</nz-breadcrumb-item>
-      </nz-breadcrumb>
-      <div class="inner-content">
-        TextTextText
-      </div>
+      <router-outlet></router-outlet>
     </nz-content>
   </nz-layout>
 </nz-layout>

@@ -1,0 +1,8 @@
+<div class="inner-content">
+  <nz-range-picker
+    [nzRanges]="dateRanges"
+    ngModel
+    [nzDisabledDate]="disabledDate"
+    (ngModelChange)="selectedDateChange($event)"></nz-range-picker>
+  <app-assets-chart [dateRange]="selectedDateRange"></app-assets-chart>
+</div>
