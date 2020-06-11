@@ -42,6 +42,8 @@ namespace Back {
 			services.AddCors(options => {
 				options.AddPolicy(this._crossOriginPolicyName, builder => {
 					builder.AllowAnyOrigin();
+					builder.AllowAnyHeader();
+					builder.AllowAnyMethod();
 				});
 			});
 
