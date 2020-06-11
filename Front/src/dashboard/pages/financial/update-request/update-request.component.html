@@ -1,0 +1,11 @@
+<div>
+  <div>
+    <nz-progress
+      [nzPercent]="progress"
+      nzType="circle"></nz-progress>
+  </div>
+  <button
+    nz-button
+    [disabled]="progress!==0"
+    (click)="UpdateRequest()">更新</button>
+</div>

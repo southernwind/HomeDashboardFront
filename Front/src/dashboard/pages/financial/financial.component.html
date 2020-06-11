@@ -5,4 +5,7 @@
     [nzDisabledDate]="disabledDate"
     (ngModelChange)="selectedDateChange($event)"></nz-range-picker>
   <app-assets-chart [dateRange]="selectedDateRange"></app-assets-chart>
+  <app-update-request [dateRange]="selectedDateRange"
+    (onUpdated)="selectedDateChange([selectedDateRange.startDate.toDate(),selectedDateRange.endDate.toDate()])">
+  </app-update-request>
 </div>

@@ -10,6 +10,7 @@ import { ChartsModule } from "ng2-charts";
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AssetsComponent } from './pages/financial/assets/assets.component';
+import { UpdateRequestComponent } from './pages/financial/update-request/update-request.component';
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
 };
@@ -18,7 +19,12 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
 );
 
 @NgModule({
-  declarations: [DashboardComponent, FinancialComponent, AssetsComponent],
+  declarations: [
+    DashboardComponent,
+    FinancialComponent,
+    AssetsComponent,
+    UpdateRequestComponent
+  ],
   imports: [
     FormsModule,
     DashboardRoutingModule,

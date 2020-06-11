@@ -68,7 +68,7 @@ namespace Back.Models.Financial {
 		private async Task UpdateCore(DateTime from, DateTime to, ProgressObject<long> progress) {
 			// 進捗率計算の分母
 			var denominator = Math.Max(1, to.Ticks - from.Ticks);
-			progress.Report(0);
+			progress.Report(1);
 			this._logger.LogInformation($"{from}-{to}の財務データベース更新開始");
 
 			var db = this._scope.ServiceProvider.GetService<HomeServerDbContext>();
@@ -92,7 +92,7 @@ namespace Back.Models.Financial {
 				await db.MfAssets.AddRangeAsync(assets);
 				this._logger.LogDebug($"{ma.First().Date:yyyy/MM/dd}資産推移{assets.Length}件登録");
 				maCount += assets.Length;
-				progress.Report((ma.First().Date.Ticks - from.Ticks) * 90 / denominator);
+				progress.Report(1 + ((ma.First().Date.Ticks - from.Ticks) * 89 / denominator));
 			}
 			this._logger.LogInformation($"資産推移 計{maCount}件登録");
 
@@ -105,10 +105,10 @@ namespace Back.Models.Financial {
 				await db.MfTransactions.AddRangeAsync(mt);
 				this._logger.LogDebug($"{mt.First()?.Date:yyyy/MM}取引履歴{mt.Length}件登録");
 				mtCount += mt.Length;
-				progress.Report(90 + ((mt.First().Date.Ticks - from.Ticks) * 10 / denominator));
+				progress.Report(90 + ((mt.First().Date.Ticks - from.Ticks) * 9 / denominator));
 			}
 			this._logger.LogInformation($"取引履歴 計{mtCount}件登録");
-			progress.Report(100);
+			progress.Report(99);
 
 			await db.SaveChangesAsync();
 			this._logger.LogDebug("SaveChanges");
@@ -116,17 +116,17 @@ namespace Back.Models.Financial {
 			this._logger.LogDebug("Commit");
 
 			this._logger.LogInformation($"{from}-{to}の財務データベース更新正常終了");
-			progress.Report(101);
+			progress.Report(100);
 		}
 
 		/// <summary>
 		/// 処理状況取得
 		/// </summary>
 		/// <param name="key">更新キー</param>
-		/// <returns>処理状況(0～100: 進捗率 101:完了)</returns>
+		/// <returns>処理状況(0～100: 進捗率 100:完了)</returns>
 		public long GetUpdateStatus(int key) {
 			// 完了済みタスクの削除
-			foreach (var et in this._executingTasks.Where(x => x.Value.progress.Progress == 101)) {
+			foreach (var et in this._executingTasks.Where(x => x.Value.progress.Progress == 100)) {
 				this._executingTasks.TryRemove(et.Key, out _);
 			}
 
@@ -135,7 +135,7 @@ namespace Back.Models.Financial {
 				return value.progress.Progress;
 			}
 
-			return 101;
+			return 100;
 		}
 
 		/// <summary>

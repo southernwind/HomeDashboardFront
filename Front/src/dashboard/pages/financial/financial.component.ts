@@ -26,7 +26,7 @@ export class FinancialComponent implements OnInit {
    * @type {DateRange}
    * @memberof FinancialComponent
    */
-  public selectedDateRange: DateRange;
+  public selectedDateRange: DateRange = null;
 
   constructor() { }
 
