@@ -6,7 +6,6 @@ import { Asset } from '../../../models/asset.model';
 import * as Enumerable from 'linq';
 import { Moment } from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
-
 @Component({
   selector: "app-assets-chart",
   templateUrl: "./assets.component.html",
@@ -33,8 +32,13 @@ export class AssetsComponent implements OnInit {
         type: 'time',
         distribution: 'linear',
         bounds: "data",
+        gridLines: {
+          display: true,
+          color: "#FFF1"
+        },
         ticks: {
-          source: "auto"
+          source: "auto",
+          beginAtZero: true
         },
         time: {
           minUnit: "day",
@@ -48,7 +52,11 @@ export class AssetsComponent implements OnInit {
         }
       }],
       yAxes: [{
-        stacked: true
+        stacked: true,
+        gridLines: {
+          display: true,
+          color: "#FFF3"
+        }
       }]
     }, legend: {
       position: "right"
@@ -97,15 +105,15 @@ export class AssetsComponent implements OnInit {
     const dates = temp.groupBy(x => x.date).select(x => x.first().date);
     this.assetsChartData = temp
       .groupBy(x => x.institution)
-      .orderByDescending(x => x.sum(a => Math.abs(a.amount)))
-      .select(x => {
+      .orderBy(x => x.sum(a => Math.abs(a.amount)))
+      .select((x, i) => {
         return {
           label: `${x.key()}`,
           data:
             dates.groupJoin(x.groupBy(a => a.date).select(x => {
               return {
                 t: x.key(),
-                y: x?.sum(ax => ax.amount)
+                y: x?.sum(ax => ax.amount) == 0 ? null : x?.sum(ax => ax.amount)
               }
             }
             ), d => d, a => a.t, (d, a) => a?.firstOrDefault() ?? { t: d, y: null }).toArray()
