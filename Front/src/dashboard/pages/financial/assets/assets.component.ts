@@ -6,11 +6,13 @@ import { Asset } from '../../../models/asset.model';
 import * as Enumerable from 'linq';
 import { Moment } from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
+import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
+
 @Component({
   selector: "app-assets-chart",
   templateUrl: "./assets.component.html",
 })
-export class AssetsComponent implements OnInit {
+export class AssetsComponent extends DashboardParentComponent implements OnInit {
   /** 資産推移生データ */
   public assets: Asset[];
   /** 資産推移データセット */
@@ -63,7 +65,9 @@ export class AssetsComponent implements OnInit {
     }
   };
 
-  constructor(private financialApiService: FinancialApiService) { }
+  constructor(private financialApiService: FinancialApiService) {
+    super();
+  }
 
   /**
    * 初期処理

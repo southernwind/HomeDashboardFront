@@ -4,7 +4,9 @@ import { DateRange } from 'src/dashboard/models/date-range.model';
 import { interval, timer } from 'rxjs';
 import { DashboardParentComponent } from '../../../components/parent/dashboard-parent.component';
 import { map } from 'rxjs/operators';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: "app-update-request",
   templateUrl: "./update-request.component.html",
@@ -34,25 +36,28 @@ export class UpdateRequestComponent extends DashboardParentComponent {
             map(x => x.key)
           ).toPromise();
 
-    const subscription = interval(500).subscribe(async x => {
-      // 更新キーを使って進捗率の定期取得
-      const result =
-        await
-          this
-            .financialApiService
-            .GetUpdateStatus(key)
-            .toPromise();
-      this.progress = result.progress;
-      if (this.progress === 100) {
-        this.onUpdated.emit();
-        subscription.unsubscribe();
-        // 完了後3秒経過でリセット
-        timer(3000).subscribe(x => {
-          this.progress = 0;
-        });
-        return;
-      }
-    });
-    this.add(subscription);
+    const subscription = interval(500)
+      .pipe(
+        untilDestroyed(this)
+      )
+      .subscribe(async x => {
+        // 更新キーを使って進捗率の定期取得
+        const result =
+          await
+            this
+              .financialApiService
+              .GetUpdateStatus(key)
+              .toPromise();
+        this.progress = result.progress;
+        if (this.progress === 100) {
+          this.onUpdated.emit();
+          subscription.unsubscribe();
+          // 完了後3秒経過でリセット
+          timer(3000).subscribe(x => {
+            this.progress = 0;
+          });
+          return;
+        }
+      });
   }
 }

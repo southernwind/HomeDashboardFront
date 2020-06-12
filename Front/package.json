@@ -22,6 +22,7 @@
     "@angular/router": "9.1.9",
     "@angular/cdk": "9.2.4",
     "@ant-design/icons-angular": "9.0.1",
+    "@ngneat/until-destroy": "7.1.6",
     "chart.js": "2.9.3",
     "core-js": "3.6.4",
     "linq": "3.2.2",

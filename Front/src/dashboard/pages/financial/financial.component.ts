@@ -6,11 +6,12 @@ import { Asset } from '../../models/asset.model';
 import * as Enumerable from 'linq';
 import { Moment } from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
+import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 
 @Component({
   templateUrl: "./financial.component.html",
 })
-export class FinancialComponent implements OnInit {
+export class FinancialComponent extends DashboardParentComponent implements OnInit {
   /** 日付選択便利ボタン */
   public dateRanges = {
     "今月": [moment().startOf("month").toDate(), moment().toDate()],
@@ -27,8 +28,6 @@ export class FinancialComponent implements OnInit {
    * @memberof FinancialComponent
    */
   public selectedDateRange: DateRange = null;
-
-  constructor() { }
 
   /**
    * 初期処理
