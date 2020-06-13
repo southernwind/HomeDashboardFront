@@ -1,0 +1,7 @@
+<div>
+  <nz-range-picker
+    [nzRanges]="dateRanges"
+    [ngModel]="selectedDate"
+    [nzDisabledDate]="disabledDate"
+    (ngModelChange)="onSelectedDateChange($event)"></nz-range-picker>
+</div>

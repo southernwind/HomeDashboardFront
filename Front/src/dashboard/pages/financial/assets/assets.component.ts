@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { ChartOptions, ChartDataSets } from "chart.js";
 import { FinancialApiService } from "../../../services/financial-api.service";
 import * as moment from 'moment';
@@ -12,7 +12,7 @@ import { DashboardParentComponent } from 'src/dashboard/components/parent/dashbo
   selector: "app-assets-chart",
   templateUrl: "./assets.component.html",
 })
-export class AssetsComponent extends DashboardParentComponent implements OnInit {
+export class AssetsComponent extends DashboardParentComponent {
   /** 資産推移生データ */
   public assets: Asset[];
   /** 資産推移データセット */
@@ -69,18 +69,6 @@ export class AssetsComponent extends DashboardParentComponent implements OnInit 
     super();
   }
 
-  /**
-   * 初期処理
-   *
-   * @returns {Promise<void>}
-   * @memberof AssetsComponent
-   */
-  public async ngOnInit(): Promise<void> {
-    const to = moment();
-    const from = moment().add('month', -6).startOf("month");
-    await this.updateAssetsChart(from, to);
-  }
-
   @Input()
   public set dateRange(value: DateRange) {
     this.updateAssetsChart(value.startDate, value.endDate);
@@ -109,7 +97,7 @@ export class AssetsComponent extends DashboardParentComponent implements OnInit 
     const dates = temp.groupBy(x => x.date).select(x => x.first().date);
     this.assetsChartData = temp
       .groupBy(x => x.institution)
-      .orderBy(x => x.sum(a => Math.abs(a.amount)))
+      .orderByDescending(x => x.sum(a => Math.abs(a.amount)))
       .select((x, i) => {
         return {
           label: `${x.key()}`,

@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AssetsComponent } from './pages/financial/assets/assets.component';
 import { UpdateRequestComponent } from './pages/financial/update-request/update-request.component';
+import { DateRangeSelectorComponent } from './pages/financial/date-range-selector/date-range-selector.component';
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
 };
@@ -23,7 +24,8 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     DashboardComponent,
     FinancialComponent,
     AssetsComponent,
-    UpdateRequestComponent
+    UpdateRequestComponent,
+    DateRangeSelectorComponent
   ],
   imports: [
     FormsModule,
