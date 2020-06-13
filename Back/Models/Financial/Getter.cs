@@ -44,5 +44,14 @@ namespace Back.Models.Financial {
 		}
 
 
+		/// <summary>
+		/// 最新資産取得
+		/// </summary>
+		/// <returns>資産推移データ</returns>
+		public async Task<MfAsset[]> GetLatestAssetAsync() {
+			var max = await this._db.MfAssets.MaxAsync(x => x.Date);
+			return await this._db.MfAssets.Where(x => x.Date == max).ToArrayAsync();
+		}
+
 	}
 }

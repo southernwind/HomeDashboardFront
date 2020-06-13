@@ -15,6 +15,10 @@ export class FinancialApiService {
     return this.http.get<Asset[]>(`${environment.apiUrl}api/financial-api/get-assets?from=${from.format("YYYY-MM-DD")}&to=${to.format("YYYY-MM-DD")}`).pipe(first());
   }
 
+  public GetLatestAsset(): Observable<Asset[]> {
+    return this.http.get<Asset[]>(`${environment.apiUrl}api/financial-api/get-latest-asset`).pipe(first());
+  }
+
   public PostUpdateRequest(from: Moment, to: Moment): Observable<{ key: string }> {
     return this
       .http

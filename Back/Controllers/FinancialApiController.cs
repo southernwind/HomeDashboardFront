@@ -77,5 +77,15 @@ namespace Back.Controllers {
 			var toDate = DateTime.Parse(to);
 			return new JsonResult(await this._getter.GetAssetsAsync(fromDate, toDate));
 		}
+
+		/// <summary>
+		/// 最新資産取得API
+		/// </summary>
+		/// <returns>資産推移データ</returns>
+		[HttpGet]
+		[ActionName("get-latest-asset")]
+		public async Task<JsonResult> GetLatestAssetAsync() {
+			return new JsonResult(await this._getter.GetLatestAssetAsync());
+		}
 	}
 }
