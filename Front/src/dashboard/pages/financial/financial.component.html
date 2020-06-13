@@ -3,6 +3,9 @@
   <div style="width: 700px;height: 400px;">
     <app-asset-transition-chart [dateRange]="selectedDateRange"></app-asset-transition-chart>
   </div>
+  <div>
+    <app-asset-ratio-chart></app-asset-ratio-chart>
+  </div>
   <app-update-request [dateRange]="selectedDateRange"
     (onUpdated)="chartReload()">
   </app-update-request>

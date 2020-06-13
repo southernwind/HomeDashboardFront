@@ -6,7 +6,7 @@ import { NZ_ICONS, NzIconModule } from "ng-zorro-antd/icon";
 import { IconDefinition } from "@ant-design/icons-angular";
 import * as AllIcons from "@ant-design/icons-angular/icons";
 import { FinancialComponent } from "./pages/financial/financial.component";
-import { ChartsModule } from "ng2-charts";
+import { HighchartsChartModule } from 'highcharts-angular';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AssetTransitionComponent } from './pages/financial/asset/asset-transition/asset-transition.component';
@@ -31,7 +31,7 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     FormsModule,
     DashboardRoutingModule,
     NgZorroAntdModule,
-    ChartsModule,
+    HighchartsChartModule,
     NzIconModule.forRoot(icons),
     CommonModule
   ]

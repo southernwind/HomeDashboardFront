@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { ChartOptions, ChartDataSets } from "chart.js";
 import { FinancialApiService } from "../../services/financial-api.service";
 import * as moment from 'moment';
 import { Asset } from '../../models/asset.model';
