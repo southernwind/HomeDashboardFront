@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { ChartOptions, ChartDataSets } from "chart.js";
 import { FinancialApiService } from "../../../services/financial-api.service";
 import * as moment from 'moment';
@@ -12,7 +12,7 @@ import { DashboardParentComponent } from 'src/dashboard/components/parent/dashbo
   selector: "app-assets-chart",
   templateUrl: "./assets.component.html",
 })
-export class AssetsComponent extends DashboardParentComponent {
+export class AssetsComponent extends DashboardParentComponent implements OnInit {
   /** 資産推移生データ */
   public assets: Asset[];
   /** 資産推移データセット */
@@ -30,26 +30,56 @@ export class AssetsComponent extends DashboardParentComponent {
     responsive: true,
     scales: {
       xAxes: [{
-        stacked: true,
         type: 'time',
-        distribution: 'linear',
-        bounds: "data",
         gridLines: {
           display: true,
-          color: "#FFF1"
+          color: "#FFF1",
         },
         ticks: {
-          source: "auto",
-          beginAtZero: true
+          fontSize: 9,
+          maxTicksLimit: 20,
+          maxRotation: 0,
+          minRotation: 0,
         },
         time: {
-          minUnit: "day",
+          unit: "day",
           displayFormats: {
-            day: "YYYY-MM-DD",
-            week: "YYYY-MM",
-            month: "YYYY-MM",
-            quarter: "YYYY-MM",
-            year: "YYYY-MM",
+            day: "DD",
+          }
+        }
+      }, {
+        type: 'time',
+        gridLines: {
+          drawOnChartArea: false,
+          drawTicks: true,
+          drawBorder: false,
+          tickMarkLength: 10
+        },
+        ticks: {
+          fontSize: 11,
+          fontStyle: 'bold',
+          maxRotation: 0,
+          minRotation: 0,
+        },
+        time: {
+          unit: "month",
+          displayFormats: {
+            month: "M月",
+          }
+        }
+      },
+      {
+        type: 'time',
+        ticks: {
+          fontSize: 13,
+          fontStyle: 'bold',
+          maxRotation: 0,
+          minRotation: 0,
+        },
+        time: {
+          unit: "year",
+          displayFormats: {
+            year: "YYYY年",
           }
         }
       }],
@@ -58,6 +88,18 @@ export class AssetsComponent extends DashboardParentComponent {
         gridLines: {
           display: true,
           color: "#FFF3"
+        },
+        ticks: {
+          callback: label => {
+            if (label == 0) {
+              return label +
+                "円";
+            } else if (Math.abs(Number(label)) >= 100000000) {
+              return (Number(label) / 100000000) + "億円";
+            } else {
+              return (Number(label) / 10000) + "万円";
+            }
+          }
         }
       }]
     }, legend: {
@@ -67,6 +109,18 @@ export class AssetsComponent extends DashboardParentComponent {
 
   constructor(private financialApiService: FinancialApiService) {
     super();
+  }
+
+  /**
+   * 初期処理
+   *
+   * @returns {Promise<void>}
+   * @memberof AssetsComponent
+   */
+  public async ngOnInit(): Promise<void> {
+    const to = moment();
+    const from = moment().add('month', -6).startOf("month");
+    await this.updateAssetsChart(from, to);
   }
 
   @Input()
@@ -97,7 +151,7 @@ export class AssetsComponent extends DashboardParentComponent {
     const dates = temp.groupBy(x => x.date).select(x => x.first().date);
     this.assetsChartData = temp
       .groupBy(x => x.institution)
-      .orderByDescending(x => x.sum(a => Math.abs(a.amount)))
+      .orderBy(x => x.sum(a => Math.abs(a.amount)))
       .select((x, i) => {
         return {
           label: `${x.key()}`,
