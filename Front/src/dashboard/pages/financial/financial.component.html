@@ -1,6 +1,8 @@
 <div class="inner-content">
   <date-range-selector [(dateRange)]="selectedDateRange"></date-range-selector>
-  <app-assets-chart [dateRange]="selectedDateRange"></app-assets-chart>
+  <div style="width: 700px;height: 400px;">
+    <app-asset-transition-chart [dateRange]="selectedDateRange"></app-asset-transition-chart>
+  </div>
   <app-update-request [dateRange]="selectedDateRange"
     (onUpdated)="chartReload()">
   </app-update-request>

@@ -1,18 +1,18 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { ChartOptions, ChartDataSets } from "chart.js";
-import { FinancialApiService } from "../../../services/financial-api.service";
+import { FinancialApiService } from "../../../../services/financial-api.service";
 import * as moment from 'moment';
-import { Asset } from '../../../models/asset.model';
+import { Asset } from '../../../../models/asset.model';
 import * as Enumerable from 'linq';
 import { Moment } from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 
 @Component({
-  selector: "app-assets-chart",
-  templateUrl: "./assets.component.html",
+  selector: "app-asset-transition-chart",
+  templateUrl: "./asset-transition.component.html",
 })
-export class AssetsComponent extends DashboardParentComponent implements OnInit {
+export class AssetTransitionComponent extends DashboardParentComponent implements OnInit {
   /** 資産推移生データ */
   public assets: Asset[];
   /** 資産推移データセット */
@@ -115,7 +115,7 @@ export class AssetsComponent extends DashboardParentComponent implements OnInit 
    * 初期処理
    *
    * @returns {Promise<void>}
-   * @memberof AssetsComponent
+   * @memberof AssetTransitionComponent
    */
   public async ngOnInit(): Promise<void> {
     const to = moment();
@@ -135,7 +135,7 @@ export class AssetsComponent extends DashboardParentComponent implements OnInit 
    * @param {Moment} from チャート開始日
    * @param {Moment} to チャート終了日
    * @returns {Promise<void>}
-   * @memberof AssetsComponent
+   * @memberof AssetTransitionComponent
    */
   private async updateAssetsChart(from: Moment, to: Moment): Promise<void> {
     this.assets = await this.financialApiService.GetAssets(from, to).toPromise();

@@ -9,7 +9,7 @@ import { FinancialComponent } from "./pages/financial/financial.component";
 import { ChartsModule } from "ng2-charts";
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AssetsComponent } from './pages/financial/assets/assets.component';
+import { AssetTransitionComponent } from './pages/financial/asset/asset-transition/asset-transition.component';
 import { UpdateRequestComponent } from './pages/financial/update-request/update-request.component';
 import { DateRangeSelectorComponent } from './pages/financial/date-range-selector/date-range-selector.component';
 const antDesignIcons = AllIcons as {
@@ -23,7 +23,7 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
   declarations: [
     DashboardComponent,
     FinancialComponent,
-    AssetsComponent,
+    AssetTransitionComponent,
     UpdateRequestComponent,
     DateRangeSelectorComponent
   ],
