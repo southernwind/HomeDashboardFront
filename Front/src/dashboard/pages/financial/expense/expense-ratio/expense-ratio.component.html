@@ -1,0 +1,8 @@
+<div>
+  <highcharts-chart
+    *ngIf="expensesChartOptions"
+    [Highcharts]="Highcharts"
+    [constructorType]="'chart'"
+    [options]="expensesChartOptions"
+    style="width: 700px; height: 400px;"></highcharts-chart>
+</div>

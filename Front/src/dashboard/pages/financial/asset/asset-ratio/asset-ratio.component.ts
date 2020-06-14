@@ -20,6 +20,7 @@ export class AssetRatioComponent extends DashboardParentComponent implements OnI
 
   /** チャートオプション */
   private chartOptions: Highcharts.Options = {
+    ...HighchartsOptions.defaultOptions,
     chart: {
       ...HighchartsOptions.defaultOptions.chart,
       type: 'pie'
