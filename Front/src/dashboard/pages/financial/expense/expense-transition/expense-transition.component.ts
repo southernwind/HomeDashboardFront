@@ -79,7 +79,7 @@ export class ExpenseTransitionComponent extends DashboardParentComponent impleme
     },
     tooltip: {
       formatter: function () {
-        return `${Highcharts.dateFormat("%Y年%m月", this.x)}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
+        return `${moment(this.x).format("YYYY年MM月")}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
       }
     }
   };
