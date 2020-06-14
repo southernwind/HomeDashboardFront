@@ -29,12 +29,15 @@ export class AssetRatioComponent extends DashboardParentComponent implements OnI
       text: "資産割合",
     },
     plotOptions: {
+      ...HighchartsOptions.defaultOptions.plotOptions,
       pie: {
+        ...HighchartsOptions.defaultOptions.plotOptions.pie,
         shadow: false,
         center: ['50%', '50%']
       }
     },
     tooltip: {
+      ...HighchartsOptions.defaultOptions.tooltip,
       formatter: function () {
         return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
       }
@@ -110,7 +113,8 @@ export class AssetRatioComponent extends DashboardParentComponent implements OnI
                 enabled: false
               }
             } as any]
-          }
+          },
+          condition: {}
         }]
       }
     };

@@ -2,9 +2,11 @@
   <nz-sider nzCollapsible nzWidth="200px">
     <div class="logo"></div>
     <ul nz-menu nzTheme="dark" nzMode="inline">
-      <li nz-menu-item routerLink="financial">
-        <i nz-icon nzType="fund-projection-screen"></i>
-        <span>家計簿</span>
+      <li nz-submenu nzTitle="家計簿" nzIcon="fund-projection-screen">
+        <ul>
+          <li nz-menu-item routerLink="financial">Top</li>
+          <li nz-menu-item routerLink="financial/asset">資産</li>
+        </ul>
       </li>
       <li nz-submenu nzTitle=" Menu1" nzIcon="user">
         <ul>

@@ -13,6 +13,8 @@ import { AssetTransitionComponent } from './pages/financial/asset/asset-transiti
 import { UpdateRequestComponent } from './pages/financial/update-request/update-request.component';
 import { DateRangeSelectorComponent } from './pages/financial/date-range-selector/date-range-selector.component';
 import { AssetRatioComponent } from './pages/financial/asset/asset-ratio/asset-ratio.component';
+import { AssetComponent } from './pages/financial/asset/asset.component';
+import { FinancialTopComponent } from './pages/financial/financial-top/financial-top.component';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -24,9 +26,11 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
   declarations: [
     DashboardComponent,
     FinancialComponent,
+    FinancialTopComponent,
     AssetTransitionComponent,
     UpdateRequestComponent,
     AssetRatioComponent,
+    AssetComponent,
     DateRangeSelectorComponent
   ],
   imports: [

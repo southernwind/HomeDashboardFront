@@ -2,6 +2,8 @@ import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 import { DashboardComponent } from "./dashboard.component";
 import { FinancialComponent } from "./pages/financial/financial.component";
+import { AssetComponent } from './pages/financial/asset/asset.component';
+import { FinancialTopComponent } from './pages/financial/financial-top/financial-top.component';
 
 const routes: Routes = [
   {
@@ -11,6 +13,16 @@ const routes: Routes = [
       {
         path: "financial",
         component: FinancialComponent,
+        children: [
+          {
+            path: "",
+            component: FinancialTopComponent,
+          },
+          {
+            path: "asset",
+            component: AssetComponent,
+          },
+        ],
       },
     ],
   },
@@ -20,4 +32,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class DashboardRoutingModule {}
+export class DashboardRoutingModule { }
