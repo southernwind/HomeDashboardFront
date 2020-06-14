@@ -43,6 +43,7 @@ export class HighchartsOptions {
       minorGridLineColor: '#505053',
       tickColor: '#707073',
       tickWidth: 1,
+      minorTicks: true,
       title: {
         style: {
           color: '#A0A0A3'

@@ -4,14 +4,14 @@ import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 
 @Component({
-  templateUrl: "./financial-top.component.html",
+  templateUrl: "./expense.component.html",
 })
-export class FinancialTopComponent extends DashboardParentComponent {
+export class ExpenseComponent extends DashboardParentComponent {
   /**
    * 選択中日付範囲
    *
    * @type {DateRange}
-   * @memberof FinancialTopComponent
+   * @memberof AssetComponent
    */
   public selectedDateRange: DateRange;
 
@@ -19,7 +19,7 @@ export class FinancialTopComponent extends DashboardParentComponent {
    * 初期処理
    *
    * @returns {Promise<void>}
-   * @memberof FinancialTopComponent
+   * @memberof AssetComponent
    */
   public async ngOnInit(): Promise<void> {
     const to = moment();

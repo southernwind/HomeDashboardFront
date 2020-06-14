@@ -87,5 +87,19 @@ namespace Back.Controllers {
 		public async Task<JsonResult> GetLatestAssetAsync() {
 			return new JsonResult(await this._getter.GetLatestAssetAsync());
 		}
+
+		/// <summary>
+		/// 取引履歴取得API
+		/// </summary>
+		/// <param name="from">開始日</param>
+		/// <param name="to">終了日</param>
+		/// <returns>取引履歴データ</returns>
+		[HttpGet]
+		[ActionName("get-transactions")]
+		public async Task<JsonResult> GetTransactionsAsync(string from, string to) {
+			var fromDate = DateTime.Parse(from);
+			var toDate = DateTime.Parse(to);
+			return new JsonResult(await this._getter.GetTransactionsAsync(fromDate, toDate));
+		}
 	}
 }

@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 import { first } from "rxjs/operators";
 import { environment } from "../../environments/environment";
 import { Moment } from 'moment';
+import { Transaction } from '../models/transaction.model';
 
 @Injectable({
   providedIn: "root",
@@ -17,6 +18,10 @@ export class FinancialApiService {
 
   public GetLatestAsset(): Observable<Asset[]> {
     return this.http.get<Asset[]>(`${environment.apiUrl}api/financial-api/get-latest-asset`).pipe(first());
+  }
+
+  public GetTransactions(from: Moment, to: Moment): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${environment.apiUrl}api/financial-api/get-transactions?from=${from.format("YYYY-MM-DD")}&to=${to.format("YYYY-MM-DD")}`).pipe(first());
   }
 
   public PostUpdateRequest(from: Moment, to: Moment): Observable<{ key: string }> {

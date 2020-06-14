@@ -15,6 +15,8 @@ import { DateRangeSelectorComponent } from './pages/financial/date-range-selecto
 import { AssetRatioComponent } from './pages/financial/asset/asset-ratio/asset-ratio.component';
 import { AssetComponent } from './pages/financial/asset/asset.component';
 import { FinancialTopComponent } from './pages/financial/financial-top/financial-top.component';
+import { ExpenseComponent } from './pages/financial/expense/expense.component';
+import { ExpenseTransitionComponent } from './pages/financial/expense/expense-transition/expense-transition.component';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -31,6 +33,8 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     UpdateRequestComponent,
     AssetRatioComponent,
     AssetComponent,
+    ExpenseComponent,
+    ExpenseTransitionComponent,
     DateRangeSelectorComponent
   ],
   imports: [

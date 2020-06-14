@@ -1,0 +1,9 @@
+<div>
+  <highcharts-chart
+    *ngIf="expensesChartOptions"
+    [Highcharts]="Highcharts"
+    [constructorType]="'chart'"
+    [options]="expensesChartOptions"
+    [oneToOne]="true"
+    style="width: 100%; height: 400px; display: block;"></highcharts-chart>
+</div>

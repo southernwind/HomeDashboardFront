@@ -53,5 +53,14 @@ namespace Back.Models.Financial {
 			return await this._db.MfAssets.Where(x => x.Date == max).ToArrayAsync();
 		}
 
+		/// <summary>
+		/// 取引履歴取得
+		/// </summary>
+		/// <param name="from">取得対象開始日</param>
+		/// <param name="to">取得対象終了日</param>
+		/// <returns>取引履歴データ</returns>
+		public async Task<MfTransaction[]> GetTransactionsAsync(DateTime from, DateTime to) {
+			return await this._db.MfTransactions.Where(x => x.IsCalculateTarget).Where(x => from <= x.Date && to >= x.Date).ToArrayAsync();
+		}
 	}
 }

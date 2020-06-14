@@ -4,6 +4,7 @@ import { DashboardComponent } from "./dashboard.component";
 import { FinancialComponent } from "./pages/financial/financial.component";
 import { AssetComponent } from './pages/financial/asset/asset.component';
 import { FinancialTopComponent } from './pages/financial/financial-top/financial-top.component';
+import { ExpenseComponent } from './pages/financial/expense/expense.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,10 @@ const routes: Routes = [
             path: "asset",
             component: AssetComponent,
           },
+          {
+            path: "expense",
+            component: ExpenseComponent
+          }
         ],
       },
     ],
