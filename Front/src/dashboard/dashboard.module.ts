@@ -18,6 +18,8 @@ import { FinancialTopComponent } from './pages/financial/financial-top/financial
 import { ExpenseComponent } from './pages/financial/expense/expense.component';
 import { ExpenseTransitionComponent } from './pages/financial/expense/expense-transition/expense-transition.component';
 import { ExpenseRatioComponent } from './pages/financial/expense/expense-ratio/expense-ratio.component';
+import { ExpenseRawDataViewerComponent } from './pages/financial/expense/expense-raw-data-viewer/expense-raw-data-viewer.component';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -37,10 +39,12 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     ExpenseComponent,
     ExpenseTransitionComponent,
     ExpenseRatioComponent,
-    DateRangeSelectorComponent
+    ExpenseRawDataViewerComponent,
+    DateRangeSelectorComponent,
   ],
   imports: [
     FormsModule,
+    PipesModule,
     DashboardRoutingModule,
     NgZorroAntdModule,
     HighchartsChartModule,
