@@ -37,10 +37,7 @@ export class ExpenseTransitionComponent extends DashboardParentComponent impleme
       type: 'datetime',
       title: null,
       dateTimeLabelFormats: {
-        year: '%Y',
         month: '%Y/%m',
-        week: '%m/%d',
-        day: '%d',
       }
     },
     yAxis: {

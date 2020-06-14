@@ -41,7 +41,7 @@ export class AssetTransitionComponent extends DashboardParentComponent implement
         year: '%Y',
         month: '%Y/%m',
         week: '%m/%d',
-        day: '%d',
+        day: '%m/%d',
       }
     },
     yAxis: {
@@ -64,7 +64,33 @@ export class AssetTransitionComponent extends DashboardParentComponent implement
       formatter: function () {
         return `${Highcharts.dateFormat("%Y/%m/%d", this.key)}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
       }
-    }
+    },
+    plotOptions: {
+      ...HighchartsOptions.defaultOptions.plotOptions,
+      series: {
+        ...HighchartsOptions.defaultOptions.plotOptions.series,
+        dataLabels: {
+          ...HighchartsOptions.defaultOptions.plotOptions.series.dataLabels,
+          shape: 'callout',
+          backgroundColor: '#0007',
+          formatter: function () {
+            return `最終値:${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
+          }
+        }
+      }
+    },
+    legend: {
+      ...HighchartsOptions.defaultOptions.legend,
+      labelFormatter: function () {
+        const values = ((this as any).yData as number[]);
+        const lastValue = values[values.length - 1];
+        if (lastValue != null && lastValue != 0) {
+          return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(lastValue, 0, '', ',')}円)</span>`;
+        } else {
+          return `${this.name}<br/><span style="font-size:0.6rem">( - )</span>`;
+        }
+      }
+    },
   };
 
   constructor(private financialApiService: FinancialApiService) {
@@ -108,18 +134,20 @@ export class AssetTransitionComponent extends DashboardParentComponent implement
         }
       });
     const dates = temp.groupBy(x => x.date).select(x => x.first().date);
+    const datesCount = dates.count();
     this.assetsChartOptions = {
       ...this.chartOptions,
       series: temp
         .groupBy(x => x.institution)
-        .orderBy(x => x.sum(a => Math.abs(a.amount)))
-        .select(x => {
+        .orderBy(x => Math.abs(x.lastOrDefault().amount))
+        .select((x, index) => {
           return {
             type: 'area',
             name: `${x.key()}`,
             pointInterval: 24 * 3600 * 1000,
-            pointStart: Date.UTC(moment(dates.first()).year(), moment(dates.first()).month(), moment(dates.first()).day()),
+            pointStart: moment(dates.first()).valueOf(),
             stack: x.sum(x => x.amount) > 0 ? 0 : 1,
+            legendIndex: -index,
             data:
               dates.groupJoin(x.groupBy(a => a.date).select(x => {
                 return {
@@ -137,8 +165,21 @@ export class AssetTransitionComponent extends DashboardParentComponent implement
             name: `計`,
             zIndex: 10000,
             pointInterval: 24 * 3600 * 1000,
-            pointStart: Date.UTC(moment(dates.first()).year(), moment(dates.first()).month(), moment(dates.first()).day()),
-            data: temp.groupBy(x => x.date).orderBy(x => x.key()).select(x => x.sum(a => a.amount)).toArray()
+            pointStart: moment(dates.first()).valueOf(),
+            legendIndex: -1000000,
+            data: temp
+              .groupBy(x => x.date)
+              .orderBy(x => x.key())
+              .select(x => x.sum(a => a.amount))
+              .select((x, index) => {
+                return index != datesCount - 1 ? x : {
+                  y: x,
+                  dataLabels: {
+                    enabled: true,
+                    align: 'right'
+                  }
+                }
+              }).toArray(),
           } as Highcharts.SeriesLineOptions
         ])
     }
