@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import * as moment from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
+import { FinancialApiService } from 'src/dashboard/services/financial-api.service';
+import { Transaction } from 'src/dashboard/models/transaction.model';
 
 @Component({
   templateUrl: "./expense.component.html",
@@ -15,6 +17,14 @@ export class ExpenseComponent extends DashboardParentComponent {
    */
   public selectedDateRange: DateRange;
 
+  /** 取引履歴生データ */
+  @Input()
+  public transactions: Transaction[];
+
+  constructor(private financialApiService: FinancialApiService) {
+    super();
+  }
+
   /**
    * 初期処理
    *
@@ -25,9 +35,10 @@ export class ExpenseComponent extends DashboardParentComponent {
     const to = moment();
     const from = moment().add(-6, 'month').startOf("month");
     this.selectedDateRange = { startDate: from, endDate: to };
+    await this.selectedDateChanged();
   }
 
-  public chartReload(): void {
-    this.selectedDateRange = this.selectedDateRange;
+  public async selectedDateChanged(): Promise<void> {
+    this.transactions = await this.financialApiService.GetTransactions(this.selectedDateRange.startDate, this.selectedDateRange.endDate).toPromise();
   }
 }

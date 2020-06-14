@@ -13,9 +13,12 @@ import { HighchartsOptions } from 'src/utils/highcharts.options';
   selector: "app-expense-transition-chart",
   templateUrl: "./expense-transition.component.html",
 })
-export class ExpenseTransitionComponent extends DashboardParentComponent implements OnInit {
+export class ExpenseTransitionComponent extends DashboardParentComponent {
   /** 取引履歴生データ */
-  public transactions: Transaction[];
+  @Input()
+  public set transactions(value: Transaction[]) {
+    this.updateExpensesChart(value);
+  }
   public Highcharts: typeof Highcharts = Highcharts;
   /** 支出推移チャートオプション */
   public expensesChartOptions: Highcharts.Options;
@@ -84,27 +87,6 @@ export class ExpenseTransitionComponent extends DashboardParentComponent impleme
     }
   };
 
-  constructor(private financialApiService: FinancialApiService) {
-    super();
-  }
-
-  /**
-   * 初期処理
-   *
-   * @returns {Promise<void>}
-   * @memberof expenseTransitionComponent
-   */
-  public async ngOnInit(): Promise<void> {
-    const to = moment();
-    const from = moment().add(-6, 'month').startOf("month");
-    await this.updateExpensesChart(from, to);
-  }
-
-  @Input()
-  public set dateRange(value: DateRange) {
-    this.updateExpensesChart(value.startDate, value.endDate);
-  }
-
   /**
    * 資産推移チャート更新処理
    *
@@ -114,10 +96,9 @@ export class ExpenseTransitionComponent extends DashboardParentComponent impleme
    * @returns {Promise<void>}
    * @memberof expenseTransitionComponent
    */
-  private async updateExpensesChart(from: Moment, to: Moment): Promise<void> {
-    this.transactions = await this.financialApiService.GetTransactions(from, to).toPromise();
+  private async updateExpensesChart(transactions: Transaction[]): Promise<void> {
     const temp = Enumerable
-      .from(this.transactions)
+      .from(transactions)
       .where(x => x.amount < 0)
       .select(x => {
         return {
