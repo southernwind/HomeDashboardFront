@@ -79,7 +79,7 @@ export class AssetTransitionComponent extends DashboardParentComponent implement
    */
   public async ngOnInit(): Promise<void> {
     const to = moment();
-    const from = moment().add('month', -6).startOf("month");
+    const from = moment().add(-6, 'month').startOf("month");
     await this.updateAssetsChart(from, to);
   }
 
