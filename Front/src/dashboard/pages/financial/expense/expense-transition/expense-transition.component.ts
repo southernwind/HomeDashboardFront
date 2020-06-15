@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { FinancialApiService } from "../../../../services/financial-api.service";
 import * as moment from 'moment';
@@ -8,84 +8,110 @@ import { Moment } from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
+import { Condition } from 'src/dashboard/models/condition.model';
 
 @Component({
   selector: "app-expense-transition-chart",
   templateUrl: "./expense-transition.component.html",
 })
-export class ExpenseTransitionComponent extends DashboardParentComponent {
+export class ExpenseTransitionComponent extends DashboardParentComponent implements OnInit {
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
     this.updateExpensesChart(value);
   }
+
+  /** フィルター条件 */
+  @Output()
+  public filterConditionChange = new EventEmitter<Condition<Transaction>>();
+
   public Highcharts: typeof Highcharts = Highcharts;
   /** 支出推移チャートオプション */
   public expensesChartOptions: Highcharts.Options;
 
   /** チャートオプション */
-  private chartOptions: Highcharts.Options = {
-    ...HighchartsOptions.defaultOptions,
-    chart: {
-      ...HighchartsOptions.defaultOptions.chart,
-      type: "column",
-      zoomType: "x"
-    },
-    title: {
-      ...HighchartsOptions.defaultOptions.title,
-      text: "支出推移",
-    },
-    xAxis: {
-      ...HighchartsOptions.defaultOptions.xAxis,
-      type: 'datetime',
-      title: null,
-      dateTimeLabelFormats: {
-        month: '%Y/%m',
-      }
-    },
-    yAxis: {
-      ...HighchartsOptions.defaultOptions.yAxis,
-      title: null,
-      stackLabels: {
-        enabled: true,
-        formatter: function () {
-          return `${Highcharts.numberFormat(this.total, 0, '', ',')}円`;
+  private chartOptions: Highcharts.Options = {};
+
+  public ngOnInit(): void {
+    const componentScope = this;
+    this.chartOptions = {
+      ...HighchartsOptions.defaultOptions,
+      chart: {
+        ...HighchartsOptions.defaultOptions.chart,
+        type: "column",
+        zoomType: "x"
+      },
+      title: {
+        ...HighchartsOptions.defaultOptions.title,
+        text: "支出推移",
+      },
+      xAxis: {
+        ...HighchartsOptions.defaultOptions.xAxis,
+        type: 'datetime',
+        title: null,
+        dateTimeLabelFormats: {
+          month: '%Y/%m',
         }
       },
-      labels: {
-        ...(HighchartsOptions.defaultOptions.yAxis as Highcharts.YAxisOptions).labels,
-        formatter: function () {
-          if (this.value == 0) {
-            return `${this.value}円`;
-          } else if (Math.abs(this.value) >= 100000000) {
-            return `${this.value / 100000000} 万円`
-          } else {
-            return `${this.value / 10000} 万円`
+      yAxis: {
+        ...HighchartsOptions.defaultOptions.yAxis,
+        title: null,
+        stackLabels: {
+          enabled: true,
+          formatter: function () {
+            return `${Highcharts.numberFormat(this.total, 0, '', ',')}円`;
+          }
+        },
+        labels: {
+          ...(HighchartsOptions.defaultOptions.yAxis as Highcharts.YAxisOptions).labels,
+          formatter: function () {
+            if (this.value == 0) {
+              return `${this.value}円`;
+            } else if (Math.abs(this.value) >= 100000000) {
+              return `${this.value / 100000000} 万円`
+            } else {
+              return `${this.value / 10000} 万円`
+            }
           }
         }
-      }
-    },
-    legend: {
-      ...HighchartsOptions.defaultOptions.legend,
-      labelFormatter: function () {
-        return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(Enumerable.from((this as any).yData).sum(), 0, '', ',')}円)</span>`;
-      }
-    },
-    plotOptions: {
-      ...HighchartsOptions.defaultOptions.plotOptions,
-      column: {
-        stacking: "normal",
-        dataLabels: {
-          enabled: false
+      },
+      legend: {
+        ...HighchartsOptions.defaultOptions.legend,
+        labelFormatter: function () {
+          return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(Enumerable.from((this as any).yData).sum(), 0, '', ',')}円)</span>`;
+        }
+      },
+      plotOptions: {
+        ...HighchartsOptions.defaultOptions.plotOptions,
+        column: {
+          stacking: "normal",
+          dataLabels: {
+            enabled: false
+          }
+        },
+        series: {
+          ...HighchartsOptions.defaultOptions.plotOptions?.series,
+          point: {
+            ...HighchartsOptions.defaultOptions.plotOptions?.series?.point,
+            events: {
+              ...HighchartsOptions.defaultOptions.plotOptions?.series?.point?.events,
+              click: function (e) {
+                const month = moment(this.category).format("YYYY-MM");
+                componentScope.filterConditionChange.emit({
+                  condition: x => x.date.startsWith(month) && x.largeCategory == e.point.series.name
+                });
+              }
+            }
+          }
+        }
+      },
+      tooltip: {
+        formatter: function () {
+          return `${moment(this.x).format("YYYY年MM月")}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
         }
       }
-    },
-    tooltip: {
-      formatter: function () {
-        return `${moment(this.x).format("YYYY年MM月")}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
-      }
     }
-  };
+  }
 
   /**
    * 資産推移チャート更新処理

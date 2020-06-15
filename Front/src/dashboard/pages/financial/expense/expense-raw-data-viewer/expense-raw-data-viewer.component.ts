@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import * as Highcharts from 'highcharts';
 import { FinancialApiService } from "../../../../services/financial-api.service";
 import * as moment from 'moment';
@@ -8,16 +8,25 @@ import { Moment } from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
+import { Condition } from 'src/dashboard/models/condition.model';
 
 @Component({
   selector: "app-expense-raw-data-viewer",
   templateUrl: "./expense-raw-data-viewer.component.html",
 })
 export class ExpenseRawDataViewerComponent extends DashboardParentComponent {
+  private _transactions: Transaction[];
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
+    this._transactions = value;
     this.createTableData(value);
+  }
+
+  /** フィルター条件 */
+  @Input()
+  public set filterCondition(value: Condition<Transaction>) {
+    this.createTableData(this._transactions, value);
   }
 
   public tableData: Transaction[];
@@ -51,13 +60,14 @@ export class ExpenseRawDataViewerComponent extends DashboardParentComponent {
    * @returns {Promise<void>}
    * @memberof ExpenseRawDataViewerComponent
    */
-  private async createTableData(transactions: Transaction[]): Promise<void> {
+  private async createTableData(transactions: Transaction[], filterCondition?: Condition<Transaction>): Promise<void> {
     this.tableData = Enumerable.from(transactions).select(x => {
       return {
         ...x,
         amount: -x.amount
       }
     }).where(x => x.amount > 0)
+      .where(x => filterCondition?.condition(x) ?? true)
       .orderBy(x => x.date)
       .toArray();
     this.totalAmount = Enumerable.from(this.tableData).sum(x => x.amount);

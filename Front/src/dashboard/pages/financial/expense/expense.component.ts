@@ -4,6 +4,7 @@ import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { FinancialApiService } from 'src/dashboard/services/financial-api.service';
 import { Transaction } from 'src/dashboard/models/transaction.model';
+import { Condition } from 'src/dashboard/models/condition.model';
 
 @Component({
   templateUrl: "./expense.component.html",
@@ -18,8 +19,10 @@ export class ExpenseComponent extends DashboardParentComponent {
   public selectedDateRange: DateRange;
 
   /** 取引履歴生データ */
-  @Input()
   public transactions: Transaction[];
+
+  /** フィルター条件 */
+  public filterCondition: Condition<Transaction>;
 
   constructor(private financialApiService: FinancialApiService) {
     super();
@@ -29,7 +32,7 @@ export class ExpenseComponent extends DashboardParentComponent {
    * 初期処理
    *
    * @returns {Promise<void>}
-   * @memberof AssetComponent
+   * @memberof ExpenseComponent
    */
   public async ngOnInit(): Promise<void> {
     const to = moment();

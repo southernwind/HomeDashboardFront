@@ -2,8 +2,11 @@
   <date-range-selector [(dateRange)]="selectedDateRange" (dateRangeChange)="selectedDateChanged()">
   </date-range-selector>
   <div style="width: 700px;height: 400px;">
-    <app-expense-transition-chart [transactions]="transactions"></app-expense-transition-chart>
+    <app-expense-transition-chart [transactions]="transactions" (filterConditionChange)="filterCondition = $event">
+    </app-expense-transition-chart>
   </div>
-  <app-expense-ratio-chart [transactions]="transactions"></app-expense-ratio-chart>
-  <app-expense-raw-data-viewer [transactions]="transactions"></app-expense-raw-data-viewer>
+  <app-expense-ratio-chart [transactions]="transactions" (filterConditionChange)="filterCondition = $event">
+  </app-expense-ratio-chart>
+  <app-expense-raw-data-viewer [transactions]="transactions" [filterCondition]="filterCondition">
+  </app-expense-raw-data-viewer>
 </div>

@@ -1,15 +1,16 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, EventEmitter, Output } from "@angular/core";
 import * as Highcharts from 'highcharts';
 import { Transaction } from '../../../../models/transaction.model';
 import * as Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
+import { Condition } from 'src/dashboard/models/condition.model';
 
 @Component({
   selector: "app-expense-ratio-chart",
   templateUrl: "./expense-ratio.component.html",
 })
-export class ExpenseRatioComponent extends DashboardParentComponent {
+export class ExpenseRatioComponent extends DashboardParentComponent implements OnInit {
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
@@ -17,47 +18,80 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
       this.updateExpensesChart(value);
     }
   }
+
+  /** フィルター条件 */
+  @Output()
+  public filterConditionChange = new EventEmitter<Condition<Transaction>>();
+
   public Highcharts: typeof Highcharts = Highcharts;
 
   /** 資産割合チャートオプション */
   public expensesChartOptions: Highcharts.Options;
 
   /** チャートオプション */
-  private chartOptions: Highcharts.Options = {
-    ...HighchartsOptions.defaultOptions,
-    chart: {
-      ...HighchartsOptions.defaultOptions.chart,
-      type: 'pie'
-    },
-    title: {
-      ...HighchartsOptions.defaultOptions.title,
-      text: "支出割合",
-    },
-    plotOptions: {
-      ...HighchartsOptions.defaultOptions.plotOptions,
-      pie: {
-        ...HighchartsOptions.defaultOptions.plotOptions.pie,
-        shadow: false,
-        center: ['50%', '50%']
+  private chartOptions: Highcharts.Options = {};
+
+  public ngOnInit(): void {
+    const componentScope = this;
+    this.chartOptions = {
+      ...HighchartsOptions.defaultOptions,
+      chart: {
+        ...HighchartsOptions.defaultOptions.chart,
+        type: 'pie'
+      },
+      title: {
+        ...HighchartsOptions.defaultOptions.title,
+        text: "支出割合",
+      },
+      plotOptions: {
+        ...HighchartsOptions.defaultOptions.plotOptions,
+        pie: {
+          ...HighchartsOptions.defaultOptions.plotOptions.pie,
+          shadow: false,
+          center: ['50%', '50%']
+        },
+        series: {
+          ...HighchartsOptions.defaultOptions.plotOptions?.series,
+          point: {
+            ...HighchartsOptions.defaultOptions.plotOptions?.series?.point,
+            events: {
+              ...HighchartsOptions.defaultOptions.plotOptions?.series?.point?.events,
+              click: function (e) {
+                switch (e.point.series.name) {
+                  case "カテゴリ":
+                    componentScope.filterConditionChange.emit({
+                      condition: x => x.largeCategory == e.point.name
+                    });
+                    break;
+                  case "サブカテゴリ":
+                    componentScope.filterConditionChange.emit({
+                      condition: x => x.middleCategory == e.point.name
+                    });
+                    break;
+                }
+              }
+            }
+          }
+        }
+      },
+      tooltip: {
+        ...HighchartsOptions.defaultOptions.tooltip,
+        formatter: function () {
+          return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
+        }
+      },
+      legend: {
+        ...HighchartsOptions.defaultOptions.legend,
+        labelFormatter: function () {
+          return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(this.y, 0, '', ',')}円)</span>`;
+        } as Highcharts.FormatterCallbackFunction<Highcharts.Point>,
+        enabled: true,
+        align: "right",
+        layout: "vertical",
+        verticalAlign: "top"
       }
-    },
-    tooltip: {
-      ...HighchartsOptions.defaultOptions.tooltip,
-      formatter: function () {
-        return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
-      }
-    },
-    legend: {
-      ...HighchartsOptions.defaultOptions.legend,
-      labelFormatter: function () {
-        return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(this.y, 0, '', ',')}円)</span>`;
-      } as Highcharts.FormatterCallbackFunction<Highcharts.Point>,
-      enabled: true,
-      align: "right",
-      layout: "vertical",
-      verticalAlign: "top"
-    },
-  };
+    }
+  }
 
   /**
    * 資産割合チャート更新処理
