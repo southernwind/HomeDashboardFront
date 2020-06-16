@@ -5,6 +5,7 @@ import { FinancialComponent } from "./pages/financial/financial.component";
 import { AssetComponent } from './pages/financial/asset/asset.component';
 import { FinancialTopComponent } from './pages/financial/financial-top/financial-top.component';
 import { ExpenseComponent } from './pages/financial/expense/expense.component';
+import { IncomeComponent } from './pages/financial/income/income.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
           {
             path: "expense",
             component: ExpenseComponent
+          },
+          {
+            path: "income",
+            component: IncomeComponent
           }
         ],
       },

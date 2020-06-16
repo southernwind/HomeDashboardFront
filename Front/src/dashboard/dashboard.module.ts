@@ -19,6 +19,10 @@ import { ExpenseComponent } from './pages/financial/expense/expense.component';
 import { ExpenseTransitionComponent } from './pages/financial/expense/expense-transition/expense-transition.component';
 import { ExpenseRatioComponent } from './pages/financial/expense/expense-ratio/expense-ratio.component';
 import { ExpenseRawDataViewerComponent } from './pages/financial/expense/expense-raw-data-viewer/expense-raw-data-viewer.component';
+import { IncomeComponent } from './pages/financial/income/income.component';
+import { IncomeTransitionComponent } from './pages/financial/income/income-transition/income-transition.component';
+import { IncomeRatioComponent } from './pages/financial/income/income-ratio/income-ratio.component';
+import { IncomeRawDataViewerComponent } from './pages/financial/income/income-raw-data-viewer/income-raw-data-viewer.component';
 import { PipesModule } from 'src/pipes/pipes.module';
 
 const antDesignIcons = AllIcons as {
@@ -40,6 +44,10 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     ExpenseTransitionComponent,
     ExpenseRatioComponent,
     ExpenseRawDataViewerComponent,
+    IncomeComponent,
+    IncomeTransitionComponent,
+    IncomeRatioComponent,
+    IncomeRawDataViewerComponent,
     DateRangeSelectorComponent,
   ],
   imports: [
