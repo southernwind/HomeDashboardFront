@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { DashboardRoutingModule } from "./dashboard-routing.module";
 import { DashboardComponent } from "./dashboard.component";
-import { NgZorroAntdModule } from "ng-zorro-antd";
 import { NzIconModule } from "ng-zorro-antd/icon";
 import { IconDefinition } from "@ant-design/icons-angular";
 import * as AllIcons from "@ant-design/icons-angular/icons";
@@ -24,6 +23,7 @@ import { IncomeTransitionComponent } from './pages/financial/income/income-trans
 import { IncomeRatioComponent } from './pages/financial/income/income-ratio/income-ratio.component';
 import { IncomeRawDataViewerComponent } from './pages/financial/income/income-raw-data-viewer/income-raw-data-viewer.component';
 import { PipesModule } from 'src/pipes/pipes.module';
+import { NgZorroAntdModule } from 'src/shared/ng-zorro-antd.module';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -48,7 +48,7 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     IncomeTransitionComponent,
     IncomeRatioComponent,
     IncomeRawDataViewerComponent,
-    DateRangeSelectorComponent,
+    DateRangeSelectorComponent
   ],
   imports: [
     FormsModule,
