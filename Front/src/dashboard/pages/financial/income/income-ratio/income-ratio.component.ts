@@ -5,7 +5,6 @@ import * as Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
 import { Condition } from 'src/dashboard/models/condition.model';
-import { timeInterval } from 'rxjs/operators';
 
 @Component({
   selector: "app-income-ratio-chart",
@@ -117,7 +116,7 @@ export class IncomeRatioComponent extends DashboardParentComponent implements Af
         size: '100%',
         showInLegend: true,
         dataLabels: {
-          enabled: false
+          enabled: true
         }
       } as any]
     }, true, true);
