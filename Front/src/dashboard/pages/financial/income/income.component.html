@@ -1,12 +1,17 @@
 <div>
   <date-range-selector [(dateRange)]="selectedDateRange" (dateRangeChange)="selectedDateChanged()">
   </date-range-selector>
-  <div style="width: 700px;height: 400px;">
-    <app-income-transition-chart [transactions]="transactions" (filterConditionChange)="filterCondition = $event">
-    </app-income-transition-chart>
+  <div style="display:flex;flex-wrap: wrap;">
+    <div style="min-width:600px;width:50%;padding:10px;">
+      <app-income-transition-chart [transactions]="transactions"
+        (filterConditionChange)="filterCondition = $event">
+      </app-income-transition-chart>
+    </div>
+    <div style="min-width:600px;width:50%;padding: 10px;">
+      <app-income-ratio-chart [transactions]="transactions" (filterConditionChange)="filterCondition = $event">
+      </app-income-ratio-chart>
+    </div>
   </div>
-  <app-income-ratio-chart [transactions]="transactions" (filterConditionChange)="filterCondition = $event">
-  </app-income-ratio-chart>
   <app-income-raw-data-viewer [transactions]="transactions" [filterCondition]="filterCondition">
   </app-income-raw-data-viewer>
 </div>

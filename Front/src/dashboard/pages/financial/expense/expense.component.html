@@ -1,12 +1,15 @@
 <div>
   <date-range-selector [(dateRange)]="selectedDateRange" (dateRangeChange)="selectedDateChanged()">
   </date-range-selector>
-  <div style="width: 700px;height: 400px;">
-    <app-expense-transition-chart [transactions]="transactions" (filterConditionChange)="filterCondition = $event">
-    </app-expense-transition-chart>
+  <div style="display:flex;flex-wrap: wrap;">
+    <div style="min-width:600px;width:50%;padding:10px;">
+      <app-expense-transition-chart [transactions]="transactions" (filterConditionChange)="filterCondition = $event">
+      </app-expense-transition-chart>
+    </div>
+    <div style="min-width:600px;width:50%;padding:10px;">
+      <app-expense-ratio-chart [transactions]="transactions" (filterConditionChange)="filterCondition = $event">
+      </app-expense-ratio-chart>
+    </div>
+    <app-expense-raw-data-viewer [transactions]="transactions" [filterCondition]="filterCondition">
+    </app-expense-raw-data-viewer>
   </div>
-  <app-expense-ratio-chart [transactions]="transactions" (filterConditionChange)="filterCondition = $event">
-  </app-expense-ratio-chart>
-  <app-expense-raw-data-viewer [transactions]="transactions" [filterCondition]="filterCondition">
-  </app-expense-raw-data-viewer>
-</div>

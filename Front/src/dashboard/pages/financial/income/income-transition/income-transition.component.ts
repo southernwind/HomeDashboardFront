@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewChecked, Input, Output, EventEmitter } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import * as moment from 'moment';
 import { Transaction } from '../../../../models/transaction.model';
@@ -11,7 +11,7 @@ import { Condition } from 'src/dashboard/models/condition.model';
   selector: "app-income-transition-chart",
   templateUrl: "./income-transition.component.html",
 })
-export class IncomeTransitionComponent extends DashboardParentComponent implements OnInit {
+export class IncomeTransitionComponent extends DashboardParentComponent implements AfterViewChecked {
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
@@ -24,14 +24,14 @@ export class IncomeTransitionComponent extends DashboardParentComponent implemen
 
   public Highcharts: typeof Highcharts = Highcharts;
   /** 支出推移チャートオプション */
-  public incomesChartOptions: Highcharts.Options;
+  public incomesChartOptions: Highcharts.Options = {};
+  /** chartインスタンス */
+  private chart: Highcharts.Chart;
 
-  /** チャートオプション */
-  private chartOptions: Highcharts.Options = {};
-
-  public ngOnInit(): void {
+  public setChartInstance(chart: Highcharts.Chart): void {
+    this.chart = chart;
     const componentScope = this;
-    this.chartOptions = {
+    this.incomesChartOptions = {
       ...HighchartsOptions.defaultOptions,
       chart: {
         ...HighchartsOptions.defaultOptions.chart,
@@ -107,7 +107,11 @@ export class IncomeTransitionComponent extends DashboardParentComponent implemen
           return `${moment(this.x).format("YYYY年MM月")}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
         }
       }
-    }
+    };
+  }
+
+  public ngAfterViewChecked(): void {
+    this.chart?.reflow();
   }
 
   /**
@@ -131,8 +135,8 @@ export class IncomeTransitionComponent extends DashboardParentComponent implemen
         }
       });
     const months = temp.groupBy(x => x.date).select(x => x.first().date);
-    this.incomesChartOptions = {
-      ...this.chartOptions,
+    this.chart.update({
+      ...this.incomesChartOptions,
       series: temp
         .groupBy(x => x.middleCategory)
         .orderByDescending(x => x.sum(a => a.amount))
@@ -151,6 +155,6 @@ export class IncomeTransitionComponent extends DashboardParentComponent implemen
               ), month => month, a => a.month, (month, a) => [moment(`${month}-01`).valueOf(), a?.firstOrDefault()?.data ?? null]).toArray()
           } as Highcharts.SeriesColumnOptions
         }).toArray()
-    }
+    }, true, true);
   }
 }

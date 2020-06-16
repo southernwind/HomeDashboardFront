@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, AfterViewChecked } from "@angular/core";
 import * as Highcharts from 'highcharts';
 import { FinancialApiService } from "../../../../services/financial-api.service";
 import { Asset } from '../../../../models/asset.model';
@@ -10,40 +10,15 @@ import { HighchartsOptions } from 'src/utils/highcharts.options';
   selector: "app-asset-ratio-chart",
   templateUrl: "./asset-ratio.component.html",
 })
-export class AssetRatioComponent extends DashboardParentComponent implements OnInit {
+export class AssetRatioComponent extends DashboardParentComponent implements AfterViewChecked {
   /** 資産割合生データ */
   public assets: Asset[];
   public Highcharts: typeof Highcharts = Highcharts;
 
   /** 資産割合チャートオプション */
   public assetsChartOptions: Highcharts.Options;
-
-  /** チャートオプション */
-  private chartOptions: Highcharts.Options = {
-    ...HighchartsOptions.defaultOptions,
-    chart: {
-      ...HighchartsOptions.defaultOptions.chart,
-      type: 'pie'
-    },
-    title: {
-      ...HighchartsOptions.defaultOptions.title,
-      text: "資産割合",
-    },
-    plotOptions: {
-      ...HighchartsOptions.defaultOptions.plotOptions,
-      pie: {
-        ...HighchartsOptions.defaultOptions.plotOptions.pie,
-        shadow: false,
-        center: ['50%', '50%']
-      }
-    },
-    tooltip: {
-      ...HighchartsOptions.defaultOptions.tooltip,
-      formatter: function () {
-        return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
-      }
-    },
-  };
+  /** chartインスタンス */
+  private chart: Highcharts.Chart;
   constructor(private financialApiService: FinancialApiService) {
     super();
   }
@@ -54,8 +29,39 @@ export class AssetRatioComponent extends DashboardParentComponent implements OnI
    * @returns {Promise<void>}
    * @memberof AssetRatioComponent
    */
-  public async ngOnInit(): Promise<void> {
+  public async setChartInstance(chart: Highcharts.Chart): Promise<void> {
+    this.chart = chart;
+    this.assetsChartOptions = {
+      ...HighchartsOptions.defaultOptions,
+      chart: {
+        ...HighchartsOptions.defaultOptions.chart,
+        type: 'pie'
+      },
+      title: {
+        ...HighchartsOptions.defaultOptions.title,
+        text: "資産割合",
+      },
+      plotOptions: {
+        ...HighchartsOptions.defaultOptions.plotOptions,
+        pie: {
+          ...HighchartsOptions.defaultOptions.plotOptions.pie,
+          shadow: false,
+          center: ['50%', '50%']
+        }
+      },
+      tooltip: {
+        ...HighchartsOptions.defaultOptions.tooltip,
+        formatter: function () {
+          return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
+        }
+      }
+    };
+
     await this.updateAssetsChart();
+  }
+
+  public ngAfterViewChecked(): void {
+    this.chart?.reflow();
   }
 
 
@@ -73,8 +79,8 @@ export class AssetRatioComponent extends DashboardParentComponent implements OnI
       .where(x => x.amount > 0)
       .groupBy(x => x.category)
       .orderBy(x => x.sum(a => a.amount));
-    this.assetsChartOptions = {
-      ...this.chartOptions,
+    this.chart.update({
+      ...this.assetsChartOptions,
       series: [{
         name: 'カテゴリ',
         data: temp
@@ -118,6 +124,6 @@ export class AssetRatioComponent extends DashboardParentComponent implements OnI
           condition: {}
         }]
       }
-    };
+    }, true, true);
   }
 }

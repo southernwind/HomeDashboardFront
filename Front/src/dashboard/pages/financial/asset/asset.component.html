@@ -1,9 +1,11 @@
 <div>
   <date-range-selector [(dateRange)]="selectedDateRange"></date-range-selector>
-  <div style="width: 700px;height: 400px;">
-    <app-asset-transition-chart [dateRange]="selectedDateRange"></app-asset-transition-chart>
-  </div>
-  <div>
-    <app-asset-ratio-chart></app-asset-ratio-chart>
+  <div style="display:flex;flex-wrap: wrap;">
+    <div style="min-width:600px;width:50%;padding:10px;">
+      <app-asset-transition-chart [dateRange]="selectedDateRange"></app-asset-transition-chart>
+    </div>
+    <div style="min-width:600px;width:50%;padding:10px;">
+      <app-asset-ratio-chart></app-asset-ratio-chart>
+    </div>
   </div>
 </div>

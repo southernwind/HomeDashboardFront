@@ -1,16 +1,17 @@
-import { Component, OnInit, Input, EventEmitter, Output } from "@angular/core";
+import { Component, AfterViewChecked, Input, EventEmitter, Output } from "@angular/core";
 import * as Highcharts from 'highcharts';
 import { Transaction } from '../../../../models/transaction.model';
 import * as Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
 import { Condition } from 'src/dashboard/models/condition.model';
+import { timeInterval } from 'rxjs/operators';
 
 @Component({
   selector: "app-income-ratio-chart",
   templateUrl: "./income-ratio.component.html",
 })
-export class IncomeRatioComponent extends DashboardParentComponent implements OnInit {
+export class IncomeRatioComponent extends DashboardParentComponent implements AfterViewChecked {
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
@@ -27,13 +28,13 @@ export class IncomeRatioComponent extends DashboardParentComponent implements On
 
   /** 収入割合チャートオプション */
   public incomesChartOptions: Highcharts.Options;
+  /** chartインスタンス */
+  private chart: Highcharts.Chart;
 
-  /** チャートオプション */
-  private chartOptions: Highcharts.Options = {};
-
-  public ngOnInit(): void {
+  public setChartInstance(chart: Highcharts.Chart): void {
+    this.chart = chart;
     const componentScope = this;
-    this.chartOptions = {
+    this.incomesChartOptions = {
       ...HighchartsOptions.defaultOptions,
       chart: {
         ...HighchartsOptions.defaultOptions.chart,
@@ -81,7 +82,11 @@ export class IncomeRatioComponent extends DashboardParentComponent implements On
         layout: "vertical",
         verticalAlign: "top"
       }
-    }
+    };
+  }
+
+  public ngAfterViewChecked(): void {
+    this.chart.reflow();
   }
 
   /**
@@ -97,8 +102,8 @@ export class IncomeRatioComponent extends DashboardParentComponent implements On
       .groupBy(x => x.middleCategory)
       .orderByDescending(x => x.sum(a => a.amount));
 
-    this.incomesChartOptions = {
-      ...this.chartOptions,
+    this.chart.update({
+      ...this.incomesChartOptions,
       series: [{
         name: 'サブカテゴリ',
         data: temp
@@ -115,6 +120,6 @@ export class IncomeRatioComponent extends DashboardParentComponent implements On
           enabled: false
         }
       } as any]
-    };
+    }, true, true);
   }
 }

@@ -1,11 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, AfterViewChecked } from '@angular/core';
 import * as Highcharts from 'highcharts';
-import { FinancialApiService } from "../../../../services/financial-api.service";
 import * as moment from 'moment';
 import { Transaction } from '../../../../models/transaction.model';
 import * as Enumerable from 'linq';
-import { Moment } from 'moment';
-import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
 import { Condition } from 'src/dashboard/models/condition.model';
@@ -14,7 +11,7 @@ import { Condition } from 'src/dashboard/models/condition.model';
   selector: "app-expense-transition-chart",
   templateUrl: "./expense-transition.component.html",
 })
-export class ExpenseTransitionComponent extends DashboardParentComponent implements OnInit {
+export class ExpenseTransitionComponent extends DashboardParentComponent implements AfterViewChecked {
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
@@ -28,13 +25,13 @@ export class ExpenseTransitionComponent extends DashboardParentComponent impleme
   public Highcharts: typeof Highcharts = Highcharts;
   /** 支出推移チャートオプション */
   public expensesChartOptions: Highcharts.Options;
+  /** chartインスタンス */
+  private chart: Highcharts.Chart;
 
-  /** チャートオプション */
-  private chartOptions: Highcharts.Options = {};
-
-  public ngOnInit(): void {
+  public setChartInstance(chart: Highcharts.Chart): void {
+    this.chart = chart;
     const componentScope = this;
-    this.chartOptions = {
+    this.expensesChartOptions = {
       ...HighchartsOptions.defaultOptions,
       chart: {
         ...HighchartsOptions.defaultOptions.chart,
@@ -110,7 +107,11 @@ export class ExpenseTransitionComponent extends DashboardParentComponent impleme
           return `${moment(this.x).format("YYYY年MM月")}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
         }
       }
-    }
+    };
+  }
+
+  public ngAfterViewChecked(): void {
+    this.chart?.reflow();
   }
 
   /**
@@ -134,8 +135,8 @@ export class ExpenseTransitionComponent extends DashboardParentComponent impleme
         }
       });
     const months = temp.groupBy(x => x.date).select(x => x.first().date);
-    this.expensesChartOptions = {
-      ...this.chartOptions,
+    this.chart.update({
+      ...this.expensesChartOptions,
       series: temp
         .groupBy(x => x.largeCategory)
         .orderBy(x => x.sum(a => Math.abs(a.amount)))
@@ -154,7 +155,6 @@ export class ExpenseTransitionComponent extends DashboardParentComponent impleme
               ), month => month, a => a.month, (month, a) => [moment(`${month}-01`).valueOf(), a?.firstOrDefault()?.data ?? null]).toArray()
           } as Highcharts.SeriesColumnOptions
         }).toArray()
-    }
-    const a = this.expensesChartOptions;
+    }, true, true);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from "@angular/core";
+import { Component, AfterViewChecked, Input, EventEmitter, Output } from "@angular/core";
 import * as Highcharts from 'highcharts';
 import { Transaction } from '../../../../models/transaction.model';
 import * as Enumerable from 'linq';
@@ -10,7 +10,7 @@ import { Condition } from 'src/dashboard/models/condition.model';
   selector: "app-expense-ratio-chart",
   templateUrl: "./expense-ratio.component.html",
 })
-export class ExpenseRatioComponent extends DashboardParentComponent implements OnInit {
+export class ExpenseRatioComponent extends DashboardParentComponent implements AfterViewChecked {
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
@@ -27,13 +27,13 @@ export class ExpenseRatioComponent extends DashboardParentComponent implements O
 
   /** 資産割合チャートオプション */
   public expensesChartOptions: Highcharts.Options;
+  /** chartインスタンス */
+  private chart: Highcharts.Chart;
 
-  /** チャートオプション */
-  private chartOptions: Highcharts.Options = {};
-
-  public ngOnInit(): void {
+  public setChartInstance(chart: Highcharts.Chart): void {
+    this.chart = chart;
     const componentScope = this;
-    this.chartOptions = {
+    this.expensesChartOptions = {
       ...HighchartsOptions.defaultOptions,
       chart: {
         ...HighchartsOptions.defaultOptions.chart,
@@ -90,7 +90,11 @@ export class ExpenseRatioComponent extends DashboardParentComponent implements O
         layout: "vertical",
         verticalAlign: "top"
       }
-    }
+    };
+  }
+
+  public ngAfterViewChecked(): void {
+    this.chart?.reflow();
   }
 
   /**
@@ -106,8 +110,8 @@ export class ExpenseRatioComponent extends DashboardParentComponent implements O
       .groupBy(x => x.largeCategory)
       .orderByDescending(x => x.sum(a => a.amount));
 
-    this.expensesChartOptions = {
-      ...this.chartOptions,
+    this.chart.update({
+      ...this.expensesChartOptions,
       series: [{
         name: 'カテゴリ',
         data: temp
@@ -141,6 +145,6 @@ export class ExpenseRatioComponent extends DashboardParentComponent implements O
         innerSize: '60%',
         id: 'middle',
       } as any]
-    };
+    }, true, true);
   }
 }
