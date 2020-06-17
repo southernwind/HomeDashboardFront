@@ -40,7 +40,7 @@ namespace Back.Controllers {
 		/// <param name="span">更新期間</param>API
 		/// <returns>更新キー</returns>
 		[HttpPost]
-		[ActionName("post-update-by-span-request/")]
+		[ActionName("post-update-by-span-request")]
 		public JsonResult PostUpdateBySpanRequest([FromBody] Span span) {
 			if (!(span.Days is { } days)) {
 				throw new ArgumentException();
