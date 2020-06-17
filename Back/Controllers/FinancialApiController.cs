@@ -45,7 +45,7 @@ namespace Back.Controllers {
 			if (!(span.Days is { } days)) {
 				throw new ArgumentException();
 			}
-			var to = DateTime.Now;
+			var to = DateTime.Now.Date;
 			var from = to.AddDays(-days);
 			return new JsonResult(new {
 				key = this._updater.Update(from, to)

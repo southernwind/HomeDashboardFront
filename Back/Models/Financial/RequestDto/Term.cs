@@ -29,7 +29,7 @@ namespace Back.Models.Financial.RequestDto {
 			if (this.From == null) {
 				throw new ArgumentException();
 			}
-			return DateTime.Parse(this.From);
+			return DateTime.Parse(this.From).Date;
 		}
 
 		/// <summary>
@@ -40,7 +40,7 @@ namespace Back.Models.Financial.RequestDto {
 			if (this.To == null) {
 				throw new ArgumentException();
 			}
-			return DateTime.Parse(this.To);
+			return DateTime.Parse(this.To).Date;
 		}
 	}
 }
