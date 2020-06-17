@@ -1,25 +1,23 @@
-<div>
-  <nz-table
-    #nzTable
-    [nzData]="tableData"
-    [nzFrontPagination]="false"
-    nzBordered
-    nzFooter="合計 : {{ totalAmount | number }}円"
-    [nzScroll]="{ y: '240px'}">
-    <thead>
-      <tr>
-        <th *ngFor="let col of tableColumns" [nzWidth]="col.width">{{col.name}}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of nzTable.data">
-        <td>{{item.date | datetimeFormatPipe: 'YYYY-MM-DD'}}</td>
-        <td nzAlign="right">{{item.amount | number}}円</td>
-        <td nzEllipsis>{{item.largeCategory}}</td>
-        <td nzEllipsis>{{item.middleCategory}}</td>
-        <td nzBreakWord>{{item.content}}</td>
-        <td nzEllipsis>{{item.memo}}</td>
-      </tr>
-    </tbody>
-  </nz-table>
-</div>
+<nz-table
+  #nzTable
+  [nzData]="tableData"
+  [nzFrontPagination]="false"
+  nzBordered
+  nzFooter="合計 : {{ totalAmount | number }}円"
+  [nzScroll]="{ y: '240px'}">
+  <thead>
+    <tr>
+      <th *ngFor="let col of tableColumns" [nzWidth]="col.width">{{col.name}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of nzTable.data">
+      <td>{{item.date | datetimeFormatPipe: 'YYYY-MM-DD'}}</td>
+      <td nzAlign="right">{{item.amount | number}}円</td>
+      <td nzEllipsis>{{item.largeCategory}}</td>
+      <td nzEllipsis>{{item.middleCategory}}</td>
+      <td nzBreakWord>{{item.content}}</td>
+      <td nzEllipsis>{{item.memo}}</td>
+    </tr>
+  </tbody>
+</nz-table>

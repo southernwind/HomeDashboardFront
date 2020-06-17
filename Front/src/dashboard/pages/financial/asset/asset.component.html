@@ -1,10 +1,10 @@
 <div>
   <date-range-selector [(dateRange)]="selectedDateRange"></date-range-selector>
-  <div style="display:flex;flex-wrap: wrap;">
-    <div style="min-width:600px;width:50%;padding:10px;">
+  <div nz-row>
+    <div class="chart-box" nz-col [nzSm]="{ span: 24,offset:0}" [nzXl]="{span:12}">
       <app-asset-transition-chart [dateRange]="selectedDateRange"></app-asset-transition-chart>
     </div>
-    <div style="min-width:600px;width:50%;padding:10px;">
+    <div class="chart-box" nz-col [nzSm]="{ span: 24,offset:0}" [nzXl]="{span:12}">
       <app-asset-ratio-chart></app-asset-ratio-chart>
     </div>
   </div>
