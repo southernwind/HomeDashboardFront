@@ -1,6 +1,7 @@
 
 using System;
 
+using Back.Models.Common;
 using Back.Models.Financial;
 
 using DataBase;
@@ -57,7 +58,7 @@ namespace Back {
 					.AddDebug();
 			});
 			services.AddSingleton<Updater>();
-			services.AddTransient<Getter>();
+			services.AddTransient<FinancialModel>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

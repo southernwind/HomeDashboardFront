@@ -12,11 +12,9 @@ namespace Back.Controllers {
 	[Produces(MediaTypeNames.Application.Json)]
 	[Route("api/financial-api/[action]")]
 	public class FinancialApiController : ControllerBase {
-		private readonly Updater _updater;
-		private readonly Getter _getter;
-		public FinancialApiController(Updater updater, Getter getter) {
-			this._updater = updater;
-			this._getter = getter;
+		private readonly FinancialModel _financial;
+		public FinancialApiController(FinancialModel financial) {
+			this._financial = financial;
 		}
 
 		/// <summary>
@@ -30,7 +28,7 @@ namespace Back.Controllers {
 			var fromDate = term.GetFrom();
 			var toDate = term.GetTo();
 			return new JsonResult(new {
-				key = this._updater.Update(fromDate, toDate)
+				key = this._financial.Update(fromDate, toDate)
 			});
 		}
 
@@ -48,7 +46,7 @@ namespace Back.Controllers {
 			var to = DateTime.Now.Date;
 			var from = to.AddDays(-days);
 			return new JsonResult(new {
-				key = this._updater.Update(from, to)
+				key = this._financial.Update(from, to)
 			});
 		}
 
@@ -61,7 +59,7 @@ namespace Back.Controllers {
 		[ActionName("get-update-status")]
 		public JsonResult GetUpdateStatus(int key) {
 			return new JsonResult(new {
-				progress = this._updater.GetUpdateStatus(key)
+				progress = this._financial.GetUpdateStatus(key)
 			});
 		}
 
@@ -75,7 +73,7 @@ namespace Back.Controllers {
 		public async Task<JsonResult> GetAssetsAsync(string from, string to) {
 			var fromDate = DateTime.Parse(from);
 			var toDate = DateTime.Parse(to);
-			return new JsonResult(await this._getter.GetAssetsAsync(fromDate, toDate));
+			return new JsonResult(await this._financial.GetAssetsAsync(fromDate, toDate));
 		}
 
 		/// <summary>
@@ -85,7 +83,7 @@ namespace Back.Controllers {
 		[HttpGet]
 		[ActionName("get-latest-asset")]
 		public async Task<JsonResult> GetLatestAssetAsync() {
-			return new JsonResult(await this._getter.GetLatestAssetAsync());
+			return new JsonResult(await this._financial.GetLatestAssetAsync());
 		}
 
 		/// <summary>
@@ -99,7 +97,7 @@ namespace Back.Controllers {
 		public async Task<JsonResult> GetTransactionsAsync(string from, string to) {
 			var fromDate = DateTime.Parse(from);
 			var toDate = DateTime.Parse(to);
-			return new JsonResult(await this._getter.GetTransactionsAsync(fromDate, toDate));
+			return new JsonResult(await this._financial.GetTransactionsAsync(fromDate, toDate));
 		}
 	}
 }
