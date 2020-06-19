@@ -1,0 +1,20 @@
+<form nz-form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h3>MoneyForward</h3>
+  <nz-form-item>
+    <nz-form-label [nzSm]="8" [nzXs]="24">メールアドレス</nz-form-label>
+    <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+      <input nz-input formControlName="mail" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="8" [nzXs]="24">パスワード</nz-form-label>
+    <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+      <input nz-input type="password" formControlName="password" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control [nzOffset]="7" [nzSpan]="12">
+      <button type="submit" nz-button nzType="primary">更新</button>
+    </nz-form-control>
+  </nz-form-item>
+</form>

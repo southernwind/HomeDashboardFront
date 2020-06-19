@@ -6,7 +6,7 @@ import { IconDefinition } from "@ant-design/icons-angular";
 import * as AllIcons from "@ant-design/icons-angular/icons";
 import { FinancialComponent } from "./pages/financial/financial.component";
 import { HighchartsChartModule } from 'highcharts-angular';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AssetTransitionComponent } from './pages/financial/asset/asset-transition/asset-transition.component';
 import { UpdateRequestComponent } from './pages/financial/update-request/update-request.component';
@@ -24,6 +24,8 @@ import { IncomeRatioComponent } from './pages/financial/income/income-ratio/inco
 import { IncomeRawDataViewerComponent } from './pages/financial/income/income-raw-data-viewer/income-raw-data-viewer.component';
 import { PipesModule } from 'src/pipes/pipes.module';
 import { NgZorroAntdModule } from 'src/shared/ng-zorro-antd.module';
+import { SettingsComponent } from './pages/settings/settings.component';
+import { FinancialSettingsComponent } from './pages/settings/financial-settings/financial-settings.component';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -48,10 +50,13 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     IncomeTransitionComponent,
     IncomeRatioComponent,
     IncomeRawDataViewerComponent,
-    DateRangeSelectorComponent
+    DateRangeSelectorComponent,
+    SettingsComponent,
+    FinancialSettingsComponent
   ],
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     PipesModule,
     DashboardRoutingModule,
     NgZorroAntdModule,
