@@ -22,9 +22,6 @@ export class FinancialTopComponent extends DashboardParentComponent {
    * @memberof FinancialTopComponent
    */
   public async ngOnInit(): Promise<void> {
-    const to = moment();
-    const from = moment().add(-6, 'month').startOf("month");
-    this.selectedDateRange = { startDate: from, endDate: to };
   }
 
   public chartReload(): void {

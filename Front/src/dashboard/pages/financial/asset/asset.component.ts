@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import * as moment from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
+import { CookieService } from 'ngx-cookie-service';
+import { Moment } from 'moment';
 
 @Component({
   templateUrl: "./asset.component.html",
@@ -13,7 +15,11 @@ export class AssetComponent extends DashboardParentComponent {
    * @type {DateRange}
    * @memberof AssetComponent
    */
-  public selectedDateRange: DateRange;
+  public selectedDateRange: DateRange = null;
+
+  constructor(private cookieService: CookieService) {
+    super();
+  }
 
   /**
    * 初期処理
@@ -22,12 +28,32 @@ export class AssetComponent extends DashboardParentComponent {
    * @memberof AssetComponent
    */
   public async ngOnInit(): Promise<void> {
-    const to = moment();
-    const from = moment().add(-6, 'month').startOf("month");
-    this.selectedDateRange = { startDate: from, endDate: to };
+    if (this.selectedDateRange === null) {
+      let from: Moment;
+      if (this.cookieService.check("startDate")) {
+        from = moment(this.cookieService.get("startDate"));
+      } else {
+        from = moment().add(-6, 'month').startOf("month");
+      }
+
+      let to: Moment;
+      if (this.cookieService.check("endDate")) {
+        const endDateString = this.cookieService.get("endDate");
+        if (endDateString === "today") {
+          to = moment();
+        } else {
+          to = moment(this.cookieService.get("endDate"));
+        }
+      } else {
+        to = moment();
+      }
+
+      this.selectedDateRange = { startDate: from, endDate: to };
+    }
   }
 
-  public chartReload(): void {
-    this.selectedDateRange = this.selectedDateRange;
+  public selectedDateChanged(): void {
+    this.cookieService.set("startDate", this.selectedDateRange.startDate.format("YYYY-MM-DD"));
+    this.cookieService.set("endDate", this.selectedDateRange.endDate.format("YYYY-MM-DD") === moment().format("YYYY-MM-DD") ? "today" : this.selectedDateRange.endDate.format("YYYY-MM-DD"));
   }
 }

@@ -1,7 +1,8 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnInit } from '@angular/core';
 import * as moment from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: "date-range-selector",
@@ -26,6 +27,9 @@ export class DateRangeSelectorComponent extends DashboardParentComponent {
    */
   @Input()
   public set dateRange(value: DateRange) {
+    if (!value) {
+      return;
+    }
     this.selectedDate = [value.startDate.toDate(), value.endDate.toDate()];
   }
 
@@ -43,7 +47,7 @@ export class DateRangeSelectorComponent extends DashboardParentComponent {
    * @type {Date[]}
    * @memberof DateRangeSelectorComponent
    */
-  public selectedDate: Date[];
+  public selectedDate: Date[] = null;
 
   /**
    * Ng-Zorroのカレンダーの本日以降の日付を無効にする
@@ -63,6 +67,7 @@ export class DateRangeSelectorComponent extends DashboardParentComponent {
    * @memberof DateRangeSelectorComponent
    */
   public onSelectedDateChange(value: Date[]): void {
-    this.dateRangeChange.emit({ startDate: moment(value[0]), endDate: moment(value[1]) });
+    const newValue = { startDate: moment(value[0]), endDate: moment(value[1]) };
+    this.dateRangeChange.emit(newValue);
   }
 }

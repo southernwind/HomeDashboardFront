@@ -137,9 +137,11 @@ namespace Back.Models.Financial {
 		/// <summary>
 		/// 最新資産取得
 		/// </summary>
+		/// <param name="from">取得対象開始日</param>
+		/// <param name="to">取得対象終了日</param>
 		/// <returns>資産推移データ</returns>
-		public async Task<MfAsset[]> GetLatestAssetAsync() {
-			var max = await this._db.MfAssets.MaxAsync(x => x.Date);
+		public async Task<MfAsset[]> GetLatestAssetAsync(DateTime from, DateTime to) {
+			var max = await this._db.MfAssets.Where(x => from <= x.Date && to >= x.Date).MaxAsync(x => x.Date);
 			return await this._db.MfAssets.Where(x => x.Date == max).ToArrayAsync();
 		}
 

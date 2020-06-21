@@ -8,23 +8,105 @@ import { Moment } from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
+import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { Subject, combineLatest } from 'rxjs';
 
+@UntilDestroy()
 @Component({
   selector: "app-asset-transition-chart",
   templateUrl: "./asset-transition.component.html",
 })
-export class AssetTransitionComponent extends DashboardParentComponent implements AfterViewChecked {
+export class AssetTransitionComponent extends DashboardParentComponent {
   /** 資産推移生データ */
   public assets: Asset[];
-  public Highcharts: typeof Highcharts = Highcharts;
+  public highchartsObject: typeof Highcharts = Highcharts;
 
   /** 資産推移チャートオプション */
   public assetsChartOptions: Highcharts.Options;
-  /** chartインスタンス */
-  private chart: Highcharts.Chart;
+
+  private chartSubject = new Subject<Highcharts.Chart>();
+  private dateRangeSubject = new Subject<DateRange>();
+
+  @Input()
+  public set dateRange(value: DateRange) {
+    if (!value) {
+      return;
+    }
+    this.dateRangeSubject.next(value);
+  }
 
   constructor(private financialApiService: FinancialApiService) {
     super();
+    combineLatest(this.chartSubject, this.dateRangeSubject)
+      .pipe(untilDestroyed(this))
+      .subscribe(async latestValue => {
+        const chart = latestValue[0];
+        const startDate = latestValue[1].startDate;
+        const endDate = latestValue[1].endDate;
+
+        this.assets = await this.financialApiService.GetAssets(startDate, endDate).toPromise();
+        const temp = Enumerable
+          .from(this.assets)
+          .select(x => {
+            return {
+              ...x,
+              date: moment(x.date).format("YYYY-MM-DD")
+            }
+          });
+        const dates = temp.groupBy(x => x.date).select(x => x.first().date);
+        const datesCount = dates.count();
+        chart.update({
+          ...this.assetsChartOptions,
+          series: temp
+            .groupBy(x => x.institution)
+            .orderBy(x => Math.abs(x.lastOrDefault().amount))
+            .select((x, index) => {
+              return {
+                type: 'area',
+                name: `${x.key()}`,
+                pointInterval: 24 * 3600 * 1000,
+                pointStart: moment(dates.first()).valueOf(),
+                stack: x.sum(x => x.amount) > 0 ? 0 : 1,
+                legendIndex: -index,
+                data:
+                  dates.groupJoin(x.groupBy(a => a.date).select(x => {
+                    return {
+                      name: x.key(),
+                      data: x?.sum(ax => ax.amount)
+                    }
+                  }
+                  ), d => d, a => a.name, (_, a) => a?.firstOrDefault()?.data ?? null).toArray()
+              } as Highcharts.SeriesAreaOptions | Highcharts.SeriesLineOptions
+            })
+            .toArray()
+            .concat([
+              {
+                type: 'line',
+                name: `計`,
+                zIndex: 10000,
+                pointInterval: 24 * 3600 * 1000,
+                pointStart: moment(dates.first()).valueOf(),
+                legendIndex: -1000000,
+                data: temp
+                  .groupBy(x => x.date)
+                  .orderBy(x => x.key())
+                  .select(x => x.sum(a => a.amount))
+                  .select((x, index) => {
+                    return index != datesCount - 1 ? x : {
+                      y: x,
+                      dataLabels: {
+                        enabled: true,
+                        align: 'right'
+                      }
+                    }
+                  }).toArray(),
+              } as Highcharts.SeriesLineOptions
+            ])
+        }, true, true);
+      });
+    combineLatest(this.chartSubject, this.afterViewInit)
+      .pipe(untilDestroyed(this))
+      .subscribe(x => x[0].reflow());
   }
 
   /**
@@ -34,7 +116,6 @@ export class AssetTransitionComponent extends DashboardParentComponent implement
    * @memberof AssetTransitionComponent
    */
   public async setChartInstance(chart: Highcharts.Chart): Promise<void> {
-    this.chart = chart;
     this.assetsChartOptions = {
       ...HighchartsOptions.defaultOptions,
       chart: {
@@ -105,88 +186,6 @@ export class AssetTransitionComponent extends DashboardParentComponent implement
         }
       }
     };
-    const to = moment();
-    const from = moment().add(-6, 'month').startOf("month");
-    await this.updateAssetsChart(from, to);
-  }
-
-  public ngAfterViewChecked(): void {
-    this.chart?.reflow();
-  }
-
-  @Input()
-  public set dateRange(value: DateRange) {
-    this.updateAssetsChart(value.startDate, value.endDate);
-  }
-
-  /**
-   * 資産推移チャート更新処理
-   *
-   * @private
-   * @param {Moment} from チャート開始日
-   * @param {Moment} to チャート終了日
-   * @returns {Promise<void>}
-   * @memberof AssetTransitionComponent
-   */
-  private async updateAssetsChart(from: Moment, to: Moment): Promise<void> {
-    this.assets = await this.financialApiService.GetAssets(from, to).toPromise();
-    const temp = Enumerable
-      .from(this.assets)
-      .select(x => {
-        return {
-          ...x,
-          date: moment(x.date).format("YYYY-MM-DD")
-        }
-      });
-    const dates = temp.groupBy(x => x.date).select(x => x.first().date);
-    const datesCount = dates.count();
-    this.chart.update({
-      ...this.assetsChartOptions,
-      series: temp
-        .groupBy(x => x.institution)
-        .orderBy(x => Math.abs(x.lastOrDefault().amount))
-        .select((x, index) => {
-          return {
-            type: 'area',
-            name: `${x.key()}`,
-            pointInterval: 24 * 3600 * 1000,
-            pointStart: moment(dates.first()).valueOf(),
-            stack: x.sum(x => x.amount) > 0 ? 0 : 1,
-            legendIndex: -index,
-            data:
-              dates.groupJoin(x.groupBy(a => a.date).select(x => {
-                return {
-                  name: x.key(),
-                  data: x?.sum(ax => ax.amount)
-                }
-              }
-              ), d => d, a => a.name, (_, a) => a?.firstOrDefault()?.data ?? null).toArray()
-          } as Highcharts.SeriesAreaOptions | Highcharts.SeriesLineOptions
-        })
-        .toArray()
-        .concat([
-          {
-            type: 'line',
-            name: `計`,
-            zIndex: 10000,
-            pointInterval: 24 * 3600 * 1000,
-            pointStart: moment(dates.first()).valueOf(),
-            legendIndex: -1000000,
-            data: temp
-              .groupBy(x => x.date)
-              .orderBy(x => x.key())
-              .select(x => x.sum(a => a.amount))
-              .select((x, index) => {
-                return index != datesCount - 1 ? x : {
-                  y: x,
-                  dataLabels: {
-                    enabled: true,
-                    align: 'right'
-                  }
-                }
-              }).toArray(),
-          } as Highcharts.SeriesLineOptions
-        ])
-    }, true, true);
+    this.chartSubject.next(chart);
   }
 }

@@ -5,6 +5,8 @@ import { DashboardParentComponent } from 'src/dashboard/components/parent/dashbo
 import { FinancialApiService } from 'src/dashboard/services/financial-api.service';
 import { Transaction } from 'src/dashboard/models/transaction.model';
 import { Condition } from 'src/dashboard/models/condition.model';
+import { CookieService } from 'ngx-cookie-service';
+import { Moment } from 'moment';
 
 @Component({
   templateUrl: "./expense.component.html",
@@ -16,7 +18,7 @@ export class ExpenseComponent extends DashboardParentComponent {
    * @type {DateRange}
    * @memberof AssetComponent
    */
-  public selectedDateRange: DateRange;
+  public selectedDateRange: DateRange = null;
 
   /** 取引履歴生データ */
   public transactions: Transaction[];
@@ -24,7 +26,8 @@ export class ExpenseComponent extends DashboardParentComponent {
   /** フィルター条件 */
   public filterCondition: Condition<Transaction>;
 
-  constructor(private financialApiService: FinancialApiService) {
+  constructor(private financialApiService: FinancialApiService,
+    private cookieService: CookieService) {
     super();
   }
 
@@ -35,13 +38,34 @@ export class ExpenseComponent extends DashboardParentComponent {
    * @memberof ExpenseComponent
    */
   public async ngOnInit(): Promise<void> {
-    const to = moment();
-    const from = moment().add(-6, 'month').startOf("month");
-    this.selectedDateRange = { startDate: from, endDate: to };
-    await this.selectedDateChanged();
+    if (this.selectedDateRange === null) {
+      let from: Moment;
+      if (this.cookieService.check("startDate")) {
+        from = moment(this.cookieService.get("startDate"));
+      } else {
+        from = moment().add(-6, 'month').startOf("month");
+      }
+
+      let to: Moment;
+      if (this.cookieService.check("endDate")) {
+        const endDateString = this.cookieService.get("endDate");
+        if (endDateString === "today") {
+          to = moment();
+        } else {
+          to = moment(this.cookieService.get("endDate"));
+        }
+      } else {
+        to = moment();
+      }
+
+      this.selectedDateRange = { startDate: from, endDate: to };
+      await this.selectedDateChanged();
+    }
   }
 
   public async selectedDateChanged(): Promise<void> {
     this.transactions = await this.financialApiService.GetTransactions(this.selectedDateRange.startDate, this.selectedDateRange.endDate).toPromise();
+    this.cookieService.set("startDate", this.selectedDateRange.startDate.format("YYYY-MM-DD"));
+    this.cookieService.set("endDate", this.selectedDateRange.endDate.format("YYYY-MM-DD") === moment().format("YYYY-MM-DD") ? "today" : this.selectedDateRange.endDate.format("YYYY-MM-DD"));
   }
 }

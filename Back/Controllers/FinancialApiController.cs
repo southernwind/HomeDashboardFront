@@ -66,7 +66,8 @@ namespace Back.Controllers {
 		/// <summary>
 		/// 資産推移取得API
 		/// </summary>
-		/// <param name="term">期間</param>
+		/// <param name="from">開始日</param>
+		/// <param name="to">終了日</param>
 		/// <returns>資産推移データ</returns>
 		[HttpGet]
 		[ActionName("get-assets")]
@@ -79,11 +80,15 @@ namespace Back.Controllers {
 		/// <summary>
 		/// 最新資産取得API
 		/// </summary>
+		/// <param name="from">開始日</param>
+		/// <param name="to">終了日</param>
 		/// <returns>資産推移データ</returns>
 		[HttpGet]
 		[ActionName("get-latest-asset")]
-		public async Task<JsonResult> GetLatestAssetAsync() {
-			return new JsonResult(await this._financial.GetLatestAssetAsync());
+		public async Task<JsonResult> GetLatestAssetAsync(string from, string to) {
+			var fromDate = DateTime.Parse(from);
+			var toDate = DateTime.Parse(to);
+			return new JsonResult(await this._financial.GetLatestAssetAsync(fromDate, toDate));
 		}
 
 		/// <summary>

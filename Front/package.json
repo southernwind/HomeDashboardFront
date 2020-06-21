@@ -29,6 +29,7 @@
     "linq": "3.2.2",
     "moment": "2.26.0",
     "ng-zorro-antd": "9.1.2",
+    "ngx-cookie-service": "3.0.4",
     "rxjs": "6.5.4",
     "tslib": "1.11.1",
     "zone.js": "0.10.3"

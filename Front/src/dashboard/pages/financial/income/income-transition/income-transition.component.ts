@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewChecked, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import * as moment from 'moment';
 import { Transaction } from '../../../../models/transaction.model';
@@ -6,30 +6,82 @@ import * as Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
 import { Condition } from 'src/dashboard/models/condition.model';
+import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { combineLatest, Subject } from 'rxjs';
 
+@UntilDestroy()
 @Component({
   selector: "app-income-transition-chart",
   templateUrl: "./income-transition.component.html",
 })
-export class IncomeTransitionComponent extends DashboardParentComponent implements AfterViewChecked {
+export class IncomeTransitionComponent extends DashboardParentComponent {
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
-    this.updateIncomesChart(value);
+    if (!value) {
+      return;
+    }
+    this.transactionsSubject.next(value);
   }
 
   /** フィルター条件 */
   @Output()
   public filterConditionChange = new EventEmitter<Condition<Transaction>>();
 
-  public Highcharts: typeof Highcharts = Highcharts;
+  public highchartsObject: typeof Highcharts = Highcharts;
   /** 支出推移チャートオプション */
   public incomesChartOptions: Highcharts.Options = {};
-  /** chartインスタンス */
-  private chart: Highcharts.Chart;
+
+  private chartSubject = new Subject<Highcharts.Chart>();
+  private transactionsSubject = new Subject<Transaction[]>();
+
+  constructor() {
+    super();
+    combineLatest(this.chartSubject, this.transactionsSubject)
+      .pipe(untilDestroyed(this))
+      .subscribe(latestValue => {
+        const chart = latestValue[0];
+        const transactions = latestValue[1];
+
+        const temp = Enumerable
+          .from(transactions)
+          .where(x => x.amount > 0)
+          .select(x => {
+            return {
+              ...x,
+              amount: x.amount,
+              date: moment(x.date).format("YYYY-MM")
+            }
+          });
+        const months = temp.groupBy(x => x.date).select(x => x.first().date);
+        chart.update({
+          ...this.incomesChartOptions,
+          series: temp
+            .groupBy(x => x.middleCategory)
+            .orderByDescending(x => x.sum(a => a.amount))
+            .select((x, index) => {
+              return {
+                type: 'column',
+                name: `${x.key()}`,
+                legendIndex: index,
+                data:
+                  months.groupJoin(x.groupBy(a => a.date).select(x => {
+                    return {
+                      month: x.key(),
+                      data: x?.sum(ax => ax.amount),
+                    }
+                  }
+                  ), month => month, a => a.month, (month, a) => [moment(`${month}-01`).valueOf(), a?.firstOrDefault()?.data ?? null]).toArray()
+              } as Highcharts.SeriesColumnOptions
+            }).toArray()
+        }, true, true);
+      });
+    combineLatest(this.chartSubject, this.afterViewInit)
+      .pipe(untilDestroyed(this))
+      .subscribe(x => x[0].reflow());
+  }
 
   public setChartInstance(chart: Highcharts.Chart): void {
-    this.chart = chart;
     const componentScope = this;
     this.incomesChartOptions = {
       ...HighchartsOptions.defaultOptions,
@@ -108,53 +160,6 @@ export class IncomeTransitionComponent extends DashboardParentComponent implemen
         }
       }
     };
-  }
-
-  public ngAfterViewChecked(): void {
-    this.chart?.reflow();
-  }
-
-  /**
-   * 収入推移チャート更新処理
-   *
-   * @private
-   * @param {Moment} from チャート開始日
-   * @param {Moment} to チャート終了日
-   * @returns {Promise<void>}
-   * @memberof IncomeTransitionComponent
-   */
-  private async updateIncomesChart(transactions: Transaction[]): Promise<void> {
-    const temp = Enumerable
-      .from(transactions)
-      .where(x => x.amount > 0)
-      .select(x => {
-        return {
-          ...x,
-          amount: x.amount,
-          date: moment(x.date).format("YYYY-MM")
-        }
-      });
-    const months = temp.groupBy(x => x.date).select(x => x.first().date);
-    this.chart.update({
-      ...this.incomesChartOptions,
-      series: temp
-        .groupBy(x => x.middleCategory)
-        .orderByDescending(x => x.sum(a => a.amount))
-        .select((x, index) => {
-          return {
-            type: 'column',
-            name: `${x.key()}`,
-            legendIndex: index,
-            data:
-              months.groupJoin(x.groupBy(a => a.date).select(x => {
-                return {
-                  month: x.key(),
-                  data: x?.sum(ax => ax.amount),
-                }
-              }
-              ), month => month, a => a.month, (month, a) => [moment(`${month}-01`).valueOf(), a?.firstOrDefault()?.data ?? null]).toArray()
-          } as Highcharts.SeriesColumnOptions
-        }).toArray()
-    }, true, true);
+    this.chartSubject.next(chart);
   }
 }
