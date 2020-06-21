@@ -32,6 +32,14 @@ namespace DataBase {
 		} = null!;
 
 		/// <summary>
+		/// ユーザー設定(WakeOnLan
+		/// </summary>
+		public DbSet<WakeOnLanTarget> WakeOnLanTargets {
+			get;
+			set;
+		} = null!;
+
+		/// <summary>
 		/// コンストラクタ
 		/// </summary>
 		/// <param name="options">DbContextOptions</param>
@@ -46,6 +54,7 @@ namespace DataBase {
 			modelBuilder.Entity<MfTransaction>().HasKey(x => x.TransactionId);
 			modelBuilder.Entity<MfAsset>().HasKey(x => new { x.Date, x.Institution, x.Category });
 			modelBuilder.Entity<UserSetting>().HasKey(x => x.Id);
+			modelBuilder.Entity<WakeOnLanTarget>().HasKey(x => x.MacAddress);
 		}
 	}
 }

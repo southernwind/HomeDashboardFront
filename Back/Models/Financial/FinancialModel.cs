@@ -49,8 +49,6 @@ namespace Back.Models.Financial {
 			this._scope = serviceScopeFactory.CreateScope();
 			this._logger = logger;
 			this._updater = updater;
-			// TODO : もうちょっと生成場所考える
-			this._db.Database.EnsureCreated();
 		}
 
 		/// <summary>

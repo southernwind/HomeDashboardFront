@@ -78,6 +78,7 @@ namespace Back {
 			app.UseEndpoints(routes => {
 				routes.MapControllers();
 			});
+
 		}
 	}
 }
