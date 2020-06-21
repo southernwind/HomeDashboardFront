@@ -26,6 +26,9 @@ import { PipesModule } from 'src/pipes/pipes.module';
 import { NgZorroAntdModule } from 'src/shared/ng-zorro-antd.module';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { FinancialSettingsComponent } from './pages/settings/financial-settings/financial-settings.component';
+import { WakeOnLanComponent } from './pages/network/wake-on-lan/wake-on-lan.component';
+import { NetworkComponent } from './pages/network/network.component';
+import { NetworkTopComponent } from './pages/network/network-top/network-top.component';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -52,7 +55,10 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     IncomeRawDataViewerComponent,
     DateRangeSelectorComponent,
     SettingsComponent,
-    FinancialSettingsComponent
+    FinancialSettingsComponent,
+    NetworkComponent,
+    NetworkTopComponent,
+    WakeOnLanComponent
   ],
   imports: [
     FormsModule,

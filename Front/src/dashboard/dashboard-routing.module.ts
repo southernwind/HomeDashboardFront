@@ -7,6 +7,9 @@ import { FinancialTopComponent } from './pages/financial/financial-top/financial
 import { ExpenseComponent } from './pages/financial/expense/expense.component';
 import { IncomeComponent } from './pages/financial/income/income.component';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { NetworkComponent } from './pages/network/network.component';
+import { NetworkTopComponent } from './pages/network/network-top/network-top.component';
+import { WakeOnLanComponent } from './pages/network/wake-on-lan/wake-on-lan.component';
 
 const routes: Routes = [
   {
@@ -32,6 +35,20 @@ const routes: Routes = [
           {
             path: "income",
             component: IncomeComponent
+          }
+        ],
+      },
+      {
+        path: "network",
+        component: NetworkComponent,
+        children: [
+          {
+            path: "",
+            component: NetworkTopComponent,
+          },
+          {
+            path: "wake-on-lan",
+            component: WakeOnLanComponent,
           }
         ],
       },
