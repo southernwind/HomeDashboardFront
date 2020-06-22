@@ -10,6 +10,7 @@ import { SettingsComponent } from './pages/settings/settings.component';
 import { NetworkComponent } from './pages/network/network.component';
 import { NetworkTopComponent } from './pages/network/network-top/network-top.component';
 import { WakeOnLanComponent } from './pages/network/wake-on-lan/wake-on-lan.component';
+import { DhcpLeasesComponent } from './pages/network/dhcp-leases/dhcp-leases.component';
 
 const routes: Routes = [
   {
@@ -45,6 +46,10 @@ const routes: Routes = [
           {
             path: "",
             component: NetworkTopComponent,
+          },
+          {
+            path: "dhcp-leases",
+            component: DhcpLeasesComponent
           },
           {
             path: "wake-on-lan",

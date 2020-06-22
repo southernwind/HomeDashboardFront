@@ -59,6 +59,8 @@ namespace Back {
 					.AddConsole()
 					.AddDebug();
 			});
+			services.AddHttpClient();
+
 			services.AddSingleton<Updater>();
 			services.AddTransient<FinancialModel>();
 			services.AddTransient<SettingsModel>();

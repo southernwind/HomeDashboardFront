@@ -64,5 +64,25 @@ namespace Back.Controllers {
 		public async Task<JsonResult> GetWakeOnLanTargetList() {
 			return new JsonResult(await this._networkModel.GetWakeOnLanTargetList());
 		}
+
+		/// <summary>
+		/// dnsmasq leasesの取得
+		/// </summary>
+		/// <returns>DHCP払い出しリスト</returns>
+		[HttpGet]
+		[ActionName("get-dhcp-leases")]
+		public async Task<JsonResult> GetDhcpLeases() {
+			return new JsonResult(await this._networkModel.GetDhcpLeasesAsync());
+		}
+
+		/// <summary>
+		/// dnsmasq.leasesファイルの取得
+		/// </summary>
+		/// <returns>更新キー</returns>
+		[HttpPost]
+		[ActionName("post-update-vendor-list-request")]
+		public JsonResult PostUpdateVendorListRequest() {
+			return new JsonResult(this._networkModel.UpdateVendorList());
+		}
 	}
 }

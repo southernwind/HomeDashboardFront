@@ -6,7 +6,7 @@ using DataBase;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Back {
+namespace Back.Utils {
 	internal static class Utility {
 		/// <summary>
 		/// ユーザー設定の取得

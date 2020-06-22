@@ -1,0 +1,23 @@
+<h3>DHCP払い出し中リスト </h3>
+<nz-table #leasesTable [nzPageSize]="50" [nzData]="dhcpLeases" nzTableLayout="fixed">
+  <thead>
+    <tr>
+      <th nzWidth="180px">リース有効期限</th>
+      <th nzWidth="150px">MACアドレス</th>
+      <th nzWidth="120px">IPアドレス</th>
+      <th>ホスト名</th>
+      <th nzWidth="150px">クライアントID</th>
+      <th>ベンダー名</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of leasesTable.data">
+      <td>{{ item.timeOfLeaseExpiry | datetimeFormatPipe : "YYYY-MM-DD hh:mm:ss"}}</td>
+      <td>{{ item.macAddress }}</td>
+      <td>{{ item.ipAddress }}</td>
+      <td>{{ item.hostName }}</td>
+      <td>{{ item.clientName }}</td>
+      <td>{{ item.vendor?.organizationName }}</td>
+    </tr>
+  </tbody>
+</nz-table>

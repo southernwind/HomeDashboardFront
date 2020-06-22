@@ -40,6 +40,15 @@ namespace DataBase {
 		} = null!;
 
 		/// <summary>
+		/// Macアドレスベンダーコード
+		/// </summary>
+		public DbSet<MacAddressVendor> MacAddressVendors {
+			get;
+			set;
+		} = null!;
+
+
+		/// <summary>
 		/// コンストラクタ
 		/// </summary>
 		/// <param name="options">DbContextOptions</param>
@@ -55,6 +64,7 @@ namespace DataBase {
 			modelBuilder.Entity<MfAsset>().HasKey(x => new { x.Date, x.Institution, x.Category });
 			modelBuilder.Entity<UserSetting>().HasKey(x => x.Id);
 			modelBuilder.Entity<WakeOnLanTarget>().HasKey(x => x.MacAddress);
+			modelBuilder.Entity<MacAddressVendor>().HasKey(x => x.Assignment);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 <Project>
   <ItemGroup>
+    <PackageReference Update="CsvHelper" Version="15.0.5"/>
     <PackageReference Update="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1"/>
   </ItemGroup>
 </Project>

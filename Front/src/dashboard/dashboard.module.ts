@@ -29,6 +29,7 @@ import { FinancialSettingsComponent } from './pages/settings/financial-settings/
 import { WakeOnLanComponent } from './pages/network/wake-on-lan/wake-on-lan.component';
 import { NetworkComponent } from './pages/network/network.component';
 import { NetworkTopComponent } from './pages/network/network-top/network-top.component';
+import { DhcpLeasesComponent } from './pages/network/dhcp-leases/dhcp-leases.component';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -58,7 +59,8 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     FinancialSettingsComponent,
     NetworkComponent,
     NetworkTopComponent,
-    WakeOnLanComponent
+    WakeOnLanComponent,
+    DhcpLeasesComponent
   ],
   imports: [
     FormsModule,
