@@ -56,6 +56,10 @@ export class WakeOnLanComponent extends DashboardParentComponent implements OnIn
       return;
     }
     this.message.success("登録成功");
+    this.addTargetForm.setValue({
+      macAddress: null,
+      deviceName: null
+    });
     this.addTargetModalVisibility = false;
     await this.getTargetList();
   }
