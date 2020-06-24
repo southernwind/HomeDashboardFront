@@ -11,6 +11,8 @@ import { NetworkComponent } from './pages/network/network.component';
 import { NetworkTopComponent } from './pages/network/network-top/network-top.component';
 import { WakeOnLanComponent } from './pages/network/wake-on-lan/wake-on-lan.component';
 import { DhcpLeasesComponent } from './pages/network/dhcp-leases/dhcp-leases.component';
+import { KitchenComponent } from './pages/kitchen/kitchen.component';
+import { KitchenTopComponent } from './pages/kitchen/kitchen-top/kitchen-top.component';
 
 const routes: Routes = [
   {
@@ -37,6 +39,16 @@ const routes: Routes = [
             path: "income",
             component: IncomeComponent
           }
+        ],
+      },
+      {
+        path: "kitchen",
+        component: KitchenComponent,
+        children: [
+          {
+            path: "",
+            component: KitchenTopComponent,
+          },
         ],
       },
       {

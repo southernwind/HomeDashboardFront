@@ -30,6 +30,8 @@ import { WakeOnLanComponent } from './pages/network/wake-on-lan/wake-on-lan.comp
 import { NetworkComponent } from './pages/network/network.component';
 import { NetworkTopComponent } from './pages/network/network-top/network-top.component';
 import { DhcpLeasesComponent } from './pages/network/dhcp-leases/dhcp-leases.component';
+import { KitchenTopComponent } from './pages/kitchen/kitchen-top/kitchen-top.component';
+import { KitchenComponent } from './pages/kitchen/kitchen.component';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -60,7 +62,9 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     NetworkComponent,
     NetworkTopComponent,
     WakeOnLanComponent,
-    DhcpLeasesComponent
+    DhcpLeasesComponent,
+    KitchenComponent,
+    KitchenTopComponent
   ],
   imports: [
     FormsModule,

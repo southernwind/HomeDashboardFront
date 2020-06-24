@@ -49,6 +49,15 @@ namespace DataBase {
 
 
 		/// <summary>
+		/// レシピリスト
+		/// </summary>
+		public DbSet<Recipe> Recipes {
+			get;
+			set;
+		} = null!;
+
+
+		/// <summary>
 		/// コンストラクタ
 		/// </summary>
 		/// <param name="options">DbContextOptions</param>
@@ -65,6 +74,8 @@ namespace DataBase {
 			modelBuilder.Entity<UserSetting>().HasKey(x => x.Id);
 			modelBuilder.Entity<WakeOnLanTarget>().HasKey(x => x.MacAddress);
 			modelBuilder.Entity<MacAddressVendor>().HasKey(x => x.Assignment);
+			modelBuilder.Entity<Recipe>().HasKey(x => x.Id);
+			modelBuilder.Entity<Recipe>().Property(x => x.Id).ValueGeneratedOnAdd();
 		}
 	}
 }

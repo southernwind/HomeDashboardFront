@@ -6,8 +6,7 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { WakeOnLanTarget } from '../../../models/wake-on-lan-target.model';
 
 @Component({
-  templateUrl: "./wake-on-lan.component.html",
-  styleUrls: ["./wake-on-lan.component.scss"]
+  templateUrl: "./wake-on-lan.component.html"
 })
 export class WakeOnLanComponent extends DashboardParentComponent implements OnInit {
   public targetMacAddress: string;

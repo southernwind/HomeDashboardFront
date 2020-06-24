@@ -3,6 +3,7 @@ using System;
 
 using Back.Models.Common;
 using Back.Models.Financial;
+using Back.Models.Kitchen;
 using Back.Models.Network;
 using Back.Models.Settings;
 
@@ -65,6 +66,7 @@ namespace Back {
 			services.AddTransient<FinancialModel>();
 			services.AddTransient<SettingsModel>();
 			services.AddTransient<NetworkModel>();
+			services.AddTransient<KitchenModel>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

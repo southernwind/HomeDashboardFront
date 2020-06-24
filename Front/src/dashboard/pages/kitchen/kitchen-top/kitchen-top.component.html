@@ -1,0 +1,44 @@
+<div class="table-operations">
+  <button nz-button (click)="addRecipeModalVisibility = true">レシピ追加</button>
+  <nz-modal [(nzVisible)]="addRecipeModalVisibility" nzTitle="The first Modal" (nzOnCancel)="cancelAddRecipe()"
+    (nzOnOk)="addRecipe()" [nzOkDisabled]="addRecipeForm.invalid">
+    <form nz-form [formGroup]="addRecipeForm">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">URL</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <input nz-input formControlName="url" placeholder="https://cookpad.com/recipe/4584848" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">タイトル</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <input nz-input formControlName="title" placeholder="入力しなければ自動取得" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">画像URL</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <input nz-input formControlName="imageUrl" placeholder="入力しなければ自動取得" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-modal>
+</div>
+<nz-table #recipeTable [nzData]="recipeList" nzTableLayout="fixed">
+  <thead>
+    <tr>
+      <th nzWidth="140px">イメージ</th>
+      <th>タイトル</th>
+      <th nzWidth="120px">削除</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of recipeTable.data">
+      <td><img src="{{ item.imageUrl }}" style="max-width: 120px;max-height: 120px;" /></td>
+      <td><a target="_blank" rel="noopener" href="{{item.url}}">{{ item.title }}</a></td>
+      <td>
+        <button nz-button (click)="deleteRecipe(item)">削除</button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>

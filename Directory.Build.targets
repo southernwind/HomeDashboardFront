@@ -1,6 +1,8 @@
 <Project>
   <ItemGroup>
     <PackageReference Update="CsvHelper" Version="15.0.5"/>
+    <PackageReference Update="HtmlAgilityPack" Version="1.11.24"/>
+    <PackageReference Update="HtmlAgilityPack.CssSelectors.NetCore" Version="1.2.1"/>
     <PackageReference Update="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1"/>
   </ItemGroup>
 </Project>
