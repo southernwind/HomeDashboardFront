@@ -1,8 +1,7 @@
 <div>
-  <date-range-selector [(dateRange)]="selectedDateRange"></date-range-selector>
-  <app-update-request [dateRange]="selectedDateRange"
-    (onUpdated)="chartReload()">
-  </app-update-request>
+  <date-range-selector [(dateRange)]="selectedDateRange" (dateRangeChange)="selectedDateChanged()">
+  </date-range-selector>
+  <app-update-request [dateRange]="selectedDateRange"></app-update-request>
   <ul>
     <li><a routerLink="asset">資産</a></li>
     <li><a routerLink="expense">支出</a></li>

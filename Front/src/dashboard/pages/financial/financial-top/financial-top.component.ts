@@ -2,7 +2,11 @@ import { Component } from '@angular/core';
 import * as moment from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
+import { Moment } from 'moment';
+import { CookieService } from 'ngx-cookie-service';
+import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   templateUrl: "./financial-top.component.html",
 })
@@ -13,18 +17,38 @@ export class FinancialTopComponent extends DashboardParentComponent {
    * @type {DateRange}
    * @memberof FinancialTopComponent
    */
-  public selectedDateRange: DateRange;
+  public selectedDateRange: DateRange = null;
 
-  /**
-   * 初期処理
-   *
-   * @returns {Promise<void>}
-   * @memberof FinancialTopComponent
-   */
-  public async ngOnInit(): Promise<void> {
+  constructor(private cookieService: CookieService) {
+    super();
+    this.onInit.pipe(untilDestroyed(this)).subscribe(async () => {
+      if (this.selectedDateRange === null) {
+        let from: Moment;
+        if (this.cookieService.check("startDateForUpdate")) {
+          from = moment(this.cookieService.get("startDateForUpdate"));
+        } else {
+          from = moment().add(-6, 'month').startOf("month");
+        }
+
+        let to: Moment;
+        if (this.cookieService.check("endDateForUpdate")) {
+          const endDateString = this.cookieService.get("endDateForUpdate");
+          if (endDateString === "today") {
+            to = moment();
+          } else {
+            to = moment(this.cookieService.get("endDateForUpdate"));
+          }
+        } else {
+          to = moment();
+        }
+
+        this.selectedDateRange = { startDate: from, endDate: to };
+      }
+    });
   }
 
-  public chartReload(): void {
-    this.selectedDateRange = this.selectedDateRange;
+  public selectedDateChanged(): void {
+    this.cookieService.set("startDateForUpdate", this.selectedDateRange.startDate.format("YYYY-MM-DD"));
+    this.cookieService.set("endDateForUpdate", this.selectedDateRange.endDate.format("YYYY-MM-DD") === moment().format("YYYY-MM-DD") ? "today" : this.selectedDateRange.endDate.format("YYYY-MM-DD"));
   }
 }
