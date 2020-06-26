@@ -27,7 +27,7 @@ namespace Back.Controllers {
 		[HttpPost]
 		[ActionName("post-register-recipe")]
 		public async Task<JsonResult> PostRegisterRecipe([FromBody] Recipe recipe) {
-			await this._kitchenModel.RegisterWakeOnLanTarget(recipe);
+			await this._kitchenModel.RegisterRecipeAsync(recipe);
 			return new JsonResult(true);
 		}
 
@@ -40,14 +40,14 @@ namespace Back.Controllers {
 		[HttpPost]
 		[ActionName("post-delete-recipe")]
 		public async Task<JsonResult> PostDeleteRecipe([FromBody] Recipe recipe) {
-			await this._kitchenModel.DeleteWakeOnLanTarget(recipe);
+			await this._kitchenModel.DeleteRecipeAsync(recipe);
 			return new JsonResult(true);
 		}
 
 		[HttpGet]
 		[ActionName("get-recipe-list")]
 		public async Task<JsonResult> GetRecipeList() {
-			return new JsonResult(await this._kitchenModel.GetWakeOnLanTargetList());
+			return new JsonResult(await this._kitchenModel.GetRecipeListAsync());
 		}
 	}
 }

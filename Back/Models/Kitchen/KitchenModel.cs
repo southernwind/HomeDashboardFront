@@ -23,7 +23,7 @@ namespace Back.Models.Kitchen {
 			this._clientFactory = clientFactory;
 		}
 
-		public async Task RegisterWakeOnLanTarget(Recipe recipe) {
+		public async Task RegisterRecipeAsync(Recipe recipe) {
 			if (string.IsNullOrWhiteSpace(recipe.ImageUrl) || string.IsNullOrWhiteSpace(recipe.Title)) {
 				var client = this._clientFactory.CreateClient();
 				var html = await client.GetStringAsync(recipe.Url);
@@ -45,7 +45,7 @@ namespace Back.Models.Kitchen {
 			await this._db.SaveChangesAsync();
 		}
 
-		public async Task DeleteWakeOnLanTarget(Recipe recipe) {
+		public async Task DeleteRecipeAsync(Recipe recipe) {
 			await using var tran = await this._db.Database.BeginTransactionAsync();
 			var record = await this._db.Recipes.SingleAsync(x => x.Id == recipe.Id);
 			this._db.Recipes.Remove(record);
@@ -53,7 +53,7 @@ namespace Back.Models.Kitchen {
 			await tran.CommitAsync();
 		}
 
-		public async Task<Recipe[]> GetWakeOnLanTargetList() {
+		public async Task<Recipe[]> GetRecipeListAsync() {
 			return await this._db.Recipes.ToArrayAsync();
 		}
 	}
