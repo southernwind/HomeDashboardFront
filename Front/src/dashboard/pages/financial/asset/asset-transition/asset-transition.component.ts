@@ -1,15 +1,15 @@
-import { Component, Input, AfterViewChecked } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import * as Highcharts from 'highcharts';
 import { FinancialApiService } from "../../../../services/financial-api.service";
 import * as moment from 'moment';
 import { Asset } from '../../../../models/asset.model';
 import * as Enumerable from 'linq';
-import { Moment } from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { Subject, combineLatest } from 'rxjs';
+import { Subject } from 'rxjs';
+import { Chart } from 'angular-highcharts';
 
 @UntilDestroy()
 @Component({
@@ -19,12 +19,10 @@ import { Subject, combineLatest } from 'rxjs';
 export class AssetTransitionComponent extends DashboardParentComponent {
   /** 資産推移生データ */
   public assets: Asset[];
-  public highchartsObject: typeof Highcharts = Highcharts;
 
-  /** 資産推移チャートオプション */
-  public assetsChartOptions: Highcharts.Options;
+  /** 資産推移チャート */
+  public chart: Chart;
 
-  private chartSubject = new Subject<Highcharts.Chart>();
   private dateRangeSubject = new Subject<DateRange>();
 
   @Input()
@@ -37,12 +35,11 @@ export class AssetTransitionComponent extends DashboardParentComponent {
 
   constructor(private financialApiService: FinancialApiService) {
     super();
-    combineLatest(this.chartSubject, this.dateRangeSubject)
+    this.dateRangeSubject
       .pipe(untilDestroyed(this))
-      .subscribe(async latestValue => {
-        const chart = latestValue[0];
-        const startDate = latestValue[1].startDate;
-        const endDate = latestValue[1].endDate;
+      .subscribe(async dateRange => {
+        const startDate = dateRange.startDate;
+        const endDate = dateRange.endDate;
 
         this.assets = await this.financialApiService.GetAssets(startDate, endDate).toPromise();
         const temp = Enumerable
@@ -55,8 +52,75 @@ export class AssetTransitionComponent extends DashboardParentComponent {
           });
         const dates = temp.groupBy(x => x.date).select(x => x.first().date);
         const datesCount = dates.count();
-        chart.update({
-          ...this.assetsChartOptions,
+        this.chart = new Chart({
+          ...HighchartsOptions.defaultOptions,
+          chart: {
+            ...HighchartsOptions.defaultOptions.chart,
+            type: "area",
+            zoomType: "x",
+          },
+          title: {
+            ...HighchartsOptions.defaultOptions.title,
+            text: "資産推移",
+          },
+          xAxis: {
+            ...HighchartsOptions.defaultOptions.xAxis,
+            type: 'datetime',
+            title: null,
+            dateTimeLabelFormats: {
+              year: '%Y',
+              month: '%Y/%m',
+              week: '%m/%d',
+              day: '%m/%d',
+            }
+          },
+          yAxis: {
+            ...HighchartsOptions.defaultOptions.yAxis,
+            title: null,
+            labels: {
+              ...(HighchartsOptions.defaultOptions.yAxis as Highcharts.YAxisOptions).labels,
+              formatter: function () {
+                if (this.value == 0) {
+                  return `${this.value}円`;
+                } else if (Math.abs(this.value) >= 100000000) {
+                  return `${this.value / 100000000} 万円`
+                } else {
+                  return `${this.value / 10000} 万円`
+                }
+              }
+            }
+          },
+          tooltip: {
+            formatter: function () {
+              return `${Highcharts.dateFormat("%Y/%m/%d", this.key)}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
+            }
+          },
+          plotOptions: {
+            ...HighchartsOptions.defaultOptions.plotOptions,
+            series: {
+              ...HighchartsOptions.defaultOptions.plotOptions.series,
+              dataLabels: {
+                ...HighchartsOptions.defaultOptions.plotOptions.series.dataLabels,
+                shape: 'callout',
+                backgroundColor: '#0007',
+                formatter: function () {
+                  return `最終値:${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
+                }
+              }
+            }
+          },
+          legend: {
+            ...HighchartsOptions.defaultOptions.legend,
+            labelFormatter: function () {
+              const values = ((this as any).yData as number[]);
+              const lastValue = values[values.length - 1];
+              if (lastValue != null && lastValue != 0) {
+                return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(lastValue, 0, '', ',')}円)</span>`;
+              } else {
+                return `${this.name}<br/><span style="font-size:0.6rem">( - )</span>`;
+              }
+            }
+          },
           series: temp
             .groupBy(x => x.institution)
             .orderBy(x => Math.abs(x.lastOrDefault().amount))
@@ -102,90 +166,7 @@ export class AssetTransitionComponent extends DashboardParentComponent {
                   }).toArray(),
               } as Highcharts.SeriesLineOptions
             ])
-        }, true, true);
+        });
       });
-    combineLatest(this.chartSubject, this.afterViewInit)
-      .pipe(untilDestroyed(this))
-      .subscribe(x => x[0].reflow());
-  }
-
-  /**
-   * 初期処理
-   *
-   * @returns {Promise<void>}
-   * @memberof AssetTransitionComponent
-   */
-  public async setChartInstance(chart: Highcharts.Chart): Promise<void> {
-    this.assetsChartOptions = {
-      ...HighchartsOptions.defaultOptions,
-      chart: {
-        ...HighchartsOptions.defaultOptions.chart,
-        type: "area",
-        zoomType: "x",
-      },
-      title: {
-        ...HighchartsOptions.defaultOptions.title,
-        text: "資産推移",
-      },
-      xAxis: {
-        ...HighchartsOptions.defaultOptions.xAxis,
-        type: 'datetime',
-        title: null,
-        dateTimeLabelFormats: {
-          year: '%Y',
-          month: '%Y/%m',
-          week: '%m/%d',
-          day: '%m/%d',
-        }
-      },
-      yAxis: {
-        ...HighchartsOptions.defaultOptions.yAxis,
-        title: null,
-        labels: {
-          ...(HighchartsOptions.defaultOptions.yAxis as Highcharts.YAxisOptions).labels,
-          formatter: function () {
-            if (this.value == 0) {
-              return `${this.value}円`;
-            } else if (Math.abs(this.value) >= 100000000) {
-              return `${this.value / 100000000} 万円`
-            } else {
-              return `${this.value / 10000} 万円`
-            }
-          }
-        }
-      },
-      tooltip: {
-        formatter: function () {
-          return `${Highcharts.dateFormat("%Y/%m/%d", this.key)}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
-        }
-      },
-      plotOptions: {
-        ...HighchartsOptions.defaultOptions.plotOptions,
-        series: {
-          ...HighchartsOptions.defaultOptions.plotOptions.series,
-          dataLabels: {
-            ...HighchartsOptions.defaultOptions.plotOptions.series.dataLabels,
-            shape: 'callout',
-            backgroundColor: '#0007',
-            formatter: function () {
-              return `最終値:${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
-            }
-          }
-        }
-      },
-      legend: {
-        ...HighchartsOptions.defaultOptions.legend,
-        labelFormatter: function () {
-          const values = ((this as any).yData as number[]);
-          const lastValue = values[values.length - 1];
-          if (lastValue != null && lastValue != 0) {
-            return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(lastValue, 0, '', ',')}円)</span>`;
-          } else {
-            return `${this.name}<br/><span style="font-size:0.6rem">( - )</span>`;
-          }
-        }
-      }
-    };
-    this.chartSubject.next(chart);
   }
 }

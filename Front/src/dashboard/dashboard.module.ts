@@ -5,7 +5,9 @@ import { NzIconModule } from "ng-zorro-antd/icon";
 import { IconDefinition } from "@ant-design/icons-angular";
 import * as AllIcons from "@ant-design/icons-angular/icons";
 import { FinancialComponent } from "./pages/financial/financial.component";
-import { HighchartsChartModule } from 'highcharts-angular';
+import { ChartModule, HIGHCHARTS_MODULES } from 'angular-highcharts';
+import * as more from 'highcharts/highcharts-more.src';
+import * as exporting from 'highcharts/modules/exporting.src';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AssetTransitionComponent } from './pages/financial/asset/asset-transition/asset-transition.component';
@@ -72,9 +74,12 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     PipesModule,
     DashboardRoutingModule,
     NgZorroAntdModule,
-    HighchartsChartModule,
+    ChartModule,
     NzIconModule.forRoot(icons),
     CommonModule
+  ],
+  providers: [
+    { provide: HIGHCHARTS_MODULES, useFactory: () => [more, exporting] }
   ]
 })
 export class DashboardModule { }
