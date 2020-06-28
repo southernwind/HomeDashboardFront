@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import * as Highcharts from 'highcharts';
+import { Chart } from 'angular-highcharts';
 import { FinancialApiService } from "../../../../services/financial-api.service";
 import { Asset } from '../../../../models/asset.model';
 import * as Enumerable from 'linq';
@@ -8,6 +8,7 @@ import { HighchartsOptions } from 'src/utils/highcharts.options';
 import { Subject, combineLatest } from 'rxjs';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { DateRange } from '../../../../models/date-range.model';
+import * as Highcharts from 'highcharts';
 
 @UntilDestroy()
 @Component({
@@ -17,12 +18,10 @@ import { DateRange } from '../../../../models/date-range.model';
 export class AssetRatioComponent extends DashboardParentComponent {
   /** 資産割合生データ */
   public assets: Asset[];
-  public highchartsObject: typeof Highcharts = Highcharts;
 
-  /** 資産割合チャートオプション */
-  public assetsChartOptions: Highcharts.Options;
+  /** 資産割合チャート */
+  public chart: Chart;
 
-  private chartSubject = new Subject<Highcharts.Chart>();
   private dateRangeSubject = new Subject<DateRange>();
 
   @Input()
@@ -35,12 +34,11 @@ export class AssetRatioComponent extends DashboardParentComponent {
 
   constructor(private financialApiService: FinancialApiService) {
     super();
-    combineLatest(this.chartSubject, this.dateRangeSubject)
+    this.dateRangeSubject
       .pipe(untilDestroyed(this))
-      .subscribe(async latestValue => {
-        const chart = latestValue[0];
-        const startDate = latestValue[1].startDate;
-        const endDate = latestValue[1].endDate;
+      .subscribe(async dateRange => {
+        const startDate = dateRange.startDate;
+        const endDate = dateRange.endDate;
 
         this.assets = await this.financialApiService.GetLatestAsset(startDate, endDate).toPromise();
 
@@ -48,8 +46,30 @@ export class AssetRatioComponent extends DashboardParentComponent {
           .where(x => x.amount > 0)
           .groupBy(x => x.category)
           .orderBy(x => x.sum(a => a.amount));
-        chart.update({
-          ...this.assetsChartOptions,
+        this.chart = new Chart({
+          ...HighchartsOptions.defaultOptions,
+          chart: {
+            ...HighchartsOptions.defaultOptions.chart,
+            type: 'pie'
+          },
+          title: {
+            ...HighchartsOptions.defaultOptions.title,
+            text: "資産割合",
+          },
+          plotOptions: {
+            ...HighchartsOptions.defaultOptions.plotOptions,
+            pie: {
+              ...HighchartsOptions.defaultOptions.plotOptions.pie,
+              shadow: false,
+              center: ['50%', '50%']
+            }
+          },
+          tooltip: {
+            ...HighchartsOptions.defaultOptions.tooltip,
+            formatter: function () {
+              return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
+            }
+          },
           series: [{
             name: 'カテゴリ',
             data: temp
@@ -93,46 +113,7 @@ export class AssetRatioComponent extends DashboardParentComponent {
               condition: {}
             }]
           }
-        }, true, true);
+        });
       });
-    combineLatest(this.chartSubject, this.afterViewInit)
-      .pipe(untilDestroyed(this))
-      .subscribe(x => x[0].reflow());
-  }
-
-  /**
-   * 初期処理
-   *
-   * @returns {Promise<void>}
-   * @memberof AssetRatioComponent
-   */
-  public setChartInstance(chart: Highcharts.Chart): void {
-    this.assetsChartOptions = {
-      ...HighchartsOptions.defaultOptions,
-      chart: {
-        ...HighchartsOptions.defaultOptions.chart,
-        type: 'pie'
-      },
-      title: {
-        ...HighchartsOptions.defaultOptions.title,
-        text: "資産割合",
-      },
-      plotOptions: {
-        ...HighchartsOptions.defaultOptions.plotOptions,
-        pie: {
-          ...HighchartsOptions.defaultOptions.plotOptions.pie,
-          shadow: false,
-          center: ['50%', '50%']
-        }
-      },
-      tooltip: {
-        ...HighchartsOptions.defaultOptions.tooltip,
-        formatter: function () {
-          return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
-        }
-      }
-    };
-
-    this.chartSubject.next(chart);
   }
 }

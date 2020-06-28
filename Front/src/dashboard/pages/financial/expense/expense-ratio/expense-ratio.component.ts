@@ -7,6 +7,7 @@ import { HighchartsOptions } from 'src/utils/highcharts.options';
 import { Condition } from 'src/dashboard/models/condition.model';
 import { Subject, combineLatest } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Chart } from 'angular-highcharts';
 
 @UntilDestroy()
 @Component({
@@ -14,7 +15,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   templateUrl: "./expense-ratio.component.html",
 })
 export class ExpenseRatioComponent extends DashboardParentComponent {
-  public highchartsObject: typeof Highcharts = Highcharts;
+  public chart: Chart;
+
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
@@ -28,28 +30,77 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
   @Output()
   public filterConditionChange = new EventEmitter<Condition<Transaction>>();
 
-
-  /** 資産割合チャートオプション */
-  public expensesChartOptions: Highcharts.Options;
-
-  private chartSubject = new Subject<Highcharts.Chart>();
   private transactionsSubject = new Subject<Transaction[]>();
 
   constructor() {
     super();
-    combineLatest(this.chartSubject, this.transactionsSubject)
+    const componentScope = this;
+    this.transactionsSubject
       .pipe(untilDestroyed(this))
-      .subscribe(latestValue => {
-        const chart = latestValue[0];
-        const transactions = latestValue[1];
+      .subscribe(transactions => {
 
         const temp = Enumerable.from(transactions)
           .where(x => -x.amount > 0)
           .groupBy(x => x.largeCategory)
           .orderByDescending(x => x.sum(a => a.amount));
 
-        chart.update({
-          ...this.expensesChartOptions,
+        this.chart = new Chart({
+          ...HighchartsOptions.defaultOptions,
+          chart: {
+            ...HighchartsOptions.defaultOptions.chart,
+            type: 'pie'
+          },
+          title: {
+            ...HighchartsOptions.defaultOptions.title,
+            text: "支出割合",
+          },
+          plotOptions: {
+            ...HighchartsOptions.defaultOptions.plotOptions,
+            pie: {
+              ...HighchartsOptions.defaultOptions.plotOptions.pie,
+              shadow: false,
+              center: ['50%', '50%']
+            },
+            series: {
+              ...HighchartsOptions.defaultOptions.plotOptions?.series,
+              point: {
+                ...HighchartsOptions.defaultOptions.plotOptions?.series?.point,
+                events: {
+                  ...HighchartsOptions.defaultOptions.plotOptions?.series?.point?.events,
+                  click: function (e) {
+                    switch (e.point.series.name) {
+                      case "カテゴリ":
+                        componentScope.filterConditionChange.emit({
+                          condition: x => x.largeCategory == e.point.name
+                        });
+                        break;
+                      case "サブカテゴリ":
+                        componentScope.filterConditionChange.emit({
+                          condition: x => x.middleCategory == e.point.name
+                        });
+                        break;
+                    }
+                  }
+                }
+              }
+            }
+          },
+          tooltip: {
+            ...HighchartsOptions.defaultOptions.tooltip,
+            formatter: function () {
+              return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
+            }
+          },
+          legend: {
+            ...HighchartsOptions.defaultOptions.legend,
+            labelFormatter: function () {
+              return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(this.y, 0, '', ',')}円)</span>`;
+            } as Highcharts.FormatterCallbackFunction<Highcharts.Point>,
+            enabled: true,
+            align: "right",
+            layout: "vertical",
+            verticalAlign: "top"
+          },
           series: [{
             name: 'カテゴリ',
             data: temp
@@ -83,73 +134,7 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
             innerSize: '60%',
             id: 'middle',
           } as any]
-        }, true, true);
+        });
       });
-    combineLatest(this.chartSubject, this.afterViewInit)
-      .pipe(untilDestroyed(this))
-      .subscribe(x => x[0].reflow());
-  }
-
-  public setChartInstance(chart: Highcharts.Chart): void {
-    const componentScope = this;
-    this.expensesChartOptions = {
-      ...HighchartsOptions.defaultOptions,
-      chart: {
-        ...HighchartsOptions.defaultOptions.chart,
-        type: 'pie'
-      },
-      title: {
-        ...HighchartsOptions.defaultOptions.title,
-        text: "支出割合",
-      },
-      plotOptions: {
-        ...HighchartsOptions.defaultOptions.plotOptions,
-        pie: {
-          ...HighchartsOptions.defaultOptions.plotOptions.pie,
-          shadow: false,
-          center: ['50%', '50%']
-        },
-        series: {
-          ...HighchartsOptions.defaultOptions.plotOptions?.series,
-          point: {
-            ...HighchartsOptions.defaultOptions.plotOptions?.series?.point,
-            events: {
-              ...HighchartsOptions.defaultOptions.plotOptions?.series?.point?.events,
-              click: function (e) {
-                switch (e.point.series.name) {
-                  case "カテゴリ":
-                    componentScope.filterConditionChange.emit({
-                      condition: x => x.largeCategory == e.point.name
-                    });
-                    break;
-                  case "サブカテゴリ":
-                    componentScope.filterConditionChange.emit({
-                      condition: x => x.middleCategory == e.point.name
-                    });
-                    break;
-                }
-              }
-            }
-          }
-        }
-      },
-      tooltip: {
-        ...HighchartsOptions.defaultOptions.tooltip,
-        formatter: function () {
-          return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
-        }
-      },
-      legend: {
-        ...HighchartsOptions.defaultOptions.legend,
-        labelFormatter: function () {
-          return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(this.y, 0, '', ',')}円)</span>`;
-        } as Highcharts.FormatterCallbackFunction<Highcharts.Point>,
-        enabled: true,
-        align: "right",
-        layout: "vertical",
-        verticalAlign: "top"
-      }
-    };
-    this.chartSubject.next(chart);
   }
 }

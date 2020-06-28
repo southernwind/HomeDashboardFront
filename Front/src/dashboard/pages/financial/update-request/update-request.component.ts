@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FinancialApiService } from "../../../services/financial-api.service";
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { interval, timer } from 'rxjs';
