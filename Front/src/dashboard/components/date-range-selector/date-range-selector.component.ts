@@ -1,8 +1,7 @@
-import { Component, Output, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 import * as moment from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
-import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: "date-range-selector",
@@ -18,6 +17,10 @@ export class DateRangeSelectorComponent extends DashboardParentComponent {
     "去年": [moment().add(-1, "years").startOf("year").toDate(), moment().add(-1, "years").endOf("year").toDate()],
     "一昨年": [moment().add(-2, "years").startOf("year").toDate(), moment().add(-2, "years").endOf("year").toDate()],
   };
+
+  /** 時刻選択の有効化 */
+  @Input()
+  public showTime: boolean = false;
 
   /**
    * 選択範囲

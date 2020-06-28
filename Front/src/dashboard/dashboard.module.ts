@@ -12,7 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AssetTransitionComponent } from './pages/financial/asset/asset-transition/asset-transition.component';
 import { UpdateRequestComponent } from './pages/financial/update-request/update-request.component';
-import { DateRangeSelectorComponent } from './pages/financial/date-range-selector/date-range-selector.component';
+import { DateRangeSelectorComponent } from './components/date-range-selector/date-range-selector.component';
 import { AssetRatioComponent } from './pages/financial/asset/asset-ratio/asset-ratio.component';
 import { AssetComponent } from './pages/financial/asset/asset.component';
 import { FinancialTopComponent } from './pages/financial/financial-top/financial-top.component';
@@ -34,6 +34,10 @@ import { NetworkTopComponent } from './pages/network/network-top/network-top.com
 import { DhcpLeasesComponent } from './pages/network/dhcp-leases/dhcp-leases.component';
 import { KitchenTopComponent } from './pages/kitchen/kitchen-top/kitchen-top.component';
 import { KitchenComponent } from './pages/kitchen/kitchen.component';
+import { AquariumTopComponent } from './pages/aquarium/aquarium-top/aquarium-top.component';
+import { AquariumComponent } from './pages/aquarium/aquarium.component';
+import { WaterStatesComponent } from './pages/aquarium/water-states/water-states.component';
+import { AquaPeriodSelectorComponent } from './pages/aquarium/aquaPeriodSelector/aqua-period-selector.component';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -66,7 +70,11 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     WakeOnLanComponent,
     DhcpLeasesComponent,
     KitchenComponent,
-    KitchenTopComponent
+    KitchenTopComponent,
+    AquariumComponent,
+    AquariumTopComponent,
+    AquaPeriodSelectorComponent,
+    WaterStatesComponent
   ],
   imports: [
     FormsModule,

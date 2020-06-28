@@ -5,10 +5,24 @@ export class HighchartsOptions {
     chart: {
       backgroundColor: "#FFF3"
     },
+    time: {
+      useUTC: false
+    },
     title: {
       style: {
         color: '#EEE',
         fontSize: '20px'
+      }
+    },
+    tooltip: {
+      dateTimeLabelFormats: {
+        year: '%Y',
+        month: '%Y/%m',
+        week: '%Y/%m/%d',
+        day: '%Y/%m/%d',
+        hour: '%Y/%m/%d %H',
+        minute: '%Y/%m/%d %H:%M',
+        second: '%Y/%m/%d %H:%M:%S',
       }
     },
     subtitle: {

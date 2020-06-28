@@ -56,6 +56,13 @@ namespace DataBase {
 			set;
 		} = null!;
 
+		/// <summary>
+		/// 水質情報
+		/// </summary>
+		public DbSet<WaterState> WaterStates {
+			get;
+			set;
+		} = null!;
 
 		/// <summary>
 		/// コンストラクタ
@@ -76,6 +83,7 @@ namespace DataBase {
 			modelBuilder.Entity<MacAddressVendor>().HasKey(x => x.Assignment);
 			modelBuilder.Entity<Recipe>().HasKey(x => x.Id);
 			modelBuilder.Entity<Recipe>().Property(x => x.Id).ValueGeneratedOnAdd();
+			modelBuilder.Entity<WaterState>().HasKey(x => x.TimeStamp);
 		}
 	}
 }

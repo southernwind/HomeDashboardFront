@@ -1,0 +1,9 @@
+<div>
+  <nz-select [(ngModel)]="selectedPeriod" nzPlaceHolder="単位の選択" nzShowSearch
+    (ngModelChange)="selectedPeriodChange()">
+    <ng-container *ngFor="let item of candidate">
+      <nz-option [nzValue]="item.value" [nzLabel]="item.label">
+      </nz-option>
+    </ng-container>
+  </nz-select>
+</div>

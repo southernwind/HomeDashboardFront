@@ -122,6 +122,7 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
             }
           },
           tooltip: {
+            ...HighchartsOptions.defaultOptions.tooltip,
             formatter: function () {
               return `${moment(this.x).format("YYYY年MM月")}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
             }

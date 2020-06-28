@@ -13,12 +13,24 @@ import { WakeOnLanComponent } from './pages/network/wake-on-lan/wake-on-lan.comp
 import { DhcpLeasesComponent } from './pages/network/dhcp-leases/dhcp-leases.component';
 import { KitchenComponent } from './pages/kitchen/kitchen.component';
 import { KitchenTopComponent } from './pages/kitchen/kitchen-top/kitchen-top.component';
+import { AquariumComponent } from './pages/aquarium/aquarium.component';
+import { AquariumTopComponent } from './pages/aquarium/aquarium-top/aquarium-top.component';
 
 const routes: Routes = [
   {
     path: "",
     component: DashboardComponent,
     children: [
+      {
+        path: "aquarium",
+        component: AquariumComponent,
+        children: [
+          {
+            path: "",
+            component: AquariumTopComponent,
+          },
+        ],
+      },
       {
         path: "financial",
         component: FinancialComponent,

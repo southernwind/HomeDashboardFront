@@ -91,6 +91,7 @@ export class AssetTransitionComponent extends DashboardParentComponent {
             }
           },
           tooltip: {
+            ...HighchartsOptions.defaultOptions.tooltip,
             formatter: function () {
               return `${Highcharts.dateFormat("%Y/%m/%d", this.key)}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
             }
