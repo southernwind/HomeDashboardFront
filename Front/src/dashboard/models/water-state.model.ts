@@ -16,3 +16,10 @@ export interface WaterState {
   upperQuartileHumidity: number,
   maxHumidity: number
 }
+
+export interface CurrentWaterState {
+  time: string,
+  waterTemperature: number,
+  temperature: number,
+  humidity: number
+}

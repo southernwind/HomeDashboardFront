@@ -1,6 +1,7 @@
 
 using System;
 
+using Back.Hubs;
 using Back.Models.Aquarium;
 using Back.Models.Common;
 using Back.Models.Financial;
@@ -46,13 +47,15 @@ namespace Back {
 			// クロスドメインの許可
 			services.AddCors(options => {
 				options.AddPolicy(this._crossOriginPolicyName, builder => {
-					builder.AllowAnyOrigin();
+					builder.AllowCredentials();
+					builder.WithOrigins("http://localhost:4200");
 					builder.AllowAnyHeader();
 					builder.AllowAnyMethod();
 				});
 			});
 
 			services.AddMvc();
+			services.AddSignalR();
 			services.AddDbContext<HomeServerDbContext>(optionsBuilder => {
 				optionsBuilder.UseMySql(this.Configuration.GetConnectionString("Database"));
 			});
@@ -80,6 +83,10 @@ namespace Back {
 			app.UseRouting();
 
 			app.UseCors(this._crossOriginPolicyName);
+
+			app.UseEndpoints(routes => {
+				routes.MapHub<DashboardHub>("api/hubs/dashboard-hub");
+			});
 
 			app.UseEndpoints(routes => {
 				routes.MapControllers();

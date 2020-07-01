@@ -38,6 +38,7 @@ import { AquariumTopComponent } from './pages/aquarium/aquarium-top/aquarium-top
 import { AquariumComponent } from './pages/aquarium/aquarium.component';
 import { WaterStatesComponent } from './pages/aquarium/water-states/water-states.component';
 import { AquaPeriodSelectorComponent } from './pages/aquarium/aquaPeriodSelector/aqua-period-selector.component';
+import { CurrentWaterStatesComponent } from './pages/aquarium/current-water-state/current-water-states.component';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -74,7 +75,8 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     AquariumComponent,
     AquariumTopComponent,
     AquaPeriodSelectorComponent,
-    WaterStatesComponent
+    WaterStatesComponent,
+    CurrentWaterStatesComponent
   ],
   imports: [
     FormsModule,

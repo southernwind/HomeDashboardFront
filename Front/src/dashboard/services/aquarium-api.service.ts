@@ -1,19 +1,27 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { first } from "rxjs/operators";
+import { Observable, defer, Subject } from "rxjs";
+import { first, map } from 'rxjs/operators';
 import { environment } from "../../environments/environment";
-import { WakeOnLanTarget } from '../models/wake-on-lan-target.model';
-import { DhcpLease } from '../models/dhcp-lease.model';
-import { Recipe } from '../models/recipe.model';
-import { WaterState } from '../models/water-state.model';
+import { WaterState, CurrentWaterState } from '../models/water-state.model';
+import { DashboardService } from './dashboard.service';
+
 
 @Injectable({
   providedIn: "root",
 })
 export class AquariumApiService {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private dashboardService: DashboardService) { }
   public GetWaterStateList(from: string, to: string, period: number): Observable<WaterState[]> {
     return this.http.get<WaterState[]>(`${environment.apiUrl}api/aquarium-api/get-water-state-list?from=${from}&to=${to}&period=${period}`).pipe(first());
+  }
+
+  public waterStateAsObservable(): Observable<CurrentWaterState> {
+    return this.dashboardService.aquaStateChangedObservable();
+  }
+
+  public async requestSendLastWaterState(): Promise<void> {
+    await this.dashboardService.signalrConnected.toPromise();
+    await this.http.post<any>(`${environment.apiUrl}api/aquarium-api/post-request-send-latest-water-state`, {}).pipe(first()).toPromise();
   }
 }

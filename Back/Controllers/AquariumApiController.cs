@@ -53,5 +53,12 @@ namespace Back.Controllers {
 			}
 			return new JsonResult(await this._aquariumModel.GetWaterStateListAsync(from, to, notNullPeriod));
 		}
+
+
+		[HttpPost]
+		[ActionName("post-request-send-latest-water-state")]
+		public async Task PostRequestSendLatestWaterStateAsync() {
+			await this._aquariumModel.SendLatestWaterState();
+		}
 	}
 }

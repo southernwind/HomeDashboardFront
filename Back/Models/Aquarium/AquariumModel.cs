@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Back.Hubs;
 using Back.Models.Aquarium.RequestDto;
 using Back.Models.Aquarium.ResponseDto;
 
@@ -11,16 +12,19 @@ using Database.Tables;
 
 using DataBase;
 
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 namespace Back.Models.Aquarium {
 	public class AquariumModel {
 		private readonly ILogger<AquariumModel> _logger;
 		private readonly HomeServerDbContext _db;
+		private readonly IHubContext<DashboardHub> _hubContext;
 
-		public AquariumModel(ILogger<AquariumModel> logger, HomeServerDbContext db) {
+		public AquariumModel(ILogger<AquariumModel> logger, HomeServerDbContext db, IHubContext<DashboardHub> hubContext) {
 			this._logger = logger;
 			this._db = db;
+			this._hubContext = hubContext;
 		}
 
 		public async Task RegisterWaterStateAsync(WaterStateRequestDto waterState) {
@@ -31,6 +35,23 @@ namespace Back.Models.Aquarium {
 				Temperature = waterState.Temperature
 			});
 			await this._db.SaveChangesAsync();
+			await this._hubContext.Clients.All.SendAsync(
+				DashboardHub.GetMethodName(DashboardHub.Method.AquaStateChanged),
+				DateTime.Parse(waterState.TimeStamp),
+				waterState.WaterTemperature,
+				waterState.Humidity,
+				waterState.Temperature);
+		}
+
+		public async Task SendLatestWaterState() {
+			var waterState = await this._db.WaterStates.OrderByDescending(x => x.TimeStamp).FirstAsync();
+
+			await this._hubContext.Clients.All.SendAsync(
+				DashboardHub.GetMethodName(DashboardHub.Method.AquaStateChanged),
+				waterState.TimeStamp,
+				waterState.WaterTemperature,
+				waterState.Humidity,
+				waterState.Temperature);
 		}
 
 		/// <summary>

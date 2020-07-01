@@ -1,0 +1,23 @@
+<div style="padding: 5px;">
+  <h2>最終取得日時 : {{waterState?.time}}</h2>
+  <nz-space>
+    <nz-space-item>
+      <nz-card style="width:300px;" [nzBordered]="false" nzTitle="水温">
+        <nz-progress nzStrokeLinecap="round" nzType="dashboard" nzPercent="{{waterState?.waterTemperature * 2}}"
+          [nzStrokeColor]="temperatureStrokeColor" [nzFormat]="formatFunc"></nz-progress>
+      </nz-card>
+    </nz-space-item>
+    <nz-space-item>
+      <nz-card style=" width:300px;" [nzBordered]="false" nzTitle="気温">
+        <nz-progress nzStrokeLinecap="round" nzType="dashboard" nzPercent="{{waterState?.temperature * 2}}"
+          [nzStrokeColor]="temperatureStrokeColor" [nzFormat]="formatFunc"></nz-progress>
+      </nz-card>
+    </nz-space-item>
+    <nz-space-item>
+      <nz-card style=" width:300px;" [nzBordered]="false" nzTitle="湿度">
+        <nz-progress nzStrokeLinecap="round" nzType="circle" nzPercent="{{waterState?.humidity}}"
+          [nzFormat]="humidityFormatFunc"></nz-progress>
+      </nz-card>
+    </nz-space-item>
+  </nz-space>
+</div>
