@@ -15,6 +15,7 @@ import { KitchenComponent } from './pages/kitchen/kitchen.component';
 import { KitchenTopComponent } from './pages/kitchen/kitchen-top/kitchen-top.component';
 import { AquariumComponent } from './pages/aquarium/aquarium.component';
 import { AquariumTopComponent } from './pages/aquarium/aquarium-top/aquarium-top.component';
+import { AquariumPastComponent } from './pages/aquarium/aquarium-past/aquarium-past.component';
 
 const routes: Routes = [
   {
@@ -28,6 +29,10 @@ const routes: Routes = [
           {
             path: "",
             component: AquariumTopComponent,
+          },
+          {
+            path: "past",
+            component: AquariumPastComponent,
           },
         ],
       },

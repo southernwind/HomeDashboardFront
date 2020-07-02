@@ -57,8 +57,8 @@ namespace Back.Controllers {
 
 		[HttpPost]
 		[ActionName("post-request-send-latest-water-state")]
-		public async Task PostRequestSendLatestWaterStateAsync() {
-			await this._aquariumModel.SendLatestWaterState();
+		public async Task PostRequestSendLatestWaterStateAsync([FromBody] RequestSendLatestWaterStateRequestDto dto) {
+			await this._aquariumModel.SendLatestWaterState(dto.ConnectionId);
 		}
 	}
 }

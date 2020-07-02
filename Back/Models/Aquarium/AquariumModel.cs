@@ -43,10 +43,10 @@ namespace Back.Models.Aquarium {
 				waterState.Temperature);
 		}
 
-		public async Task SendLatestWaterState() {
+		public async Task SendLatestWaterState(string connectionId) {
 			var waterState = await this._db.WaterStates.OrderByDescending(x => x.TimeStamp).FirstAsync();
 
-			await this._hubContext.Clients.All.SendAsync(
+			await this._hubContext.Clients.Client(connectionId).SendAsync(
 				DashboardHub.GetMethodName(DashboardHub.Method.AquaStateChanged),
 				waterState.TimeStamp,
 				waterState.WaterTemperature,

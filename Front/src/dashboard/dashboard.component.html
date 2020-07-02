@@ -16,9 +16,11 @@
           <li nz-menu-item routerLink="network/wake-on-lan">Wake on LAN</li>
         </ul>
       </li>
-      <li nz-menu-item>
-        <i nz-icon nzType="qq" nzTheme="outline"></i>
-        <a routerLink="aquarium">アクアリウム</a>
+      <li nz-submenu nzTitle="アクアリウム" nzIcon="qq">
+        <ul>
+          <li nz-menu-item routerLink="aquarium/">Top</li>
+          <li nz-menu-item routerLink="aquarium/past">過去分</li>
+        </ul>
       </li>
       <li nz-menu-item>
         <i nz-icon nzType="book" nzTheme="outline"></i>

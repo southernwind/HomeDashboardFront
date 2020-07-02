@@ -1,14 +1,9 @@
 <div>
-  <div>
-    <current-water-states></current-water-states>
-  </div>
   <nz-space>
     <nz-space-item>
-      <nz-select style="width:120px;" [(ngModel)]="selectedTerm"
-        (ngModelChange)="selectedTermChanged()">
-        <nz-option *ngFor="let item of termCandidate" [nzValue]="item" nzLabel="{{item.value}} {{item.unit}}">
-        </nz-option>
-      </nz-select>
+      <date-range-selector [(dateRange)]="selectedDateRange" (dateRangeChange)="selectedDateChanged()"
+        [showTime]="true">
+      </date-range-selector>
     </nz-space-item>
     <nz-space-item>
       <aqua-period-selector [(period)]="selectedPeriod" (periodChange)="selectedPeriodChanged()"></aqua-period-selector>

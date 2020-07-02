@@ -15,9 +15,32 @@ export class AquariumTopComponent extends DashboardParentComponent {
    * 選択中日付範囲
    *
    * @type {DateRange}
-   * @memberof AssetComponent
+   * @memberof AquariumTopComponent
    */
   public selectedDateRange: DateRange = null;
+
+  public selectedTerm: {
+    value: string,
+    unit: moment.unitOfTime.DurationConstructor
+  } = null;
+
+  public termCandidate: {
+    value: string,
+    unit: moment.unitOfTime.DurationConstructor
+  }[] = [
+      { value: "1", unit: "hours" },
+      { value: "6", unit: "hours" },
+      { value: "12", unit: "hours" },
+      { value: "1", unit: "days" },
+      { value: "3", unit: "days" },
+      { value: "7", unit: "days" },
+      { value: "14", unit: "days" },
+      { value: "1", unit: "month" },
+      { value: "6", unit: "month" },
+      { value: "1", unit: "year" },
+      { value: "3", unit: "year" },
+      { value: "10", unit: "year" },
+    ]
 
   /**
    * 選択中ピリオド
@@ -31,32 +54,28 @@ export class AquariumTopComponent extends DashboardParentComponent {
     super();
     this.onInit
       .pipe(untilDestroyed(this))
-      .subscribe(async () => {
-        if (this.selectedDateRange === null) {
-          let from: Moment;
-          if (this.cookieService.check("aquaStartDate")) {
-            from = moment(this.cookieService.get("aquaStartDate"));
+      .subscribe(() => {
+        if (this.selectedTerm === null) {
+          const term = {
+            value: null,
+            unit: null
+          };
+          if (this.cookieService.check("aquaTermValue")) {
+            term.value = this.cookieService.get("aquaTermValue");
           } else {
-            from = moment().add(-7, 'day').startOf("month");
+            term.value = "2";
+          }
+          if (this.cookieService.check("aquaTermUnit")) {
+            term.unit = this.cookieService.get("aquaTermUnit");
+          } else {
+            term.unit = "days";
           }
 
-          let to: Moment;
-          if (this.cookieService.check("aquaEndDate")) {
-            const endDateString = this.cookieService.get("aquaEndDate");
-            if (endDateString === "today") {
-              to = moment();
-            } else {
-              to = moment(this.cookieService.get("endDate"));
-            }
-          } else {
-            to = moment();
-          }
-
-          this.selectedDateRange = { startDate: from, endDate: to };
-          await this.selectedDateChanged();
+          this.selectedTerm = this.termCandidate.find(x => x.value == term.value && x.unit == term.unit);
+          this.selectedTermChanged();
         }
         if (this.selectedPeriod === null) {
-          if (this.cookieService.check("aquaStartDate")) {
+          if (this.cookieService.check("aquaPeriod")) {
             this.selectedPeriod = Number(this.cookieService.get("aquaPeriod"));
           } else {
             this.selectedPeriod = 1800;
@@ -65,11 +84,15 @@ export class AquariumTopComponent extends DashboardParentComponent {
       });
   }
 
-  public async selectedDateChanged(): Promise<void> {
-    this.cookieService.set("aquaStartDate", this.selectedDateRange.startDate.format("YYYY-MM-DD HH:mm:ss"));
-    this.cookieService.set("aquaEndDate", this.selectedDateRange.endDate.format("YYYY-MM-DD") === moment().format("YYYY-MM-DD") ? "today" : this.selectedDateRange.endDate.format("YYYY-MM-DD HH:mm:ss"));
+  public selectedTermChanged(): void {
+    this.cookieService.set("aquaTermValue", this.selectedTerm?.value);
+    this.cookieService.set("aquaTermUnit", this.selectedTerm?.unit);
+    this.selectedDateRange = {
+      startDate: moment().add(`-${this.selectedTerm.value}`, this.selectedTerm.unit),
+      endDate: moment()
+    }
   }
-  public async selectedPeriodChanged(): Promise<void> {
+  public selectedPeriodChanged(): void {
     this.cookieService.set("aquaPeriod", this.selectedPeriod.toString());
   }
 }

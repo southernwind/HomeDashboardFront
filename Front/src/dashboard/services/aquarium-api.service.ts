@@ -22,6 +22,6 @@ export class AquariumApiService {
 
   public async requestSendLastWaterState(): Promise<void> {
     await this.dashboardService.signalrConnected.toPromise();
-    await this.http.post<any>(`${environment.apiUrl}api/aquarium-api/post-request-send-latest-water-state`, {}).pipe(first()).toPromise();
+    await this.http.post<any>(`${environment.apiUrl}api/aquarium-api/post-request-send-latest-water-state`, { connectionId: this.dashboardService.signalRConnectionId }).pipe(first()).toPromise();
   }
 }

@@ -11,6 +11,10 @@ import { map, first } from 'rxjs/operators';
 })
 export class DashboardService {
   private signalRConnection: HubConnection = null;
+  public get signalRConnectionId(): string {
+    return this.signalRConnection?.connectionId;
+  }
+
   constructor() {
   }
   private signalrConnectedSubject = new Subject<void>();
