@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Back.Hubs;
 using Back.Models.Aquarium.RequestDto;
 using Back.Models.Aquarium.ResponseDto;
+using Back.States;
 
 using Dapper;
 
@@ -12,19 +12,20 @@ using Database.Tables;
 
 using DataBase;
 
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 namespace Back.Models.Aquarium {
 	public class AquariumModel {
 		private readonly ILogger<AquariumModel> _logger;
 		private readonly HomeServerDbContext _db;
-		private readonly IHubContext<DashboardHub> _hubContext;
+		private readonly Store _store;
 
-		public AquariumModel(ILogger<AquariumModel> logger, HomeServerDbContext db, IHubContext<DashboardHub> hubContext) {
+		public AquariumModel(ILogger<AquariumModel> logger, HomeServerDbContext db, Store store) {
 			this._logger = logger;
 			this._db = db;
-			this._hubContext = hubContext;
+			this._store = store;
+
+
 		}
 
 		public async Task RegisterWaterStateAsync(WaterStateRequestDto waterState) {
@@ -35,23 +36,19 @@ namespace Back.Models.Aquarium {
 				Temperature = waterState.Temperature
 			});
 			await this._db.SaveChangesAsync();
-			await this._hubContext.Clients.All.SendAsync(
-				DashboardHub.GetMethodName(DashboardHub.Method.AquaStateChanged),
-				DateTime.Parse(waterState.TimeStamp),
-				waterState.WaterTemperature,
-				waterState.Humidity,
-				waterState.Temperature);
+			this._store.Aquarium.LatestTimeStamp.Value = DateTime.Parse(waterState.TimeStamp);
+			this._store.Aquarium.LatestWaterTemperature.Value = waterState.WaterTemperature;
+			this._store.Aquarium.LatestHumidity.Value = waterState.Humidity;
+			this._store.Aquarium.LatestTemperature.Value = waterState.Temperature;
 		}
 
-		public async Task SendLatestWaterState(string connectionId) {
-			var waterState = await this._db.WaterStates.OrderByDescending(x => x.TimeStamp).FirstAsync();
-
-			await this._hubContext.Clients.Client(connectionId).SendAsync(
-				DashboardHub.GetMethodName(DashboardHub.Method.AquaStateChanged),
-				waterState.TimeStamp,
-				waterState.WaterTemperature,
-				waterState.Humidity,
-				waterState.Temperature);
+		public WaterState GetLatestWaterState() {
+			return new WaterState {
+				TimeStamp = this._store.Aquarium.LatestTimeStamp.Value,
+				WaterTemperature = this._store.Aquarium.LatestWaterTemperature.Value,
+				Humidity = this._store.Aquarium.LatestHumidity.Value,
+				Temperature = this._store.Aquarium.LatestTemperature.Value
+			};
 		}
 
 		/// <summary>

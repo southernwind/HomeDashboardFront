@@ -1,6 +1,8 @@
 
 using System;
 
+using Back.States;
+
 using DataBase;
 
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +15,7 @@ namespace Back {
 		public static void Main(string[] args) {
 			var host = CreateHostBuilder(args).Build();
 			CreateDbIfNotExists(host);
+			StartMonitoring(host);
 			host.Run();
 		}
 
@@ -25,6 +28,16 @@ namespace Back {
 			} catch (Exception ex) {
 				var logger = services.GetRequiredService<ILogger<Program>>();
 				logger.LogError(ex, "An error occurred creating the DB.");
+			}
+		}
+		private static void StartMonitoring(IHost host) {
+			using var scope = host.Services.CreateScope();
+			var services = scope.ServiceProvider;
+			try {
+				var context = services.GetRequiredService<Monitor>();
+			} catch (Exception ex) {
+				var logger = services.GetRequiredService<ILogger<Program>>();
+				logger.LogError(ex, "An error occurred start Monitoring.");
 			}
 		}
 

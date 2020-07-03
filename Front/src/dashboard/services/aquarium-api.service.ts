@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import { Observable, defer, Subject } from "rxjs";
-import { first, map } from 'rxjs/operators';
+import { Observable } from "rxjs";
+import { first } from 'rxjs/operators';
 import { environment } from "../../environments/environment";
 import { WaterState, CurrentWaterState } from '../models/water-state.model';
 import { DashboardService } from './dashboard.service';
@@ -20,8 +20,7 @@ export class AquariumApiService {
     return this.dashboardService.aquaStateChangedObservable();
   }
 
-  public async requestSendLastWaterState(): Promise<void> {
-    await this.dashboardService.signalrConnected.toPromise();
-    await this.http.post<any>(`${environment.apiUrl}api/aquarium-api/post-request-send-latest-water-state`, { connectionId: this.dashboardService.signalRConnectionId }).pipe(first()).toPromise();
+  public getLatestWaterState(): Observable<CurrentWaterState> {
+    return this.http.get<CurrentWaterState>(`${environment.apiUrl}api/aquarium-api/get-latest-water-state`).pipe(first());
   }
 }

@@ -18,7 +18,7 @@ export interface WaterState {
 }
 
 export interface CurrentWaterState {
-  time: string,
+  timeStamp: string,
   waterTemperature: number,
   temperature: number,
   humidity: number

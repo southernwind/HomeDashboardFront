@@ -30,9 +30,9 @@ export class DashboardService {
     return defer(() => {
       this.createSignalRConnection();
       const subject = new Subject<CurrentWaterState>();
-      this.signalRConnection.on("aqua-state-changed", (time: string, waterTemperature: number, humidity: number, temperature: number) => {
+      this.signalRConnection.on("aqua-state-changed", (timeStamp: string, waterTemperature: number, humidity: number, temperature: number) => {
         subject.next({
-          time,
+          timeStamp,
           waterTemperature,
           humidity,
           temperature

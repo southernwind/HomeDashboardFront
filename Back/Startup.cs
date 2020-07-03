@@ -8,6 +8,8 @@ using Back.Models.Financial;
 using Back.Models.Kitchen;
 using Back.Models.Network;
 using Back.Models.Settings;
+using Back.States;
+using Back.States.Monitors.Aquarium;
 
 using DataBase;
 
@@ -67,6 +69,9 @@ namespace Back {
 			services.AddHttpClient();
 
 			services.AddSingleton<Updater>();
+			services.AddSingleton<Store>();
+			services.AddSingleton<Monitor>();
+			services.AddTransient<AquariumMonitor>();
 			services.AddTransient<FinancialModel>();
 			services.AddTransient<SettingsModel>();
 			services.AddTransient<NetworkModel>();

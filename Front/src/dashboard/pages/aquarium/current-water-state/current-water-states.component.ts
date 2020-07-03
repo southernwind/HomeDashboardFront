@@ -4,6 +4,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { AquariumApiService } from '../../../services/aquarium-api.service';
 import { CurrentWaterState } from '../../../models/water-state.model';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { catchError } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -22,7 +23,11 @@ export class CurrentWaterStatesComponent extends DashboardParentComponent {
       .pipe(untilDestroyed(this))
       .subscribe(x => this.waterState = x);
     this.aquariumApiService
-      .requestSendLastWaterState().catch(() => {
+      .getLatestWaterState()
+      .pipe(untilDestroyed(this))
+      .subscribe(x => {
+        this.waterState = x;
+      }, () => {
         this.message.error("通信失敗");
       });
   }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -10,6 +10,9 @@
     <PackageReference Include="HtmlAgilityPack" />
     <PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />
+    <PackageReference Include="ReactiveProperty" />
+    <PackageReference Include="System.Reactive" />
+    <PackageReference Include="Slack.Webhooks" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Database\Database.csproj" />

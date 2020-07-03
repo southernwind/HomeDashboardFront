@@ -55,10 +55,10 @@ namespace Back.Controllers {
 		}
 
 
-		[HttpPost]
-		[ActionName("post-request-send-latest-water-state")]
-		public async Task PostRequestSendLatestWaterStateAsync([FromBody] RequestSendLatestWaterStateRequestDto dto) {
-			await this._aquariumModel.SendLatestWaterState(dto.ConnectionId);
+		[HttpGet]
+		[ActionName("get-latest-water-state")]
+		public JsonResult GetLatestWaterStateAsync() {
+			return new JsonResult(this._aquariumModel.GetLatestWaterState());
 		}
 	}
 }
