@@ -40,6 +40,7 @@ import { WaterStatesComponent } from './pages/aquarium/water-states/water-states
 import { AquaPeriodSelectorComponent } from './pages/aquarium/aquaPeriodSelector/aqua-period-selector.component';
 import { CurrentWaterStatesComponent } from './pages/aquarium/current-water-state/current-water-states.component';
 import { AquariumPastComponent } from './pages/aquarium/aquarium-past/aquarium-past.component';
+import { NetworkDiagramComponent } from './pages/network/network-diagram/network-diagram.component';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -71,6 +72,7 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     NetworkTopComponent,
     WakeOnLanComponent,
     DhcpLeasesComponent,
+    NetworkDiagramComponent,
     KitchenComponent,
     KitchenTopComponent,
     AquariumComponent,

@@ -1,5 +1,4 @@
-<div style="padding: 5px;">
-  <h2>最終取得日時 : {{waterState?.timeStamp}}</h2>
+<div style="padding: 5px;display:inline-block;">
   <nz-space>
     <nz-space-item>
       <nz-card style="width:300px;" [nzBordered]="false" nzTitle="水温">
@@ -20,4 +19,7 @@
       </nz-card>
     </nz-space-item>
   </nz-space>
+  <div style="padding:5px;text-align: right;">
+    <span>{{waterState?.timeStamp}}時点</span>
+  </div>
 </div>

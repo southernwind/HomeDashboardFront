@@ -16,6 +16,7 @@ import { KitchenTopComponent } from './pages/kitchen/kitchen-top/kitchen-top.com
 import { AquariumComponent } from './pages/aquarium/aquarium.component';
 import { AquariumTopComponent } from './pages/aquarium/aquarium-top/aquarium-top.component';
 import { AquariumPastComponent } from './pages/aquarium/aquarium-past/aquarium-past.component';
+import { NetworkDiagramComponent } from './pages/network/network-diagram/network-diagram.component';
 
 const routes: Routes = [
   {
@@ -83,6 +84,10 @@ const routes: Routes = [
           {
             path: "wake-on-lan",
             component: WakeOnLanComponent,
+          },
+          {
+            path: "diagram",
+            component: NetworkDiagramComponent,
           }
         ],
       },
