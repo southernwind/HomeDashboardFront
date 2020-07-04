@@ -3,13 +3,13 @@
   <nz-space>
     <nz-space-item>
       <nz-card style="width:300px;" [nzBordered]="false" nzTitle="水温">
-        <nz-progress nzStrokeLinecap="round" nzType="dashboard" nzPercent="{{waterState?.waterTemperature * 2}}"
+        <nz-progress nzStrokeLinecap="round" nzType="dashboard" nzPercent="{{(waterState?.waterTemperature-15) * 5}}"
           [nzStrokeColor]="temperatureStrokeColor" [nzFormat]="formatFunc"></nz-progress>
       </nz-card>
     </nz-space-item>
     <nz-space-item>
       <nz-card style=" width:300px;" [nzBordered]="false" nzTitle="気温">
-        <nz-progress nzStrokeLinecap="round" nzType="dashboard" nzPercent="{{waterState?.temperature * 2}}"
+        <nz-progress nzStrokeLinecap="round" nzType="dashboard" nzPercent="{{(waterState?.temperature-15) * 5}}"
           [nzStrokeColor]="temperatureStrokeColor" [nzFormat]="formatFunc"></nz-progress>
       </nz-card>
     </nz-space-item>

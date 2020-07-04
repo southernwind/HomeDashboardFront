@@ -14,7 +14,7 @@ import { catchError } from 'rxjs/operators';
 export class CurrentWaterStatesComponent extends DashboardParentComponent {
   public waterState: CurrentWaterState = null;
   public temperatureStrokeColor = { '0%': '#1e90ff', '100%': '#ff4500' };
-  public formatFunc = (percent: number) => `${(percent / 2).toFixed(3)} ℃`;
+  public formatFunc = (percent: number) => `${(percent / 5 + 15).toFixed(3)} ℃`;
   public humidityFormatFunc = (percent: number) => `${percent.toFixed(3)} %`;
   constructor(private message: NzMessageService, private aquariumApiService: AquariumApiService) {
     super();
