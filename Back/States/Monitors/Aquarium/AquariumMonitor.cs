@@ -45,7 +45,7 @@ namespace Back.States.Monitors.Aquarium {
 			store
 				.Aquarium
 				.LatestTemperature
-				.Where(x => x >= 30 && x >= this._store.Aquarium.LastWarnedTemperature.Value + 1)
+				.Where(x => x >= 30 && x >= this._store.Aquarium.LastWarnedTemperature.Value + 0.5)
 				.Subscribe(async x => {
 					this._store.Aquarium.LastWarnedTemperature.Value = x;
 					await slackClient.PostAsync(new SlackMessage { Text = $"室温警告 : {x:##.000}℃", Username = "水槽監視員" });
@@ -70,7 +70,7 @@ namespace Back.States.Monitors.Aquarium {
 			store
 				.Aquarium
 				.LatestWaterTemperature
-				.Where(x => x >= 29 && x >= this._store.Aquarium.LastWarnedWaterTemperature.Value + 1)
+				.Where(x => x >= 29 && x >= this._store.Aquarium.LastWarnedWaterTemperature.Value + 0.5)
 				.Subscribe(async x => {
 					this._store.Aquarium.LastWarnedWaterTemperature.Value = x;
 					await slackClient.PostAsync(new SlackMessage { Text = $"水温警告 : {x:##.000}℃", Username = "水槽監視員" });
