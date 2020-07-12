@@ -16,12 +16,15 @@ namespace Back.States.Monitors.Aquarium {
 		private readonly Store _store;
 		private readonly IHubContext<DashboardHub> _hubContext;
 		private readonly CompositeDisposable _compositeDisposable = new CompositeDisposable();
-		private readonly string _webHookUrl;
+		private readonly string _aquaWebHookUrl;
+		private readonly string _errorWebHookUrl;
 		public AquariumMonitor(Store store, IHubContext<DashboardHub> hubContext, IConfiguration configuration) {
 			this._store = store;
 			this._hubContext = hubContext;
-			this._webHookUrl = configuration.GetSection("WebHookUrl").GetSection("AquariumSlack").Get<string>();
-			var slackClient = new SlackClient(this._webHookUrl).AddTo(this._compositeDisposable);
+			this._aquaWebHookUrl = configuration.GetSection("WebHookUrl").GetSection("AquariumSlack").Get<string>();
+			this._errorWebHookUrl = configuration.GetSection("WebHookUrl").GetSection("ErrorSlack").Get<string>();
+			var slackClient = new SlackClient(this._aquaWebHookUrl).AddTo(this._compositeDisposable);
+			var errorSlackClient = new SlackClient(this._errorWebHookUrl).AddTo(this._compositeDisposable);
 			// 更新値通知
 			this._store
 				.Aquarium
@@ -56,7 +59,7 @@ namespace Back.States.Monitors.Aquarium {
 				.Aquarium
 				.LatestTemperature
 				.Where(_ => this._store.Aquarium.LastWarnedTemperature.Value >= 29)
-				.Where(x => x <= 29 || x <= this._store.Aquarium.LastWarnedTemperature.Value - 0.5)
+				.Where(x => x < 29 || x <= this._store.Aquarium.LastWarnedTemperature.Value - 0.5)
 				.Subscribe(async x => {
 					this._store.Aquarium.LastWarnedTemperature.Value = x;
 					if (x < 29) {
@@ -81,7 +84,7 @@ namespace Back.States.Monitors.Aquarium {
 				.Aquarium
 				.LatestWaterTemperature
 				.Where(_ => this._store.Aquarium.LastWarnedWaterTemperature.Value >= 28)
-				.Where(x => x <= 28 || x <= this._store.Aquarium.LastWarnedWaterTemperature.Value - 0.5)
+				.Where(x => x < 28 || x <= this._store.Aquarium.LastWarnedWaterTemperature.Value - 0.5)
 				.Subscribe(async x => {
 					this._store.Aquarium.LastWarnedWaterTemperature.Value = x;
 					if (x < 28) {
@@ -91,6 +94,13 @@ namespace Back.States.Monitors.Aquarium {
 					}
 
 				}).AddTo(this._compositeDisposable);
+
+			store.Aquarium
+				.LatestWaterTemperature
+				.Throttle(TimeSpan.FromMinutes(10))
+				.Subscribe(async _ => {
+					await errorSlackClient.PostAsync(new SlackMessage { Text = "10分間水温を受信していません。" });
+				});
 		}
 
 
