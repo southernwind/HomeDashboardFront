@@ -97,7 +97,7 @@ namespace Back.Models.Financial {
 					var deleteTransactionList = db.MfTransactions.Where(t => ids.Contains(t.TransactionId));
 					db.MfTransactions.RemoveRange(deleteTransactionList);
 					await db.MfTransactions.AddRangeAsync(mt);
-					this._logger.LogDebug($"{mt.First()?.Date:yyyy/MM}取引履歴{mt.Length}件登録");
+					this._logger.LogInformation($"{mt.First()?.Date:yyyy/MM}取引履歴{mt.Length}件登録");
 					mtCount += mt.Length;
 					progress.Report(90 + ((mt.First().Date.Ticks - from.Ticks) * 9 / denominator));
 				}
