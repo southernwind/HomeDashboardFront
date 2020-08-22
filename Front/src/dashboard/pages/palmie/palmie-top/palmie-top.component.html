@@ -1,0 +1,36 @@
+<div>
+  <nz-input-group nzSearch nzSize="large" [nzSuffix]="suffixIconSearch">
+    <input type="text" nz-input placeholder="input search text"
+      [ngModel]="searchWord"
+      (ngModelChange)="searchWordUpdate($event)" />
+  </nz-input-group>
+  <ng-template #suffixIconSearch>
+    <i nz-icon nzType="search"></i>
+  </ng-template>
+  <div nz-row [nzGutter]="12">
+    <div *ngFor="let dailyLesson of dailyLessons" nz-col [nzXXl]="3" [nzXl]="4" [nzLg]="6" [nzMd]="8" [nzSm]="12">
+      <nz-card routerLink="{{dailyLesson.course.id}}" [nzCover]="coverTemplate"
+        title="{{dailyLesson.course.title}}">
+        <h4>{{dailyLesson.course.title}}</h4>
+        <div>Level: [{{dailyLesson.level}}]</div>
+      </nz-card>
+      <ng-template #coverTemplate>
+        <div class="card-header">
+          <img alt="example" hei src="{{dailyLesson.chapter.slide.url}}" />
+        </div>
+      </ng-template>
+    </div>
+    <div *ngFor="let primeLesson of primeLessons" nz-col [nzXXl]="3" [nzXl]="4" [nzLg]="6" [nzMd]="8" [nzSm]="12">
+      <nz-card routerLink="{{primeLesson.course.id}}" [nzCover]="coverTemplate"
+        title="{{primeLesson.course.title}}">
+        <h4>{{primeLesson.course.title}}</h4>
+        <div>Level: [{{primeLesson.level}}]</div>
+      </nz-card>
+      <ng-template #coverTemplate>
+        <div class="card-header">
+          <img alt="example" hei src="{{primeLesson.slide.url}}" />
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

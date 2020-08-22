@@ -88,7 +88,7 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
           tooltip: {
             ...HighchartsOptions.defaultOptions.tooltip,
             formatter: function () {
-              return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
+              return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円<br>(${this.percentage.toFixed(3)}%)`;
             }
           },
           legend: {

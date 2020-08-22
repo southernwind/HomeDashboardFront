@@ -1,0 +1,50 @@
+<ng-container *ngIf="lesson">
+  <h2>{{lesson.course.title}}</h2>
+  <div nz-row nzGutter="16">
+    <div nz-col nzFlex="auto">
+      <div>
+        <video src="{{videoUrl}}" controls autoplay width="100%" #video></video>
+      </div>
+      <div>
+        <input nz-input placeholder="再生速度" nzSize="small" [(ngModel)]="playbackRate" inputmode="numeric"
+          (ngModelChange)="playbackRateChange($event)" style="width:100px; text-align: right;" />
+        <span>倍速</span>
+      </div>
+    </div>
+    <div nz-col nzFlex="250px">
+      <div *ngIf="dailyLesson">
+        <div *ngIf="dailyLesson.course.supplementUrl?.length || dailyLesson.course.supplementPdfUrl?.length">
+          <div *ngIf="dailyLesson.course.supplementUrl?.length">
+            <a download href="{{documentsUrl}}{{dailyLesson.course.supplementUrl}}"> 資料ダウンロード </a>
+          </div>
+          <div *ngIf="dailyLesson.course.supplementPdfUrl?.length">
+            <a download href="{{documentsUrl}}{{dailyLesson.course.supplementPdfUrl}}" target="_blank"> PDF資料ダウンロード </a>
+          </div>
+        </div>
+        <nz-list
+          *ngFor="let dLesson of dailyLesson.dailyLessons">
+          <nz-list-header>
+            <h3>{{dLesson.title}}</h3>
+            <div>{{dLesson.description}}</div>
+          </nz-list-header>
+          <nz-list-item *ngFor="let chapter of dLesson.chapters">
+            <a (click)="setVideo(chapter.videoId)"><i nz-icon nzType="check-circle"
+                nzTheme="outline"></i>{{chapter.title}}</a>
+          </nz-list-item>
+        </nz-list>
+      </div>
+      <div *ngIf="primeLesson">
+        <nz-list>
+          <nz-list-item *ngFor="let pLesson of primeLesson.primeLessons">
+            <div>
+              <a (click)="setVideoFromPrimeLessonId(pLesson.id)" style="display:block;">
+                <h3>{{pLesson.title}}</h3>
+              </a>
+              <div>{{pLesson.description}}</div>
+            </div>
+          </nz-list-item>
+        </nz-list>
+      </div>
+    </div>
+  </div>
+</ng-container>

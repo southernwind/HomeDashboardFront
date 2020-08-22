@@ -41,6 +41,9 @@ import { AquaPeriodSelectorComponent } from './pages/aquarium/aquaPeriodSelector
 import { CurrentWaterStatesComponent } from './pages/aquarium/current-water-state/current-water-states.component';
 import { AquariumPastComponent } from './pages/aquarium/aquarium-past/aquarium-past.component';
 import { NetworkDiagramComponent } from './pages/network/network-diagram/network-diagram.component';
+import { PalmieComponent } from './pages/palmie/palmie.component';
+import { PalmieTopComponent } from './pages/palmie/palmie-top/palmie-top.component';
+import { PalmieCourseComponent } from './pages/palmie/palmie-course/palmie-course.component';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -80,7 +83,10 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     AquariumPastComponent,
     AquaPeriodSelectorComponent,
     WaterStatesComponent,
-    CurrentWaterStatesComponent
+    CurrentWaterStatesComponent,
+    PalmieComponent,
+    PalmieTopComponent,
+    PalmieCourseComponent
   ],
   imports: [
     FormsModule,

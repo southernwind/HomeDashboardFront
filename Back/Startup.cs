@@ -7,6 +7,7 @@ using Back.Models.Common;
 using Back.Models.Financial;
 using Back.Models.Kitchen;
 using Back.Models.Network;
+using Back.Models.Palmie;
 using Back.Models.Settings;
 using Back.States;
 using Back.States.Monitors.Aquarium;
@@ -77,6 +78,7 @@ namespace Back {
 			services.AddTransient<NetworkModel>();
 			services.AddTransient<KitchenModel>();
 			services.AddTransient<AquariumModel>();
+			services.AddTransient<PalmieModel>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

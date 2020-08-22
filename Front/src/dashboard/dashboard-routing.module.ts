@@ -17,6 +17,9 @@ import { AquariumComponent } from './pages/aquarium/aquarium.component';
 import { AquariumTopComponent } from './pages/aquarium/aquarium-top/aquarium-top.component';
 import { AquariumPastComponent } from './pages/aquarium/aquarium-past/aquarium-past.component';
 import { NetworkDiagramComponent } from './pages/network/network-diagram/network-diagram.component';
+import { PalmieComponent } from './pages/palmie/palmie.component';
+import { PalmieTopComponent } from './pages/palmie/palmie-top/palmie-top.component';
+import { PalmieCourseComponent } from './pages/palmie/palmie-course/palmie-course.component';
 
 const routes: Routes = [
   {
@@ -68,6 +71,20 @@ const routes: Routes = [
             component: KitchenTopComponent,
           },
         ],
+      },
+      {
+        path: "palmie",
+        component: PalmieComponent,
+        children: [
+          {
+            path: "",
+            component: PalmieTopComponent
+          },
+          {
+            path: ":id",
+            component: PalmieCourseComponent
+          }
+        ]
       },
       {
         path: "network",

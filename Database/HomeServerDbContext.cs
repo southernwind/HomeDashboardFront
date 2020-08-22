@@ -65,6 +65,14 @@ namespace DataBase {
 		} = null!;
 
 		/// <summary>
+		/// パルミー動画
+		/// </summary>
+		public DbSet<Palmie> Palmies {
+			get;
+			set;
+		} = null!;
+
+		/// <summary>
 		/// コンストラクタ
 		/// </summary>
 		/// <param name="options">DbContextOptions</param>
@@ -84,6 +92,8 @@ namespace DataBase {
 			modelBuilder.Entity<Recipe>().HasKey(x => x.Id);
 			modelBuilder.Entity<Recipe>().Property(x => x.Id).ValueGeneratedOnAdd();
 			modelBuilder.Entity<WaterState>().HasKey(x => x.TimeStamp);
+			modelBuilder.Entity<Palmie>().HasKey(x => x.Id);
+			modelBuilder.Entity<Palmie>().Property(x => x.Id).ValueGeneratedOnAdd();
 		}
 	}
 }
