@@ -1,8 +1,9 @@
 import { ParentComponent } from 'src/components/parent/parent.component';
-import { OnInit, OnDestroy, OnChanges, DoCheck, AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked, SimpleChanges } from '@angular/core';
+import { OnInit, OnDestroy, OnChanges, DoCheck, AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked, SimpleChanges, Directive } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 
-export class DashboardParentComponent extends ParentComponent implements OnInit, OnChanges, DoCheck, AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked, OnDestroy {
+@Directive()
+export abstract class DashboardParentComponent extends ParentComponent implements OnInit, OnChanges, DoCheck, AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked, OnDestroy {
   private onInitSubject;
   protected get onInit(): Observable<void> {
     if (!this.onInitSubject) {

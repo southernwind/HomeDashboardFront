@@ -1,5 +1,5 @@
-import { OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Directive } from '@angular/core';
 
-export class ParentComponent {
+@Directive()
+export abstract class ParentComponent {
 }
