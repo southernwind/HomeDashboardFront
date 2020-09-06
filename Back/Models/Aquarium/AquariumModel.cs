@@ -63,39 +63,69 @@ namespace Back.Models.Aquarium {
 			parameters.Add("@period", period);
 			parameters.Add("@from", from);
 			parameters.Add("@to", to);
-			return (await this._db.Database.GetDbConnection().QueryAsync<WaterStateResponseDto>($@"
-SELECT
-	*
-FROM
-	(
-		SELECT 
-		    DATE_FORMAT(from_unixtime(round(unix_timestamp(`TimeStamp` ) div @period) * @period),""%Y-%m-%d %T"") as Time,
-		    MIN(WaterTemperature ) over (partition by Time)  as MinWaterTemperature,
-		    PERCENTILE_CONT(0.25) within group ( order by WaterTemperature ) over (partition by Time) as LowerQuartileWaterTemperature,
-		    median(WaterTemperature ) over (partition by Time) as MedianWaterTemperature,
-		    PERCENTILE_CONT(0.75) within group ( order by WaterTemperature ) over (partition by Time) as UpperQuartileWaterTemperature,
-		    MAX(WaterTemperature ) over (partition by Time)  as MaxWaterTemperature,
-		    MIN(Temperature ) over (partition by Time) as MinTemperature,
-		    PERCENTILE_CONT(0.25) within group ( order by Temperature ) over (partition by Time) as LowerQuartileTemperature,
-		    median(Temperature ) over (partition by Time) as MedianTemperature,
-		    PERCENTILE_CONT(0.75) within group ( order by Temperature ) over (partition by Time) as UpperQuartileTemperature,
-		    MAX(Temperature ) over (partition by Time) as MaxTemperature,
-		    MIN(Humidity ) over (partition by Time) as MinHumidity,
-		    PERCENTILE_CONT(0.25) within group ( order by Humidity ) over (partition by Time) as LowerQuartileHumidity,
-		    median(Humidity ) over (partition by Time) as MedianHumidity,
-		    PERCENTILE_CONT(0.75) within group ( order by Humidity ) over (partition by Time) as UpperQuartileHumidity,
-		    MAX(Humidity ) over (partition by Time) as MaxHumidity
-		FROM 
-		    WaterStates
-		WHERE
-			`TimeStamp` BETWEEN @from AND @to
-	) as t1
-GROUP BY 
-    t1.Time
-ORDER BY
-	t1.Time
-", parameters)).ToArray();
+			var records = await
+				this._db.WaterStates
+					.Where(x => x.TimeStamp >= DateTime.Parse(from) && x.TimeStamp <= DateTime.Parse(to))
+					.OrderBy(x => x.TimeStamp)
+					.ToArrayAsync();
 
+			double median(double[] data) {
+				var i = (data.Length / 2d) - 0.5;
+				if (i % 1 == 0) {
+					return data[(int)i];
+				} else {
+					return (data[(int)(i - 0.5)] + data[(int)(i + 0.5)]) / 2;
+				}
+			};
+			double lowerQ(double[] data) {
+				var i = (data.Length / 4d) - 0.25;
+				if (i % 1 == 0) {
+					return data[(int)i];
+				} else if ((i - 0.25) % 1 == 0) {
+					return ((data[(int)(i - 0.25)] * 3) + data[(int)(i + 0.75)]) / 4;
+				} else {
+					return (data[(int)(i - 0.75)] + (data[(int)(i + 0.25)] * 3)) / 4;
+				}
+			}
+			double upperQ(double[] data) {
+				var i = (data.Length * 0.75d) - 0.75;
+				if (i % 1 == 0) {
+					return data[(int)i];
+				} else if ((i - 0.25) % 1 == 0) {
+					return ((data[(int)(i - 0.25)] * 3) + data[(int)(i + 0.75)]) / 4;
+				} else {
+					return (data[(int)(i - 0.75)] + (data[(int)(i + 0.25)] * 3)) / 4;
+				}
+			}
+
+			return records
+				.GroupBy(x => x.TimeStamp.ToFileTimeUtc() / (period * 10000000L) * period * 10000000)
+				.Select(
+					x => {
+						var wts = x.Select(x => x.WaterTemperature).OrderBy(x => x).ToArray();
+						var ts = x.Select(x => x.Temperature).OrderBy(x => x).ToArray();
+						var hs = x.Select(x => x.Humidity).OrderBy(x => x).ToArray();
+						return new WaterStateResponseDto() {
+							Time = DateTime.FromFileTimeUtc(x.Key).ToString("yyyy-MM-dd HH:mm:ss"),
+							MinWaterTemperature = wts[0],
+							LowerQuartileWaterTemperature = lowerQ(wts),
+							MedianWaterTemperature = median(wts),
+							UpperQuartileWaterTemperature = upperQ(wts),
+							MaxWaterTemperature = wts[wts.Length - 1],
+							MinTemperature = ts[0],
+							LowerQuartileTemperature = lowerQ(ts),
+							MedianTemperature = median(ts),
+							UpperQuartileTemperature = upperQ(ts),
+							MaxTemperature = ts[ts.Length - 1],
+							MinHumidity = hs[0],
+							LowerQuartileHumidity = lowerQ(hs),
+							MedianHumidity = median(hs),
+							UpperQuartileHumidity = upperQ(hs),
+							MaxHumidity = hs[hs.Length - 1],
+						};
+					}
+				).ToArray();
+			;
 		}
 	}
 }
