@@ -61,10 +61,10 @@ export class AquariumPastComponent extends DashboardParentComponent {
   }
 
   public selectedDateChanged(): void {
-    this.cookieService.set("aquaStartDate", this.selectedDateRange.startDate.format("YYYY-MM-DD HH:mm:ss"));
-    this.cookieService.set("aquaEndDate", this.selectedDateRange.endDate.format("YYYY-MM-DD HH:mm:ss"));
+    this.cookieService.set("aquaStartDate", this.selectedDateRange.startDate.format("YYYY-MM-DD HH:mm:ss"), undefined, "/");
+    this.cookieService.set("aquaEndDate", this.selectedDateRange.endDate.format("YYYY-MM-DD HH:mm:ss"), undefined, "/");
   }
   public selectedPeriodChanged(): void {
-    this.cookieService.set("aquaPastPeriod", this.selectedPeriod.toString());
+    this.cookieService.set("aquaPastPeriod", this.selectedPeriod.toString(), undefined, "/");
   }
 }

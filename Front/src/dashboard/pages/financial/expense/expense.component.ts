@@ -65,7 +65,7 @@ export class ExpenseComponent extends DashboardParentComponent {
 
   public async selectedDateChanged(): Promise<void> {
     this.transactions = await this.financialApiService.GetTransactions(this.selectedDateRange.startDate, this.selectedDateRange.endDate).toPromise();
-    this.cookieService.set("startDate", this.selectedDateRange.startDate.format("YYYY-MM-DD"));
-    this.cookieService.set("endDate", this.selectedDateRange.endDate.format("YYYY-MM-DD") === moment().format("YYYY-MM-DD") ? "today" : this.selectedDateRange.endDate.format("YYYY-MM-DD"));
+    this.cookieService.set("startDate", this.selectedDateRange.startDate.format("YYYY-MM-DD"), undefined, "/");
+    this.cookieService.set("endDate", this.selectedDateRange.endDate.format("YYYY-MM-DD") === moment().format("YYYY-MM-DD") ? "today" : this.selectedDateRange.endDate.format("YYYY-MM-DD"), undefined, "/");
   }
 }

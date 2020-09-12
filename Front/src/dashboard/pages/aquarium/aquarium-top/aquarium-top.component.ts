@@ -85,14 +85,14 @@ export class AquariumTopComponent extends DashboardParentComponent {
   }
 
   public selectedTermChanged(): void {
-    this.cookieService.set("aquaTermValue", this.selectedTerm?.value);
-    this.cookieService.set("aquaTermUnit", this.selectedTerm?.unit);
+    this.cookieService.set("aquaTermValue", this.selectedTerm?.value, undefined, "/");
+    this.cookieService.set("aquaTermUnit", this.selectedTerm?.unit, undefined, "/");
     this.selectedDateRange = {
       startDate: moment().add(`-${this.selectedTerm.value}`, this.selectedTerm.unit),
       endDate: moment()
     }
   }
   public selectedPeriodChanged(): void {
-    this.cookieService.set("aquaPeriod", this.selectedPeriod.toString());
+    this.cookieService.set("aquaPeriod", this.selectedPeriod.toString(), undefined, "/");
   }
 }

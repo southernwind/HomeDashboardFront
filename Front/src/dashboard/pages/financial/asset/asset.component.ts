@@ -53,7 +53,7 @@ export class AssetComponent extends DashboardParentComponent {
   }
 
   public selectedDateChanged(): void {
-    this.cookieService.set("startDate", this.selectedDateRange.startDate.format("YYYY-MM-DD"));
-    this.cookieService.set("endDate", this.selectedDateRange.endDate.format("YYYY-MM-DD") === moment().format("YYYY-MM-DD") ? "today" : this.selectedDateRange.endDate.format("YYYY-MM-DD"));
+    this.cookieService.set("startDate", this.selectedDateRange.startDate.format("YYYY-MM-DD"), undefined, "/");
+    this.cookieService.set("endDate", this.selectedDateRange.endDate.format("YYYY-MM-DD") === moment().format("YYYY-MM-DD") ? "today" : this.selectedDateRange.endDate.format("YYYY-MM-DD"), undefined, "/");
   }
 }
