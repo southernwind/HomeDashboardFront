@@ -44,6 +44,7 @@ import { NetworkDiagramComponent } from './pages/network/network-diagram/network
 import { PalmieComponent } from './pages/palmie/palmie.component';
 import { PalmieTopComponent } from './pages/palmie/palmie-top/palmie-top.component';
 import { PalmieCourseComponent } from './pages/palmie/palmie-course/palmie-course.component';
+import { LinksComponent } from './pages/links/links.component';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -86,7 +87,8 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     CurrentWaterStatesComponent,
     PalmieComponent,
     PalmieTopComponent,
-    PalmieCourseComponent
+    PalmieCourseComponent,
+    LinksComponent
   ],
   imports: [
     FormsModule,
