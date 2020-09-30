@@ -24,11 +24,11 @@ node {
         keyFileVariable: 'SSH_KEY', \
         usernameVariable: 'SSH_USER')]) {
     stage('Deploy FrontEnd'){
-        sh 'scp -pr -i ${SSH_KEY} ./Front/dist/Front/* ${SSH_USER}@home-server.localnet:/var/www/html'
+        sh 'scp -pr -i ${SSH_KEY} ./Front/dist/Front/* ${SSH_USER}@home-server.localnet:/var/www/html/dashboard'
     }
 
     stage('Deploy BackEnd'){
-      sh 'scp -pr -i ${SSH_KEY} ./Back/bin/Release/netcoreapp3.1/linux-x64/* ${SSH_USER}@home-server.localnet:/var/www/html/api'
+      sh 'scp -pr -i ${SSH_KEY} ./Back/bin/Release/netcoreapp3.1/linux-x64/* ${SSH_USER}@home-server.localnet:/var/www/html/dashboard-api'
     }
 
     stage('Restart BackEndService'){
