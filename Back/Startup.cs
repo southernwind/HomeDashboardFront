@@ -51,7 +51,7 @@ namespace Back {
 			services.AddCors(options => {
 				options.AddPolicy(this._crossOriginPolicyName, builder => {
 					builder.AllowCredentials();
-					builder.WithOrigins("http://localhost:4200");
+					builder.WithOrigins(this.Configuration.GetSection("FrontOrigin").Value);
 					builder.AllowAnyHeader();
 					builder.AllowAnyMethod();
 				});
