@@ -21,6 +21,9 @@ import { PalmieComponent } from './pages/palmie/palmie.component';
 import { PalmieTopComponent } from './pages/palmie/palmie-top/palmie-top.component';
 import { PalmieCourseComponent } from './pages/palmie/palmie-course/palmie-course.component';
 import { LinksComponent } from './pages/links/links.component';
+import { ElectricPowerTopComponent } from './pages/electric-power/electric-power-top/electric-power-top.component';
+import { ElectricPowerComponent } from './pages/electric-power/electric-power.component';
+import { ElectricPowerPastComponent } from './pages/electric-power/electric-power-past/electric-power-past.component';
 
 const routes: Routes = [
   {
@@ -62,6 +65,20 @@ const routes: Routes = [
             component: IncomeComponent
           }
         ],
+      },
+      {
+        path: "electric-power",
+        component: ElectricPowerComponent,
+        children: [
+          {
+            path: "",
+            component: ElectricPowerTopComponent
+          },
+          {
+            path: "past",
+            component: ElectricPowerPastComponent
+          }
+        ]
       },
       {
         path: "kitchen",

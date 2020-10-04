@@ -65,6 +65,14 @@ namespace DataBase {
 		} = null!;
 
 		/// <summary>
+		/// 電力情報
+		/// </summary>
+		public DbSet<ElectricPower> ElectricPowers {
+			get;
+			set;
+		} = null!;
+
+		/// <summary>
 		/// パルミー動画
 		/// </summary>
 		public DbSet<Palmie> Palmies {
@@ -92,6 +100,7 @@ namespace DataBase {
 			modelBuilder.Entity<Recipe>().HasKey(x => x.Id);
 			modelBuilder.Entity<Recipe>().Property(x => x.Id).ValueGeneratedOnAdd();
 			modelBuilder.Entity<WaterState>().HasKey(x => x.TimeStamp);
+			modelBuilder.Entity<ElectricPower>().HasKey(x => x.TimeStamp);
 			modelBuilder.Entity<Palmie>().HasKey(x => x.Id);
 			modelBuilder.Entity<Palmie>().Property(x => x.Id).ValueGeneratedOnAdd();
 		}

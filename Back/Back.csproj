@@ -11,6 +11,7 @@
     <PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />
     <PackageReference Include="ReactiveProperty" />
+    <PackageReference Include="System.IO.Ports" />
     <PackageReference Include="System.Reactive" />
     <PackageReference Include="Slack.Webhooks" />
   </ItemGroup>
