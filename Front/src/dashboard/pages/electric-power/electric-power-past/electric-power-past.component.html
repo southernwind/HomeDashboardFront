@@ -5,10 +5,8 @@
         [showTime]="true">
       </date-range-selector>
     </nz-space-item>
-    <nz-space-item>
-      <aqua-period-selector [(period)]="selectedPeriod" (periodChange)="selectedPeriodChanged()"></aqua-period-selector>
-    </nz-space-item>
   </nz-space>
   <div class="chart-box">
+    <electric-power-chart [chartData]="chartData"></electric-power-chart>
   </div>
 </div>

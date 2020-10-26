@@ -5,6 +5,8 @@ import { DateRange } from 'src/dashboard/models/date-range.model';
 import { CookieService } from 'ngx-cookie-service';
 import { Moment } from 'moment';
 import * as moment from 'moment';
+import { ElectricPower } from '../../../models/electric-power.model';
+import { ElectricPowerApiService } from '../../../services/electric-power.service';
 
 @UntilDestroy()
 @Component({
@@ -27,22 +29,29 @@ export class ElectricPowerPastComponent extends DashboardParentComponent {
    */
   public selectedPeriod: number = null;
 
-  constructor(private cookieService: CookieService) {
+  /**
+   * チャートデータ
+   *
+   * @type {ElectricPower[]}
+   * @memberof ElectricPowerPastComponent
+   */
+  public chartData: ElectricPower[];
+  constructor(private cookieService: CookieService, private electricPowerApiService: ElectricPowerApiService) {
     super();
     this.onInit
       .pipe(untilDestroyed(this))
       .subscribe(async () => {
         if (this.selectedDateRange === null) {
           let from: Moment;
-          if (this.cookieService.check("electricPowerStartDate")) {
-            from = moment(this.cookieService.get("electricPowerStartDate"));
+          if (this.cookieService.check("electricPowerPastStartDate")) {
+            from = moment(this.cookieService.get("electricPowerPastStartDate"));
           } else {
             from = moment().add(-7, 'day').startOf("month");
           }
 
           let to: Moment;
-          if (this.cookieService.check("electricPowerEndDate")) {
-            to = moment(this.cookieService.get("electricPowerEndDate"));
+          if (this.cookieService.check("electricPowerPastEndDate")) {
+            to = moment(this.cookieService.get("electricPowerPastEndDate"));
           } else {
             to = moment();
           }
@@ -60,9 +69,10 @@ export class ElectricPowerPastComponent extends DashboardParentComponent {
       });
   }
 
-  public selectedDateChanged(): void {
-    this.cookieService.set("electricPowerStartDate", this.selectedDateRange.startDate.format("YYYY-MM-DD HH:mm:ss"), undefined, "/");
-    this.cookieService.set("electricPowerEndDate", this.selectedDateRange.endDate.format("YYYY-MM-DD HH:mm:ss"), undefined, "/");
+  public async selectedDateChanged(): Promise<void> {
+    this.chartData = await this.electricPowerApiService.getElectricPowerConsumptionList(this.selectedDateRange.startDate.format("YYYY-MM-DD HH:mm:ss"), this.selectedDateRange.endDate.format("YYYY-MM-DD HH:mm:ss")).pipe(untilDestroyed(this)).toPromise();
+    this.cookieService.set("electricPowerPastStartDate", this.selectedDateRange.startDate.format("YYYY-MM-DD HH:mm:ss"), undefined, "/");
+    this.cookieService.set("electricPowerPastEndDate", this.selectedDateRange.endDate.format("YYYY-MM-DD HH:mm:ss"), undefined, "/");
   }
   public selectedPeriodChanged(): void {
     this.cookieService.set("electricPowerPastPeriod", this.selectedPeriod.toString(), undefined, "/");

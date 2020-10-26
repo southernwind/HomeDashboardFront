@@ -4,6 +4,7 @@ using System;
 using Back.Hubs;
 using Back.Models.Aquarium;
 using Back.Models.Common;
+using Back.Models.ElectricPower;
 using Back.Models.Financial;
 using Back.Models.Kitchen;
 using Back.Models.Network;
@@ -74,6 +75,7 @@ namespace Back {
 			services.AddSingleton<Monitor>();
 			services.AddTransient<AquariumMonitor>();
 			services.AddTransient<FinancialModel>();
+			services.AddTransient<ElectricPowerModel>();
 			services.AddTransient<SettingsModel>();
 			services.AddTransient<NetworkModel>();
 			services.AddTransient<KitchenModel>();

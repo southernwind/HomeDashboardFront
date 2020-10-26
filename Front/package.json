@@ -25,6 +25,7 @@
     "@aspnet/signalr": "3.0.0-preview6.19307.2",
     "@ngneat/until-destroy": "8.0.2",
     "angular-highcharts": "10.0.1",
+    "angular-resize-event": "2.0.0",
     "highcharts": "8.2.0",
     "core-js": "3.6.5",
     "linq": "3.2.3",

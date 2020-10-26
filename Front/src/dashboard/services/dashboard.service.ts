@@ -4,7 +4,7 @@ import { CurrentWaterState } from '../models/water-state.model';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from "@aspnet/signalr";
 import { environment } from "../../environments/environment";
 import { map, first } from 'rxjs/operators';
-import { ElectricPower } from '../models/electric-power.model copy';
+import { ElectricPower } from '../models/electric-power.model';
 
 
 @Injectable({

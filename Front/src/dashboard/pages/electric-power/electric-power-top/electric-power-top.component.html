@@ -1,7 +1,7 @@
 <div>
   <div>
     <div>[{{currentTime}}]</div>
-    <div><span class="watt-value">{{currentValue | number}}</span>W</div>
-    <electric-power-realtime-chart></electric-power-realtime-chart>
+    <div><span class="watt-value">{{currentValue | number}}</span>W ({{(kwhPrice * currentValue / 1000) | number:"1.3-3"}}円/h)</div>
+    <electric-power-chart [chartData]="chartDataAsObservable"></electric-power-chart>
   </div>
 </div>

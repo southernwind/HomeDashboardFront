@@ -48,7 +48,8 @@ import { LinksComponent } from './pages/links/links.component';
 import { ElectricPowerComponent } from './pages/electric-power/electric-power.component';
 import { ElectricPowerPastComponent } from './pages/electric-power/electric-power-past/electric-power-past.component';
 import { ElectricPowerTopComponent } from './pages/electric-power/electric-power-top/electric-power-top.component';
-import { ElectricPowerRealtimeChartComponent } from './pages/electric-power/electric-power-realtime-chart/electric-power-realtime-chart.component';
+import { ElectricPowerChartComponent } from './pages/electric-power/electric-power-chart/electric-power-chart.component';
+import { AngularResizedEventModule } from 'angular-resize-event';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -96,9 +97,10 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     ElectricPowerComponent,
     ElectricPowerTopComponent,
     ElectricPowerPastComponent,
-    ElectricPowerRealtimeChartComponent
+    ElectricPowerChartComponent
   ],
   imports: [
+    AngularResizedEventModule,
     FormsModule,
     ReactiveFormsModule,
     PipesModule,
