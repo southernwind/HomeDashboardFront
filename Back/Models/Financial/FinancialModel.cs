@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Back.Models.Common;
 using Back.Utils;
 
+using Database.Tables;
+
 using DataBase;
 
 using Microsoft.EntityFrameworkCore;
@@ -75,15 +77,21 @@ namespace Back.Models.Financial {
 				await foreach (var ma in mfs.GetAssets(from, to)) {
 					var assets =
 						ma.GroupBy(x => new { x.Date, x.Institution, x.Category })
-							.Select(x => new MfAsset {
+							.Select(x => new LockableMfAsset {
 								Date = x.Key.Date,
 								Institution = x.Key.Institution,
 								Category = x.Key.Category,
-								Amount = x.Sum(a => a.Amount)
+								Amount = x.Sum(a => a.Amount),
+								IsLocked = false
 							}).ToArray();
-					var deleteAssetList = db.MfAssets.Where(a => a.Date == assets.First().Date);
+					var existsRecords = db.MfAssets.Where(a => a.Date == assets.First().Date);
+					var deleteAssetList = existsRecords.Where(x => !x.IsLocked);
 					db.MfAssets.RemoveRange(deleteAssetList);
-					await db.MfAssets.AddRangeAsync(assets);
+
+					await db.MfAssets.AddRangeAsync(assets.Where(x =>
+						existsRecords
+							.Where(er => er.IsLocked)
+							.All(er => er.Institution != x.Institution || er.Category != x.Category)));
 					this._logger.LogDebug($"{ma.First().Date:yyyy/MM/dd}資産推移{assets.Length}件登録");
 					maCount += assets.Length;
 					progress.Report(1 + ((ma.First().Date.Ticks - from.Ticks) * 89 / denominator));
@@ -94,9 +102,15 @@ namespace Back.Models.Financial {
 				var mtCount = 0;
 				await foreach (var mt in mfs.GetTransactions(from, to)) {
 					var ids = mt.Select(x => x.TransactionId).ToArray();
-					var deleteTransactionList = db.MfTransactions.Where(t => ids.Contains(t.TransactionId));
+					var existsRecords = db.MfTransactions.Where(t => ids.Contains(t.TransactionId));
+					var deleteTransactionList = existsRecords.Where(x => !x.IsLocked);
 					db.MfTransactions.RemoveRange(deleteTransactionList);
-					await db.MfTransactions.AddRangeAsync(mt);
+					await db.MfTransactions.AddRangeAsync(
+						mt.Select(x => new LockableMfTransaction(x))
+							.Where(x =>
+								existsRecords
+									.Where(er => er.IsLocked)
+									.All(er => er.TransactionId != x.TransactionId)));
 					this._logger.LogInformation($"{mt.First()?.Date:yyyy/MM}取引履歴{mt.Length}件登録");
 					mtCount += mt.Length;
 					progress.Report(90 + ((mt.First().Date.Ticks - from.Ticks) * 9 / denominator));

@@ -2,15 +2,13 @@ using Database.Tables;
 
 using Microsoft.EntityFrameworkCore;
 
-using MoneyForwardViewer.DataBase.Tables;
-
 namespace DataBase {
 	public class HomeServerDbContext : DbContext {
 		/// <summary>
 		/// 取引履歴
 		/// </summary>
 
-		public DbSet<MfTransaction> MfTransactions {
+		public DbSet<LockableMfTransaction> MfTransactions {
 			get;
 			set;
 		} = null!;
@@ -18,7 +16,7 @@ namespace DataBase {
 		/// <summary>
 		/// 資産推移
 		/// </summary>
-		public DbSet<MfAsset> MfAssets {
+		public DbSet<LockableMfAsset> MfAssets {
 			get;
 			set;
 		} = null!;
@@ -92,8 +90,8 @@ namespace DataBase {
 		/// </summary>
 		/// <param name="modelBuilder">ModelBuilder</param>
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
-			modelBuilder.Entity<MfTransaction>().HasKey(x => x.TransactionId);
-			modelBuilder.Entity<MfAsset>().HasKey(x => new { x.Date, x.Institution, x.Category });
+			modelBuilder.Entity<LockableMfTransaction>().HasKey(x => x.TransactionId);
+			modelBuilder.Entity<LockableMfAsset>().HasKey(x => new { x.Date, x.Institution, x.Category });
 			modelBuilder.Entity<UserSetting>().HasKey(x => x.Id);
 			modelBuilder.Entity<WakeOnLanTarget>().HasKey(x => x.MacAddress);
 			modelBuilder.Entity<MacAddressVendor>().HasKey(x => x.Assignment);
