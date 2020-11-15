@@ -50,6 +50,8 @@ import { ElectricPowerPastComponent } from './pages/electric-power/electric-powe
 import { ElectricPowerTopComponent } from './pages/electric-power/electric-power-top/electric-power-top.component';
 import { ElectricPowerChartComponent } from './pages/electric-power/electric-power-chart/electric-power-chart.component';
 import { AngularResizedEventModule } from 'angular-resize-event';
+import { DashboardTopComponent } from './dashboard-top.component';
+import { ElectricPowerCurrentComponent } from './pages/electric-power/electric-power-current/electric-power-current.component';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -60,6 +62,7 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
 @NgModule({
   declarations: [
     DashboardComponent,
+    DashboardTopComponent,
     FinancialComponent,
     FinancialTopComponent,
     AssetTransitionComponent,
@@ -97,7 +100,8 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     ElectricPowerComponent,
     ElectricPowerTopComponent,
     ElectricPowerPastComponent,
-    ElectricPowerChartComponent
+    ElectricPowerChartComponent,
+    ElectricPowerCurrentComponent
   ],
   imports: [
     AngularResizedEventModule,

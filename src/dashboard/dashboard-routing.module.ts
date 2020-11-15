@@ -24,12 +24,17 @@ import { LinksComponent } from './pages/links/links.component';
 import { ElectricPowerTopComponent } from './pages/electric-power/electric-power-top/electric-power-top.component';
 import { ElectricPowerComponent } from './pages/electric-power/electric-power.component';
 import { ElectricPowerPastComponent } from './pages/electric-power/electric-power-past/electric-power-past.component';
+import { DashboardTopComponent } from './dashboard-top.component';
 
 const routes: Routes = [
   {
     path: "",
     component: DashboardComponent,
     children: [
+      {
+        path: "",
+        component: DashboardTopComponent
+      },
       {
         path: "aquarium",
         component: AquariumComponent,
