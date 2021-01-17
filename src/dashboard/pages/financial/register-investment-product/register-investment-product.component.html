@@ -1,0 +1,75 @@
+<div class="table-operations">
+  <button nz-button (click)="addInvestmentProductModalVisibility = true">投資商品追加</button>
+  <nz-modal [(nzVisible)]="addInvestmentProductModalVisibility" nzTitle="投資商品情報登録モーダル" (nzOnCancel)="cancelAddInvestmentProduct()"
+    (nzOnOk)="addInvestmentProduct()" [nzOkDisabled]="addInvestmentProductForm.invalid">
+    <form nz-form [formGroup]="addInvestmentProductForm">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">名前</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <input nz-input formControlName="name" placeholder="Accenture" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">取得方式</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <input nz-input formControlName="type" placeholder="ScrapingService.Targets.YahooFinance" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">キー情報</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <input nz-input formControlName="key" placeholder="ACN" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-modal>
+  <nz-modal [(nzVisible)]="addInvestmentProductAmountModalProduct" nzTitle="投資商品取得量登録モーダル" (nzOnCancel)="cancelAddInvestmentProductAmount()"
+    (nzOnOk)="addInvestmentProductAmount()" [nzOkDisabled]="addInvestmentProductAmountForm.invalid">
+    <div>
+      <span>{{addInvestmentProductAmountModalProduct?.name}}</span>
+    </div>
+    <form nz-form [formGroup]="addInvestmentProductAmountForm">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">取得量変更日</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <nz-date-picker formControlName="date" placeholder="2021-12-31" ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">取得量</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <input nz-input formControlName="amount" placeholder="100" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">取得単価</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <input nz-input formControlName="price" placeholder="16.516" />
+        </nz-form-control>
+      </nz-form-item>
+      <span>金額 : {{addInvestmentProductAmountForm.value.amount * addInvestmentProductAmountForm.value.price | number}}</span>
+    </form>
+  </nz-modal>
+</div>
+<nz-table #investmentProductTable [nzData]="investmentProductList" nzTableLayout="fixed" [nzPageSize]="50" >
+  <thead>
+    <tr>
+      <th>名前</th>
+      <th>取得方式</th>
+      <th>キー情報</th>
+      <th>現在値<br>取得平均単価</th>
+      <th>損益額<br>(損益率)</th>
+      <th>取得量登録</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of investmentProductTable.data">
+      <td>{{item.name}}</td>
+      <td>{{item.type}}</td>
+      <td>{{item.key}}</td>
+      <td>{{item.latestRate | number}}<br>{{item.averageRate | number: '1.1-3'}}</td>
+      <td><app-price-display [price]="(item.latestRate - item.averageRate) * item.amount"></app-price-display><br>({{(item.latestRate / item.averageRate) * 100 - 100| number: '1.1-3'}}%)</td>
+      <td><button nz-button (click)="addInvestmentProductAmountModalProduct = item;">取得量登録</button></td>
+    </tr>
+  </tbody>
+</nz-table>

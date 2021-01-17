@@ -1,0 +1,9 @@
+<ng-container *ngIf="price > 0">
+  <span class="up">+{{price | number: '1.0-3'}}</span>
+</ng-container>
+<ng-container *ngIf="price === 0">
+  <span class="stay">{{price | number: '1.0-3'}}</span>
+</ng-container>
+<ng-container *ngIf="price < 0">
+  <span class="down">{{price | number: '1.0-3' }}</span>
+</ng-container>

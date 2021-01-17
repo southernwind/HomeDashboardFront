@@ -6,6 +6,7 @@ import { first } from "rxjs/operators";
 import { environment } from "../../environments/environment";
 import { Moment } from 'moment';
 import { Transaction } from '../models/transaction.model';
+import { InvestmentProduct } from '../models/investment-product.model';
 
 @Injectable({
   providedIn: "root",
@@ -40,6 +41,39 @@ export class FinancialApiService {
       .http
       .get<{ progress: number }>(
         `${environment.apiUrl}api/financial-api/get-update-status?key=${key}`
+      ).pipe(first());
+  }
+
+  public PostRegisterInvestmentProduct(name: string, type: string, key: string): Observable<{ result: boolean }> {
+    return this
+      .http
+      .post<{ result: boolean }>(
+        `${environment.apiUrl}api/financial-api/post-register-investment-product`,
+        {
+          name: name,
+          type: type,
+          key: key
+        }).pipe(first());
+  }
+
+  public PostRegisterInvestmentProductAmount(investmentProductId: number, date: Moment, amount: number, price: number): Observable<{ result: boolean }> {
+    return this
+      .http
+      .post<{ result: boolean }>(
+        `${environment.apiUrl}api/financial-api/post-register-investment-product-amount`,
+        {
+          investmentProductId: investmentProductId,
+          date: date.format("YYYY-MM-DD"),
+          amount: amount,
+          price: price
+        }).pipe(first());
+  }
+
+  public GetInvestmentProductList(): Observable<InvestmentProduct[]> {
+    return this
+      .http
+      .get<InvestmentProduct[]>(
+        `${environment.apiUrl}api/financial-api/get-investment-product-list`
       ).pipe(first());
   }
 }
