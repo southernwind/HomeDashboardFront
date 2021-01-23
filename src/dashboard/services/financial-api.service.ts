@@ -7,6 +7,7 @@ import { environment } from "../../environments/environment";
 import { Moment } from 'moment';
 import { Transaction } from '../models/transaction.model';
 import { InvestmentProduct } from '../models/investment-product.model';
+import { InvestmentCurrencyUnit } from '../models/investment-currency-unit.model';
 
 @Injectable({
   providedIn: "root",
@@ -44,7 +45,7 @@ export class FinancialApiService {
       ).pipe(first());
   }
 
-  public PostRegisterInvestmentProduct(name: string, type: string, key: string): Observable<{ result: boolean }> {
+  public PostRegisterInvestmentProduct(name: string, type: string, currencyUnitId: number, key: string): Observable<{ result: boolean }> {
     return this
       .http
       .post<{ result: boolean }>(
@@ -52,6 +53,7 @@ export class FinancialApiService {
         {
           name: name,
           type: type,
+          currencyUnitId: currencyUnitId,
           key: key
         }).pipe(first());
   }
@@ -74,6 +76,14 @@ export class FinancialApiService {
       .http
       .get<InvestmentProduct[]>(
         `${environment.apiUrl}api/financial-api/get-investment-product-list`
+      ).pipe(first());
+  }
+
+  public GetInvestmentCurrencyUnitList(): Observable<InvestmentCurrencyUnit[]> {
+    return this
+      .http
+      .get<InvestmentCurrencyUnit[]>(
+        `${environment.apiUrl}api/financial-api/get-investment-currency-unit-list`
       ).pipe(first());
   }
 }

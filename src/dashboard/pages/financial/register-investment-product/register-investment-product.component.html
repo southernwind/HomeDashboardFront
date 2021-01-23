@@ -16,6 +16,14 @@
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">通貨単位</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <nz-select formControlName="currencyUnit" placeHolder="米ドル">
+            <nz-option *ngFor="let unit of investmentCurrencyUnitList" [nzValue]="unit.id" [nzLabel]="unit.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
         <nz-form-label [nzSm]="8" [nzXs]="24">キー情報</nz-form-label>
         <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
           <input nz-input formControlName="key" placeholder="ACN" />
@@ -55,20 +63,26 @@
   <thead>
     <tr>
       <th>名前</th>
-      <th>取得方式</th>
-      <th>キー情報</th>
-      <th>現在値<br>取得平均単価</th>
-      <th>損益額<br>(損益率)</th>
-      <th>取得量登録</th>
+      <th [nzWidth]="'130px'">評価額</th>
+      <th [nzWidth]="'130px'">現在値<br>取得平均単価</th>
+      <th [nzWidth]="'130px'">損益額<br>(損益率)</th>
+      <th [nzWidth]="'130px'">取得量登録</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let item of investmentProductTable.data">
       <td>{{item.name}}</td>
-      <td>{{item.type}}</td>
-      <td>{{item.key}}</td>
-      <td>{{item.latestRate | number}}<br>{{item.averageRate | number: '1.1-3'}}</td>
-      <td><app-price-display [price]="(item.latestRate - item.averageRate) * item.amount"></app-price-display><br>({{(item.latestRate / item.averageRate) * 100 - 100| number: '1.1-3'}}%)</td>
+      <td>
+        <app-value-display [value]="item.latestRate * item.amount" [type]="'static-price-with-yen'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
+      </td>
+      <td>
+        <app-value-display [value]="item.latestRate" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display><br>
+        <app-value-display [value]="item.averageRate" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [adjustNumberOfDecimalPoint]="2"></app-value-display>
+      </td>
+      <td>
+        <app-value-display [value]="(item.latestRate - item.averageRate) * item.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display><br>
+        <app-value-display [value]="(item.latestRate / item.averageRate) * 100 - 100" [type]="'percent'"></app-value-display>
+      </td>
       <td><button nz-button (click)="addInvestmentProductAmountModalProduct = item;">取得量登録</button></td>
     </tr>
   </tbody>

@@ -6,6 +6,7 @@ import { InvestmentProduct } from 'src/dashboard/models/investment-product.model
 import { FinancialApiService } from 'src/dashboard/services/financial-api.service';
 import { NzMessageService } from 'ng-zorro-antd';
 import * as moment from 'moment';
+import { InvestmentCurrencyUnit } from 'src/dashboard/models/investment-currency-unit.model';
 
 @UntilDestroy()
 @Component({
@@ -15,6 +16,7 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
   public addInvestmentProductModalVisibility: boolean;
   public addInvestmentProductForm: FormGroup;
   public investmentProductList: InvestmentProduct[];
+  public investmentCurrencyUnitList: InvestmentCurrencyUnit[];
   public addInvestmentProductAmountModalProduct: InvestmentProduct;
   public addInvestmentProductAmountForm: FormGroup;
   constructor(
@@ -25,6 +27,7 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
     this.addInvestmentProductForm = formBuilder.group({
       name: new FormControl(null, [Validators.required]),
       type: new FormControl(null, [Validators.required]),
+      currencyUnit: new FormControl(null, [Validators.required]),
       key: new FormControl(null, [Validators.required])
     });
     this.addInvestmentProductAmountForm = formBuilder.group({
@@ -35,6 +38,7 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
     this.onInit
       .pipe(untilDestroyed(this))
       .subscribe(async () => {
+        this.investmentCurrencyUnitList = (await this.financialApiService.GetInvestmentCurrencyUnitList().pipe(untilDestroyed(this)).toPromise());
         await this.getInvestmentProductList();
       });
   }
@@ -47,6 +51,7 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
     this.addInvestmentProductForm.setValue({
       name: null,
       type: null,
+      currencyUnit: null,
       key: null
     });
     this.addInvestmentProductModalVisibility = false;
@@ -63,8 +68,10 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
       await this.financialApiService.PostRegisterInvestmentProduct(
         this.addInvestmentProductForm.value.name,
         this.addInvestmentProductForm.value.type,
+        this.addInvestmentProductForm.value.currencyUnit,
         this.addInvestmentProductForm.value.key
-      ).toPromise();
+      ).pipe(untilDestroyed(this))
+        .toPromise();
     } catch {
       this.message.warning("登録失敗");
       return;
@@ -73,6 +80,7 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
     this.addInvestmentProductForm.setValue({
       name: null,
       type: null,
+      currencyUnit: null,
       key: null
     });
     this.addInvestmentProductModalVisibility = false;
@@ -86,7 +94,7 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
    * @memberof RegisterInvestmentProductComponent
    */
   public async getInvestmentProductList(): Promise<void> {
-    this.investmentProductList = await this.financialApiService.GetInvestmentProductList().toPromise();
+    this.investmentProductList = await this.financialApiService.GetInvestmentProductList().pipe(untilDestroyed(this)).toPromise();
   }
 
   /**
@@ -116,7 +124,7 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
         moment(this.addInvestmentProductAmountForm.value.date),
         Number(this.addInvestmentProductAmountForm.value.amount),
         Number(this.addInvestmentProductAmountForm.value.price),
-      ).toPromise();
+      ).pipe(untilDestroyed(this)).toPromise();
     } catch {
       this.message.warning("登録失敗");
       return;

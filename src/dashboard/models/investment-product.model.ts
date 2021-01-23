@@ -4,6 +4,7 @@ export interface InvestmentProduct {
   type: string,
   key: string,
   enable: boolean,
+  currencyUnitId: number,
   latestRate: number,
   amount: number,
   averageRate: number
