@@ -1,5 +1,20 @@
 <div class="table-operations">
-  <button nz-button (click)="addInvestmentProductModalVisibility = true">投資商品追加</button>
+  <div class="header">
+    <div class="buttons">
+      <button nz-button (click)="addInvestmentProductModalVisibility = true">投資商品追加</button>
+    </div>
+    <div class="summary">
+      <div>
+        収益額: <app-value-display [value]="totalProfit" [investmentCurrencyUnit]="yenCurrency"></app-value-display>
+      </div>
+      <div>
+        収益率: <app-value-display [value]="rateOfReturn" [type]="'percent'" [investmentCurrencyUnit]="yenCurrency"></app-value-display>
+      </div>
+      <div>
+        評価額: <app-value-display [value]="totalValuation" [type]="'static-price'" [investmentCurrencyUnit]="yenCurrency"></app-value-display>
+      </div>
+    </div>
+  </div>
   <nz-modal [(nzVisible)]="addInvestmentProductModalVisibility" nzTitle="投資商品情報登録モーダル" (nzOnCancel)="cancelAddInvestmentProduct()"
     (nzOnOk)="addInvestmentProduct()" [nzOkDisabled]="addInvestmentProductForm.invalid">
     <form nz-form [formGroup]="addInvestmentProductForm">

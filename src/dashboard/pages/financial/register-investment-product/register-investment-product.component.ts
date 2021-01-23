@@ -7,15 +7,25 @@ import { FinancialApiService } from 'src/dashboard/services/financial-api.servic
 import { NzMessageService } from 'ng-zorro-antd';
 import * as moment from 'moment';
 import { InvestmentCurrencyUnit } from 'src/dashboard/models/investment-currency-unit.model';
+import * as Enumerable from 'linq';
 
 @UntilDestroy()
 @Component({
   templateUrl: "./register-investment-product.component.html",
+  styleUrls: ["./register-investment-product.component.scss"]
 })
 export class RegisterInvestmentProductComponent extends DashboardParentComponent {
   public addInvestmentProductModalVisibility: boolean;
   public addInvestmentProductForm: FormGroup;
   public investmentProductList: InvestmentProduct[];
+  /** 評価額 */
+  public totalValuation: number;
+  /** 収益率 */
+  public rateOfReturn: number;
+  /** 収益額 */
+  public totalProfit: number;
+  /** 日本円単位 */
+  public yenCurrency: InvestmentCurrencyUnit;
   public investmentCurrencyUnitList: InvestmentCurrencyUnit[];
   public addInvestmentProductAmountModalProduct: InvestmentProduct;
   public addInvestmentProductAmountForm: FormGroup;
@@ -38,7 +48,8 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
     this.onInit
       .pipe(untilDestroyed(this))
       .subscribe(async () => {
-        this.investmentCurrencyUnitList = (await this.financialApiService.GetInvestmentCurrencyUnitList().pipe(untilDestroyed(this)).toPromise());
+        this.investmentCurrencyUnitList = await this.financialApiService.GetInvestmentCurrencyUnitList().pipe(untilDestroyed(this)).toPromise();
+        this.yenCurrency = this.investmentCurrencyUnitList.find(x => x.id === 1);
         await this.getInvestmentProductList();
       });
   }
@@ -95,6 +106,18 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
    */
   public async getInvestmentProductList(): Promise<void> {
     this.investmentProductList = await this.financialApiService.GetInvestmentProductList().pipe(untilDestroyed(this)).toPromise();
+    var list =
+      Enumerable
+        .from(this.investmentProductList);
+    this.totalValuation =
+      list
+        .select(x => x.latestRate * x.amount * this.investmentCurrencyUnitList.find(icu => icu.id == x.currencyUnitId).latestRate)
+        .sum();
+    this.totalProfit =
+      list
+        .select(x => (x.latestRate - x.averageRate) * x.amount * this.investmentCurrencyUnitList.find(icu => icu.id == x.currencyUnitId).latestRate)
+        .sum();
+    this.rateOfReturn = this.totalProfit / (this.totalValuation - this.totalProfit) * 100;
   }
 
   /**

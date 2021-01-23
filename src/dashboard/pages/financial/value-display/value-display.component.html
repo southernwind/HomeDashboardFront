@@ -11,17 +11,17 @@
 </ng-container>
 
 <ng-container *ngIf="type === 'static-price'">
-  <span class="stay">{{investmentCurrencyUnit.unit}}{{value | number: digitsInfo  }}</span>
+  <span class="stay">{{investmentCurrencyUnit?.unit}}{{value | number: digitsInfo  }}</span>
 </ng-container>
 
 <ng-container *ngIf="type === 'static-price-with-yen'">
   <span class="stay">
-    <ng-container *ngIf="investmentCurrencyUnit.id===1">
-      {{investmentCurrencyUnit.unit}}{{value | number: digitsInfo }}
+    <ng-container *ngIf="investmentCurrencyUnit?.id===1">
+      {{investmentCurrencyUnit?.unit}}{{value | number: digitsInfo }}
     </ng-container>
-    <ng-container *ngIf="investmentCurrencyUnit.id!==1">
-      \{{value * investmentCurrencyUnit.latestRate | number: "1.0-0"}}<br>
-      ({{investmentCurrencyUnit.unit}}{{value | number: digitsInfo }})
+    <ng-container *ngIf="investmentCurrencyUnit?.id!==1">
+      \{{value * investmentCurrencyUnit?.latestRate | number: "1.0-0"}}<br>
+      ({{investmentCurrencyUnit?.unit}}{{value | number: digitsInfo }})
     </ng-container>
   </span>
 </ng-container>

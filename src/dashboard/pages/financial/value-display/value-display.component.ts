@@ -27,7 +27,7 @@ export class ValueDisplayComponent extends DashboardParentComponent {
     if (this.type === 'percent') {
       numberOfDecimalPoint = 3 + this.adjustNumberOfDecimalPoint;
     } else {
-      numberOfDecimalPoint = this.investmentCurrencyUnit.numberOfDecimalPoint + this.adjustNumberOfDecimalPoint;
+      numberOfDecimalPoint = this.investmentCurrencyUnit?.numberOfDecimalPoint + this.adjustNumberOfDecimalPoint;
     }
     return `1.${numberOfDecimalPoint}-${numberOfDecimalPoint}`;
   }

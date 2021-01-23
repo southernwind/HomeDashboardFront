@@ -1,0 +1,10 @@
+.header {
+  margin: 10px;
+  display: flex;
+  justify-content: space-between;
+
+  .buttons,
+  .summary {
+    display: inline-block;
+  }
+}
