@@ -54,6 +54,7 @@ import { DashboardTopComponent } from './dashboard-top.component';
 import { ElectricPowerCurrentComponent } from './pages/electric-power/electric-power-current/electric-power-current.component';
 import { InvestmentComponent } from "./pages/financial/investment/investment.component";
 import { ValueDisplayComponent } from "./pages/financial/investment/value-display/value-display.component";
+import { InvestmentPortfolioComponent } from "./pages/financial/investment/investment-portfolio/investment-portfolio.component";
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -80,6 +81,7 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     IncomeRatioComponent,
     IncomeRawDataViewerComponent,
     InvestmentComponent,
+    InvestmentPortfolioComponent,
     ValueDisplayComponent,
     DateRangeSelectorComponent,
     SettingsComponent,

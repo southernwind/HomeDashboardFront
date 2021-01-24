@@ -15,6 +15,9 @@
       </div>
     </div>
   </div>
+  <div class="portfolio">
+    <app-investment-portfolio-chart [investmentProductList]="investmentProductList" [investmentCurrencyUnitList]="investmentCurrencyUnitList"></app-investment-portfolio-chart>
+  </div>
   <nz-modal [(nzVisible)]="addInvestmentProductModalVisibility" nzTitle="投資商品情報登録モーダル" (nzOnCancel)="cancelAddInvestmentProduct()"
     (nzOnOk)="addInvestmentProduct()" [nzOkDisabled]="addInvestmentProductForm.invalid">
     <form nz-form [formGroup]="addInvestmentProductForm">
