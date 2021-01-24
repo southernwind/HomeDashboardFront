@@ -11,10 +11,10 @@ import * as Enumerable from 'linq';
 
 @UntilDestroy()
 @Component({
-  templateUrl: "./register-investment-product.component.html",
-  styleUrls: ["./register-investment-product.component.scss"]
+  templateUrl: "./investment.component.html",
+  styleUrls: ["./investment.component.scss"]
 })
-export class RegisterInvestmentProductComponent extends DashboardParentComponent {
+export class InvestmentComponent extends DashboardParentComponent {
   public addInvestmentProductModalVisibility: boolean;
   public addInvestmentProductForm: FormGroup;
   public investmentProductList: InvestmentProduct[];
@@ -56,7 +56,7 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
   /**
    * 商品情報登録キャンセル
    *
-   * @memberof RegisterInvestmentProductComponent
+   * @memberof InvestmentComponent
    */
   public cancelAddInvestmentProduct(): void {
     this.addInvestmentProductForm.setValue({
@@ -72,7 +72,7 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
    * 投資商品情報登録
    *
    * @returns {Promise<void>}
-   * @memberof RegisterInvestmentProductComponent
+   * @memberof InvestmentComponent
    */
   public async addInvestmentProduct(): Promise<void> {
     try {
@@ -102,7 +102,7 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
    * 投資商品情報一覧取得
    *
    * @returns {Promise<void>}
-   * @memberof RegisterInvestmentProductComponent
+   * @memberof InvestmentComponent
    */
   public async getInvestmentProductList(): Promise<void> {
     this.investmentProductList = await this.financialApiService.GetInvestmentProductList().pipe(untilDestroyed(this)).toPromise();
@@ -123,7 +123,7 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
   /**
    * 投資商品取得量登録キャンセル
    *
-   * @memberof RegisterInvestmentProductComponent
+   * @memberof InvestmentComponent
    */
   public cancelAddInvestmentProductAmount(): void {
     this.addInvestmentProductAmountForm.setValue({
@@ -138,7 +138,7 @@ export class RegisterInvestmentProductComponent extends DashboardParentComponent
    * 投資商品取得量登録
    *
    * @returns {Promise<void>}
-   * @memberof RegisterInvestmentProductComponent
+   * @memberof InvestmentComponent
    */
   public async addInvestmentProductAmount(): Promise<void> {
     try {

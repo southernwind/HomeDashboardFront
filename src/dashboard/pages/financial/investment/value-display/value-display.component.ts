@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { DashboardParentComponent } from '../../../components/parent/dashboard-parent.component';
+import { DashboardParentComponent } from '../../../../components/parent/dashboard-parent.component';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { InvestmentCurrencyUnit } from "src/dashboard/models/investment-currency-unit.model";
 

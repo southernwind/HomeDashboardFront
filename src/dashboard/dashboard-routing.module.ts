@@ -25,7 +25,7 @@ import { ElectricPowerTopComponent } from './pages/electric-power/electric-power
 import { ElectricPowerComponent } from './pages/electric-power/electric-power.component';
 import { ElectricPowerPastComponent } from './pages/electric-power/electric-power-past/electric-power-past.component';
 import { DashboardTopComponent } from './dashboard-top.component';
-import { RegisterInvestmentProductComponent } from './pages/financial/register-investment-product/register-investment-product.component';
+import { InvestmentComponent } from './pages/financial/investment/investment.component';
 
 const routes: Routes = [
   {
@@ -71,8 +71,8 @@ const routes: Routes = [
             component: IncomeComponent
           },
           {
-            path: "register-investment-product",
-            component: RegisterInvestmentProductComponent
+            path: "investment",
+            component: InvestmentComponent
           }
         ],
       },

@@ -52,8 +52,8 @@ import { ElectricPowerChartComponent } from './pages/electric-power/electric-pow
 import { AngularResizedEventModule } from 'angular-resize-event';
 import { DashboardTopComponent } from './dashboard-top.component';
 import { ElectricPowerCurrentComponent } from './pages/electric-power/electric-power-current/electric-power-current.component';
-import { RegisterInvestmentProductComponent } from "./pages/financial/register-investment-product/register-investment-product.component";
-import { ValueDisplayComponent } from "./pages/financial/value-display/value-display.component";
+import { InvestmentComponent } from "./pages/financial/investment/investment.component";
+import { ValueDisplayComponent } from "./pages/financial/investment/value-display/value-display.component";
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -79,7 +79,7 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     IncomeTransitionComponent,
     IncomeRatioComponent,
     IncomeRawDataViewerComponent,
-    RegisterInvestmentProductComponent,
+    InvestmentComponent,
     ValueDisplayComponent,
     DateRangeSelectorComponent,
     SettingsComponent,
