@@ -28,6 +28,23 @@
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">カテゴリ</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <nz-select nzShowSearch [nzDropdownRender]="renderTemplate" formControlName="Category" nzPlaceholder="米国株式" >
+            <nz-option *ngFor="let item of investmentProductCategoryList" [nzLabel]="item" [nzValue]="item"></nz-option>
+          </nz-select>
+          <ng-template #renderTemplate>
+            <div class="product-category-select-candidate">
+              <nz-divider></nz-divider>
+              <div class="container">
+                <input type="text" nz-input #inputElement />
+                <a class="add-item" (click)="investmentProductCategoryList.push(inputElement.value)"><i nz-icon nzType="plus"></i> Add item</a>
+              </div>
+            </div>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
         <nz-form-label [nzSm]="8" [nzXs]="24">取得方式</nz-form-label>
         <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
           <nz-select nzShowSearch [nzDropdownRender]="renderTemplate" formControlName="type" nzPlaceholder="ScrapingService.Targets.YahooFinance" >

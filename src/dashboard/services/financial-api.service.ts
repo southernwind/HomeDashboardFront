@@ -94,4 +94,12 @@ export class FinancialApiService {
         `${environment.apiUrl}api/financial-api/get-investment-product-type-list`
       ).pipe(first());
   }
+
+  public GetInvestmentProductCategoryList(): Observable<string[]> {
+    return this
+      .http
+      .get<string[]>(
+        `${environment.apiUrl}api/financial-api/get-investment-product-category-list`
+      ).pipe(first());
+  }
 }
