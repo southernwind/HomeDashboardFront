@@ -12,3 +12,21 @@
 .portfolio {
   margin: 10px;
 }
+
+.product-type-select-candidate {
+  nz-divider {
+    margin: 4px 0;
+  }
+
+  .container {
+    display: flex;
+    flex-wrap: nowrap;
+    padding: 8px;
+  }
+
+  .add-item {
+    flex: 0 0 auto;
+    padding: 8px;
+    display: block;
+  }
+}

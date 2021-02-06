@@ -86,4 +86,12 @@ export class FinancialApiService {
         `${environment.apiUrl}api/financial-api/get-investment-currency-unit-list`
       ).pipe(first());
   }
+
+  public GetInvestmentProductTypeList(): Observable<string[]> {
+    return this
+      .http
+      .get<string[]>(
+        `${environment.apiUrl}api/financial-api/get-investment-product-type-list`
+      ).pipe(first());
+  }
 }

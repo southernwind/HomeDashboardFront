@@ -26,6 +26,8 @@ export class InvestmentComponent extends DashboardParentComponent {
   public totalProfit: number;
   /** 日本円単位 */
   public yenCurrency: InvestmentCurrencyUnit;
+  /** 投資商品タイプリスト */
+  public investmentProductTypeList: string[];
   public investmentCurrencyUnitList: InvestmentCurrencyUnit[];
   public addInvestmentProductAmountModalProduct: InvestmentProduct;
   public addInvestmentProductAmountForm: FormGroup;
@@ -51,6 +53,7 @@ export class InvestmentComponent extends DashboardParentComponent {
         this.investmentCurrencyUnitList = await this.financialApiService.GetInvestmentCurrencyUnitList().pipe(untilDestroyed(this)).toPromise();
         this.yenCurrency = this.investmentCurrencyUnitList.find(x => x.id === 1);
         await this.getInvestmentProductList();
+        this.investmentProductTypeList = await this.financialApiService.GetInvestmentProductTypeList().toPromise();
       });
   }
   /**
