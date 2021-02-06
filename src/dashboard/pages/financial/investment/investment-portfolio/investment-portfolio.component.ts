@@ -10,6 +10,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Chart } from 'angular-highcharts';
 import { InvestmentProduct } from '../../../../models/investment-product.model';
 import { InvestmentCurrencyUnit } from 'src/dashboard/models/investment-currency-unit.model';
+import { PlotSunburstLevelsOptions } from 'highcharts';
+import { SeriesSunburstOptions } from 'highcharts/highcharts.src';
 
 @UntilDestroy()
 @Component({
@@ -50,6 +52,7 @@ export class InvestmentPortfolioComponent extends DashboardParentComponent {
           .select(x => {
             const currency = investmentCurrencyUnitList.find(icu => icu.id === x.currencyUnitId);
             return {
+              category: x.category,
               name: x.name,
               value: x.amount * x.latestRate * currency.latestRate
             };
@@ -60,7 +63,7 @@ export class InvestmentPortfolioComponent extends DashboardParentComponent {
           ...HighchartsOptions.defaultOptions,
           chart: {
             ...HighchartsOptions.defaultOptions.chart,
-            type: 'pie'
+            height: '100%'
           },
           title: {
             ...HighchartsOptions.defaultOptions.title,
@@ -77,35 +80,68 @@ export class InvestmentPortfolioComponent extends DashboardParentComponent {
           tooltip: {
             ...HighchartsOptions.defaultOptions.tooltip,
             formatter: function () {
-              return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円<br>(${this.percentage.toFixed(3)}%)`;
-            }
-          },
-          legend: {
-            ...HighchartsOptions.defaultOptions.legend,
-            labelFormatter: function () {
-              return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(this.y, 0, '', ',')}円)</span>`;
-            } as Highcharts.FormatterCallbackFunction<Highcharts.Point>,
-            enabled: true,
-            align: "right",
-            layout: "vertical",
-            verticalAlign: "top"
+              const parentValue = (this.series.points.find(x => (x as any).id === ((this.series as any).rootNode || 'root')) as any).value;
+              return `${this.key}<br>${Highcharts.numberFormat((this.point as any).value, 0, '', ',')}円<br>(${Highcharts.numberFormat((this.point as any).value / parentValue * 100, 2, '.', ',')}%)`;
+            },
           },
           series: [{
             name: 'カテゴリ',
-            data: temp
-              .select((x, index) => {
+            type: "sunburst",
+            data: Enumerable.from([{
+              id: 'root',
+              parent: '',
+              name: 'ALL',
+              value: temp.sum(x => x.value)
+            }]).concat(temp.groupBy(x => x.category).select(x => {
+              return {
+                id: x.key(),
+                parent: 'root',
+                name: x.key(),
+                value: x.sum(y => y.value)
+              }
+            })).concat(
+              temp.select(x => {
                 return {
+                  id: x.name,
+                  parent: x.category,
                   name: x.name,
-                  y: x.value,
-                  color: Highcharts.getOptions().colors[index % Highcharts.getOptions().colors.length],
-                };
-              }).toArray()
-            ,
-            showInLegend: true,
+                  value: x.value
+                }
+              }
+              )).toArray(),
+            allowDrillToNode: true,
+            cursor: 'pointer',
             dataLabels: {
-              enabled: false
-            }
-          } as any]
+              formatter: function () {
+                const parentValue = (this.series.points.find(x => (x as any).id === ((this.series as any).rootNode || 'root')) as any).value;
+                return `${this.key}<br>${Highcharts.numberFormat((this.point as any).value / parentValue * 100, 2, '.', ',')}%`;
+              },
+              filter: {
+                property: 'innerArcLength',
+                operator: '>',
+                value: 16
+              }
+            },
+            levels: [{
+              level: 1,
+              levelIsConstant: false,
+              dataLabels: {
+                filter: {
+                  property: 'outerArcLength',
+                }
+              }
+            } as PlotSunburstLevelsOptions, {
+              level: 2,
+              colorByPoint: true,
+            } as PlotSunburstLevelsOptions,
+            {
+              level: 3,
+              colorVariation: {
+                key: 'brightness',
+                to: 0.3
+              }
+            } as PlotSunburstLevelsOptions]
+          } as SeriesSunburstOptions] as any
         });
       });
   }

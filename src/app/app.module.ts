@@ -10,8 +10,12 @@ import { HttpClientJsonpModule, HttpClientModule } from "@angular/common/http";
 import { BrowserModule } from "@angular/platform-browser";
 import ja from '@angular/common/locales/ja';
 import { registerLocaleData } from '@angular/common';
+import * as Highcharts from 'highcharts';
+import HC_sunburst from 'highcharts/modules/sunburst';
 
 import { NZ_I18N, ja_JP } from 'ng-zorro-antd/i18n';
+
+HC_sunburst(Highcharts);
 registerLocaleData(ja);
 @NgModule({
   declarations: [AppComponent],

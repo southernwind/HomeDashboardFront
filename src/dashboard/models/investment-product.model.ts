@@ -2,6 +2,7 @@ export interface InvestmentProduct {
   investmentProductId: number,
   name: string,
   type: string,
+  category: string,
   key: string,
   enable: boolean,
   currencyUnitId: number,
