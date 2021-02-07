@@ -1,0 +1,1 @@
+export const jpyCurrencyId = 1;

@@ -8,6 +8,7 @@ import { Moment } from 'moment';
 import { Transaction } from '../models/transaction.model';
 import { InvestmentProduct } from '../models/investment-product.model';
 import { InvestmentCurrencyUnit } from '../models/investment-currency-unit.model';
+import { InvestmentAsset } from '../models/investment-asset.model';
 
 @Injectable({
   providedIn: "root",
@@ -100,6 +101,13 @@ export class FinancialApiService {
       .http
       .get<string[]>(
         `${environment.apiUrl}api/financial-api/get-investment-product-category-list`
+      ).pipe(first());
+  }
+  public GetInvestmentAssets(from: Moment, to: Moment): Observable<InvestmentAsset> {
+    return this
+      .http
+      .get<InvestmentAsset>(
+        `${environment.apiUrl}api/financial-api/get-investment-assets?from=${from.format("YYYY-MM-DD")}&to=${to.format("YYYY-MM-DD")}`
       ).pipe(first());
   }
 }

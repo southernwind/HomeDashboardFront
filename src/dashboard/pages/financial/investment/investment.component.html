@@ -15,8 +15,17 @@
       </div>
     </div>
   </div>
-  <div class="portfolio">
-    <app-investment-portfolio-chart [investmentProductList]="investmentProductList" [investmentCurrencyUnitList]="investmentCurrencyUnitList"></app-investment-portfolio-chart>
+  <div nz-row>
+    <div nz-col [nzSm]="{ span: 24,offset:0}" [nzXl]="{span:12}">
+      <div class="transition">
+        <app-investment-portfolio-chart [investmentProductList]="investmentProductList" [investmentCurrencyUnitList]="investmentCurrencyUnitList"></app-investment-portfolio-chart>
+      </div>
+    </div>
+    <div nz-col [nzSm]="{ span: 24,offset:0}" [nzXl]="{span:12}">
+      <div class="portfolio">
+        <app-investment-asset-transition-chart></app-investment-asset-transition-chart>
+      </div>
+    </div>
   </div>
   <nz-modal [(nzVisible)]="addInvestmentProductModalVisibility" nzTitle="投資商品情報登録モーダル" (nzOnCancel)="cancelAddInvestmentProduct()"
     (nzOnOk)="addInvestmentProduct()" [nzOkDisabled]="addInvestmentProductForm.invalid">
@@ -30,7 +39,7 @@
       <nz-form-item>
         <nz-form-label [nzSm]="8" [nzXs]="24">カテゴリ</nz-form-label>
         <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <nz-select nzShowSearch [nzDropdownRender]="renderTemplate" formControlName="Category" nzPlaceholder="米国株式" >
+          <nz-select nzShowSearch [nzDropdownRender]="renderTemplate" formControlName="category" nzPlaceholder="米国株式" >
             <nz-option *ngFor="let item of investmentProductCategoryList" [nzLabel]="item" [nzValue]="item"></nz-option>
           </nz-select>
           <ng-template #renderTemplate>

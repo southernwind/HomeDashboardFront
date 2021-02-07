@@ -8,6 +8,7 @@ import { NzMessageService } from 'ng-zorro-antd';
 import * as moment from 'moment';
 import { InvestmentCurrencyUnit } from 'src/dashboard/models/investment-currency-unit.model';
 import * as Enumerable from 'linq';
+import { jpyCurrencyId } from 'src/constants/constants';
 
 @UntilDestroy()
 @Component({
@@ -41,6 +42,7 @@ export class InvestmentComponent extends DashboardParentComponent {
     this.addInvestmentProductForm = formBuilder.group({
       name: new FormControl(null, [Validators.required]),
       type: new FormControl(null, [Validators.required]),
+      category: new FormControl(null, [Validators.required]),
       currencyUnit: new FormControl(null, [Validators.required]),
       key: new FormControl(null, [Validators.required])
     });
@@ -53,7 +55,7 @@ export class InvestmentComponent extends DashboardParentComponent {
       .pipe(untilDestroyed(this))
       .subscribe(async () => {
         this.investmentCurrencyUnitList = await this.financialApiService.GetInvestmentCurrencyUnitList().pipe(untilDestroyed(this)).toPromise();
-        this.yenCurrency = this.investmentCurrencyUnitList.find(x => x.id === 1);
+        this.yenCurrency = this.investmentCurrencyUnitList.find(x => x.id === jpyCurrencyId);
         await this.getInvestmentProductList();
         this.investmentProductTypeList = await this.financialApiService.GetInvestmentProductTypeList().toPromise();
         this.investmentProductCategoryList = await this.financialApiService.GetInvestmentProductCategoryList().toPromise();
@@ -68,6 +70,7 @@ export class InvestmentComponent extends DashboardParentComponent {
     this.addInvestmentProductForm.setValue({
       name: null,
       type: null,
+      category: null,
       currencyUnit: null,
       key: null
     });
@@ -97,6 +100,7 @@ export class InvestmentComponent extends DashboardParentComponent {
     this.addInvestmentProductForm.setValue({
       name: null,
       type: null,
+      category: null,
       currencyUnit: null,
       key: null
     });
