@@ -46,7 +46,7 @@ export class InvestmentPortfolioComponent extends DashboardParentComponent {
     combineLatest(this.investmentProductListSubject, this.investmentCurrencyUnitListSubject)
       .pipe(untilDestroyed(this))
       .subscribe(s => {
-        const investmentProductList = s[0];
+        const investmentProductList = s[0].filter(x => x.amount !== 0);
         const investmentCurrencyUnitList = s[1];
         const temp = Enumerable.from(investmentProductList)
           .select(x => {

@@ -123,7 +123,6 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
                 name: `${x.name}`,
                 pointInterval: 24 * 3600 * 1000,
                 pointStart: moment(Enumerable.from(x.dailyRates).firstOrDefault(dr => dr.rate !== 0)?.date ?? dates[0]).valueOf(),
-                stack: x.dailyRates[datesCount - 1].amount > 0 ? 0 : 1,
                 legendIndex: -index,
                 data:
                   Enumerable.from(x.dailyRates).skipWhile(r => r.rate === 0).select(r => r.amount * r.rate * this.getRate(x.currencyUnitId, r.date)).toArray()
