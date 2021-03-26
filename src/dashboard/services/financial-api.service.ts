@@ -46,7 +46,7 @@ export class FinancialApiService {
       ).pipe(first());
   }
 
-  public PostRegisterInvestmentProduct(name: string, type: string, currencyUnitId: number, key: string): Observable<{ result: boolean }> {
+  public PostRegisterInvestmentProduct(name: string, type: string, category: string, currencyUnitId: number, key: string): Observable<{ result: boolean }> {
     return this
       .http
       .post<{ result: boolean }>(
@@ -54,6 +54,7 @@ export class FinancialApiService {
         {
           name: name,
           type: type,
+          category: category,
           currencyUnitId: currencyUnitId,
           key: key
         }).pipe(first());

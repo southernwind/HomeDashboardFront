@@ -88,6 +88,7 @@ export class InvestmentComponent extends DashboardParentComponent {
       await this.financialApiService.PostRegisterInvestmentProduct(
         this.addInvestmentProductForm.value.name,
         this.addInvestmentProductForm.value.type,
+        this.addInvestmentProductForm.value.category,
         this.addInvestmentProductForm.value.currencyUnit,
         this.addInvestmentProductForm.value.key
       ).pipe(untilDestroyed(this))
