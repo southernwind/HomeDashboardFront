@@ -6,7 +6,7 @@ import { first } from "rxjs/operators";
 import { environment } from "../../environments/environment";
 import { Moment } from 'moment';
 import { Transaction } from '../models/transaction.model';
-import { InvestmentProduct } from '../models/investment-product.model';
+import { InvestmentProduct, InvestmentProductAmount } from '../models/investment-product.model';
 import { InvestmentCurrencyUnit } from '../models/investment-currency-unit.model';
 import { InvestmentAsset } from '../models/investment-asset.model';
 
@@ -71,6 +71,13 @@ export class FinancialApiService {
           amount: amount,
           price: price
         }).pipe(first());
+  }
+
+  public getInvestmentProductAmountList(investmentProductId: number): Observable<InvestmentProductAmount[]> {
+    return this
+      .http
+      .get<InvestmentProductAmount[]>(
+        `${environment.apiUrl}api/financial-api/get-investment-product-amount-list?investmentProductId=${investmentProductId}`).pipe(first());
   }
 
   public GetInvestmentProductList(): Observable<InvestmentProduct[]> {

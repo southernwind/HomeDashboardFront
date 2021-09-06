@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { InvestmentProduct } from 'src/dashboard/models/investment-product.model';
+import { InvestmentProduct, InvestmentProductAmount } from 'src/dashboard/models/investment-product.model';
 import { FinancialApiService } from 'src/dashboard/services/financial-api.service';
 import { NzMessageService } from 'ng-zorro-antd';
 import * as moment from 'moment';
@@ -16,6 +16,11 @@ import { jpyCurrencyId } from 'src/constants/constants';
   styleUrls: ["./investment.component.scss"]
 })
 export class InvestmentComponent extends DashboardParentComponent {
+  /** 詳細表示中の投資商品 */
+  public viewingInvestmentProductDetail: {
+    investmentProduct: InvestmentProduct,
+    investmentProductAmountList: InvestmentProductAmount[]
+  };
   public addInvestmentProductModalVisibility: boolean;
   public addInvestmentProductForm: FormGroup;
   public investmentProductList: InvestmentProduct[];
@@ -129,6 +134,36 @@ export class InvestmentComponent extends DashboardParentComponent {
         .select(x => (x.latestRate - x.averageRate) * x.amount * this.investmentCurrencyUnitList.find(icu => icu.id == x.currencyUnitId).latestRate)
         .sum();
     this.rateOfReturn = this.totalProfit / (this.totalValuation - this.totalProfit) * 100;
+  }
+
+
+  /**
+   * 投資商品詳細表示
+   *
+   * @returns {void}
+   * @memberof InvestmentComponent
+   */
+  public async openInvestmentProductDetailModal(investmentProduct: InvestmentProduct): Promise<void> {
+    const investmentProductAmountList =
+      await
+        this.financialApiService
+          .getInvestmentProductAmountList(investmentProduct.investmentProductId)
+          .pipe(untilDestroyed(this))
+          .toPromise();
+    this.viewingInvestmentProductDetail = {
+      investmentProduct: investmentProduct,
+      investmentProductAmountList: investmentProductAmountList
+    };
+  }
+
+  /**
+   * 投資商品詳細クローズ
+   *
+   * @returns {void}
+   * @memberof InvestmentComponent
+   */
+  public closeInvestmentProductDetail(): void {
+    this.viewingInvestmentProductDetail = null;
   }
 
   /**

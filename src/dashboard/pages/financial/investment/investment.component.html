@@ -86,6 +86,36 @@
       </nz-form-item>
     </form>
   </nz-modal>
+
+  <nz-modal [(nzVisible)]="viewingInvestmentProductDetail" nzTitle="{{viewingInvestmentProductDetail?.investmentProduct.name}}" (nzOnCancel)="closeInvestmentProductDetail()"
+    (nzOnOk)="closeInvestmentProductDetail()" [nzWidth]="800">
+      <button nz-button (click)="addInvestmentProductAmountModalProduct = viewingInvestmentProductDetail.investmentProduct;">取得量登録</button>
+      <nz-table #investmentProductDetailAmountTable [nzData]="viewingInvestmentProductDetail?.investmentProductAmountList" nzTableLayout="fixed" [nzPageSize]="50" >
+        <thead>
+          <tr>
+            <th [nzWidth]="'130px'">日付</th>
+            <th [nzWidth]="'130px'">取得単価</th>
+            <th [nzWidth]="'130px'">取得量</th>
+            <th [nzWidth]="'130px'">取得額</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of investmentProductDetailAmountTable.data">
+            <td>{{item.date | datetimeFormatPipe: 'YYYY-MM-DD'}}</td>
+            <td>
+              <app-value-display [value]="item.price / item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail.investmentProduct.currencyUnitId " [adjustNumberOfDecimalPoint]="2"></app-value-display>
+            </td>
+            <td>
+              {{item.amount | number}}
+            </td>
+            <td>
+              <app-value-display [value]="item.price" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail.investmentProduct.currencyUnitId "></app-value-display>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+  </nz-modal>
+
   <nz-modal [(nzVisible)]="addInvestmentProductAmountModalProduct" nzTitle="投資商品取得量登録モーダル" (nzOnCancel)="cancelAddInvestmentProductAmount()"
     (nzOnOk)="addInvestmentProductAmount()" [nzOkDisabled]="addInvestmentProductAmountForm.invalid">
     <div>
@@ -121,7 +151,7 @@
       <th [nzWidth]="'130px'">評価額</th>
       <th [nzWidth]="'130px'">現在値<br>取得平均単価</th>
       <th [nzWidth]="'130px'">損益額<br>(損益率)</th>
-      <th [nzWidth]="'130px'">取得量登録</th>
+      <th [nzWidth]="'130px'">詳細</th>
     </tr>
   </thead>
   <tbody>
@@ -138,7 +168,7 @@
         <app-value-display [value]="(item.latestRate - item.averageRate) * item.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display><br>
         <app-value-display [value]="(item.latestRate / item.averageRate) * 100 - 100" [type]="'percent'"></app-value-display>
       </td>
-      <td><button nz-button (click)="addInvestmentProductAmountModalProduct = item;">取得量登録</button></td>
+      <td><button nz-button (click)="openInvestmentProductDetailModal(item)">詳細</button></td>
     </tr>
   </tbody>
 </nz-table>
