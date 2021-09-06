@@ -5,7 +5,7 @@
     [nzFrontPagination]="false"
     nzBordered
     nzFooter="合計 : {{ totalAmount | number }}円"
-    [nzScroll]="{ y: '240px'}">
+    [nzScroll]="{ y: '600px'}">
     <thead>
       <tr>
         <th *ngFor="let col of tableColumns" [nzWidth]="col.width">{{col.name}}</th>
