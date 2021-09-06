@@ -8,6 +8,8 @@ import { Condition } from 'src/dashboard/models/condition.model';
 import { Subject, combineLatest } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Chart } from 'angular-highcharts';
+import { PlotSunburstLevelsOptions } from 'highcharts';
+import { SeriesSunburstOptions } from 'highcharts/highcharts.src';
 
 @UntilDestroy()
 @Component({
@@ -40,15 +42,11 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
       .subscribe(transactions => {
 
         const temp = Enumerable.from(transactions)
-          .where(x => -x.amount > 0)
-          .groupBy(x => x.largeCategory)
-          .orderByDescending(x => x.sum(a => a.amount));
-
+          .where(x => -x.amount > 0);
         this.chart = new Chart({
           ...HighchartsOptions.defaultOptions,
           chart: {
-            ...HighchartsOptions.defaultOptions.chart,
-            type: 'pie'
+            ...HighchartsOptions.defaultOptions.chart
           },
           title: {
             ...HighchartsOptions.defaultOptions.title,
@@ -60,81 +58,76 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
               ...HighchartsOptions.defaultOptions.plotOptions.pie,
               shadow: false,
               center: ['50%', '50%']
-            },
-            series: {
-              ...HighchartsOptions.defaultOptions.plotOptions?.series,
-              point: {
-                ...HighchartsOptions.defaultOptions.plotOptions?.series?.point,
-                events: {
-                  ...HighchartsOptions.defaultOptions.plotOptions?.series?.point?.events,
-                  click: function (e) {
-                    switch (e.point.series.name) {
-                      case "カテゴリ":
-                        componentScope.filterConditionChange.emit({
-                          condition: x => x.largeCategory == e.point.name
-                        });
-                        break;
-                      case "サブカテゴリ":
-                        componentScope.filterConditionChange.emit({
-                          condition: x => x.middleCategory == e.point.name
-                        });
-                        break;
-                    }
-                  }
-                }
-              }
             }
           },
           tooltip: {
             ...HighchartsOptions.defaultOptions.tooltip,
             formatter: function () {
-              return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円<br>(${this.percentage.toFixed(3)}%)`;
-            }
-          },
-          legend: {
-            ...HighchartsOptions.defaultOptions.legend,
-            labelFormatter: function () {
-              return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(this.y, 0, '', ',')}円)</span>`;
-            } as Highcharts.FormatterCallbackFunction<Highcharts.Point>,
-            enabled: true,
-            align: "right",
-            layout: "vertical",
-            verticalAlign: "top"
+              const parentValue = (this.series.points.find(x => (x as any).id === ((this.series as any).rootNode || 'root')) as any).value;
+              return `${this.key}<br>${Highcharts.numberFormat((this.point as any).value, 0, '', ',')}円<br>(${Highcharts.numberFormat((this.point as any).value / parentValue * 100, 2, '.', ',')}%)`;
+            },
           },
           series: [{
             name: 'カテゴリ',
-            data: temp
-              .select((x, index) => {
+            type: "sunburst",
+            data: Enumerable.from([{
+              id: 'root',
+              parent: '',
+              name: 'ALL',
+              value: temp.sum(x => -x.amount)
+            }]).concat(temp
+              .groupBy(x => x.largeCategory).select(x => {
                 return {
+                  id: x.key(),
+                  parent: 'root',
                   name: x.key(),
-                  y: x.sum(a => -a.amount),
-                  color: Highcharts.getOptions().colors[index % Highcharts.getOptions().colors.length],
-                };
-              }).reverse().toArray()
-            ,
-            size: '60%',
-            showInLegend: true,
-            dataLabels: {
-              enabled: false
-            }
-          } as any, {
-            name: 'サブカテゴリ',
-            data: temp
-              .select(x => { return { cat: x.key(), ins: x.groupBy(a => a.middleCategory) } })
-              .select((x, index) => {
-                return x.ins.select((i, index2) => {
+                  value: x.sum(y => -y.amount)
+                }
+              }).orderByDescending(x => x.value)).concat(
+                temp.groupBy(x => `${x.largeCategory}_${x.middleCategory}`).select(x => {
                   return {
-                    name: i.key(),
-                    y: i.sum(a => -a.amount),
-                    color: Highcharts.color(Highcharts.getOptions().colors[index % Highcharts.getOptions().colors.length]).brighten(0.2 - (index2 / x.ins.count()) / 5).get()
+                    id: x.key(),
+                    parent: x.first().largeCategory,
+                    name: x.first().middleCategory,
+                    value: x.sum(y => -y.amount)
                   }
                 })
-              }).selectMany(x => x).reverse().toArray(),
-            size: '100%',
-            innerSize: '60%',
-            id: 'middle',
-          } as any]
+              ).toArray(),
+            allowDrillToNode: true,
+            cursor: 'pointer',
+            dataLabels: {
+              formatter: function () {
+                const parentValue = (this.series.points.find(x => (x as any).id === ((this.series as any).rootNode || 'root')) as any).value;
+                return `${this.key}<br>${Highcharts.numberFormat((this.point as any).value / parentValue * 100, 2, '.', ',')}%`;
+              },
+              filter: {
+                property: 'innerArcLength',
+                operator: '>',
+                value: 16
+              }
+            },
+            levels: [{
+              level: 1,
+              levelIsConstant: false,
+              dataLabels: {
+                filter: {
+                  property: 'outerArcLength',
+                }
+              }
+            } as PlotSunburstLevelsOptions, {
+              level: 2,
+              colorByPoint: true,
+            } as PlotSunburstLevelsOptions,
+            {
+              level: 3,
+              colorVariation: {
+                key: 'brightness',
+                to: 0.3
+              }
+            } as PlotSunburstLevelsOptions]
+          } as SeriesSunburstOptions] as any
         });
+        const a = 1 + 1;
       });
   }
 }
