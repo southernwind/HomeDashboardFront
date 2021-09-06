@@ -103,13 +103,13 @@
           <tr *ngFor="let item of investmentProductDetailAmountTable.data">
             <td>{{item.date | datetimeFormatPipe: 'YYYY-MM-DD'}}</td>
             <td>
-              <app-value-display [value]="item.price / item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail.investmentProduct.currencyUnitId " [adjustNumberOfDecimalPoint]="2"></app-value-display>
+              <app-value-display [value]="item.price" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail.investmentProduct.currencyUnitId " [adjustNumberOfDecimalPoint]="2"></app-value-display>
             </td>
             <td>
               {{item.amount | number}}
             </td>
             <td>
-              <app-value-display [value]="item.price" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail.investmentProduct.currencyUnitId "></app-value-display>
+              <app-value-display [value]="item.price * item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail.investmentProduct.currencyUnitId "></app-value-display>
             </td>
           </tr>
         </tbody>
