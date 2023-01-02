@@ -2,7 +2,7 @@ import { Component, ElementRef, Input } from "@angular/core";
 import * as Highcharts from 'highcharts';
 import { FinancialApiService } from "../../../../services/financial-api.service";
 import * as moment from 'moment';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
@@ -47,7 +47,10 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
           chart: {
             ...HighchartsOptions.defaultOptions.chart,
             type: "area",
-            zoomType: "x",
+            zooming: {
+              ...HighchartsOptions.defaultOptions.chart.zooming,
+              type: "x"
+            }
           },
           title: {
             ...HighchartsOptions.defaultOptions.title,
@@ -72,10 +75,10 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
               formatter: function () {
                 if (this.value == 0) {
                   return `${this.value}円`;
-                } else if (Math.abs(this.value) >= 100000000) {
-                  return `${this.value / 100000000} 万円`
+                } else if (Math.abs(Number(this.value)) >= 100000000) {
+                  return `${Number(this.value) / 100000000} 万円`
                 } else {
-                  return `${this.value / 10000} 万円`
+                  return `${Number(this.value) / 10000} 万円`
                 }
               }
             }
@@ -83,7 +86,7 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
           tooltip: {
             ...HighchartsOptions.defaultOptions.tooltip,
             formatter: function () {
-              return `${Highcharts.dateFormat("%Y/%m/%d", this.key)}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
+              return `${Highcharts.dateFormat("%Y/%m/%d", Number(this.key))}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
             }
           },
           plotOptions: {

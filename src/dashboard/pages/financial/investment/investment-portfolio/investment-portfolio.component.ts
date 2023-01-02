@@ -1,7 +1,7 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { Transaction } from '../../../../models/transaction.model';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
 import { Condition } from 'src/dashboard/models/condition.model';

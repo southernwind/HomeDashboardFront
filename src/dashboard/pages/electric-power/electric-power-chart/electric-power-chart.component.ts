@@ -53,7 +53,7 @@ export class ElectricPowerChartComponent extends DashboardParentComponent {
         tooltip: {
           ...HighchartsOptions.defaultOptions.tooltip,
           formatter: function () {
-            return `<span style="font-size:10px">${$this.chart.ref.time.dateFormat("%Y/%m/%d %H:%M:%S", this.key)}<span><br><span style="fill:${this.color}">●</span><span>${this.series.name} :</span> <span style="font-weight:bold">${this.y}</span> W`;
+            return `<span style="font-size:10px">${$this.chart.ref.time.dateFormat("%Y/%m/%d %H:%M:%S", Number(this.key))}<span><br><span style="fill:${this.color}">●</span><span>${this.series.name} :</span> <span style="font-weight:bold">${this.y}</span> W`;
           }
         },
         yAxis: [{

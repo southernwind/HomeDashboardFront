@@ -1,10 +1,8 @@
 <div>
   <nz-space>
-    <nz-space-item>
-      <date-range-selector [(dateRange)]="selectedDateRange" (dateRangeChange)="selectedDateChanged()"
-        [showTime]="true">
-      </date-range-selector>
-    </nz-space-item>
+    <date-range-selector *nzSpaceItem [(dateRange)]="selectedDateRange" (dateRangeChange)="selectedDateChanged()"
+      [showTime]="true">
+    </date-range-selector>
   </nz-space>
   <div class="chart-box">
     <electric-power-chart [chartData]="chartData"></electric-power-chart>

@@ -1,13 +1,9 @@
 <div>
   <nz-space>
-    <nz-space-item>
-      <date-range-selector [(dateRange)]="selectedDateRange" (dateRangeChange)="selectedDateChanged()"
-        [showTime]="true">
-      </date-range-selector>
-    </nz-space-item>
-    <nz-space-item>
-      <aqua-period-selector [(period)]="selectedPeriod" (periodChange)="selectedPeriodChanged()"></aqua-period-selector>
-    </nz-space-item>
+    <date-range-selector *nzSpaceItem [(dateRange)]="selectedDateRange" (dateRangeChange)="selectedDateChanged()"
+      [showTime]="true">
+    </date-range-selector>
+    <aqua-period-selector *nzSpaceItem  [(period)]="selectedPeriod" (periodChange)="selectedPeriodChanged()"></aqua-period-selector>
   </nz-space>
   <div class="chart-box">
     <water-states [dateRange]="selectedDateRange" [period]="selectedPeriod"></water-states>

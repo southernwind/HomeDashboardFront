@@ -5,9 +5,8 @@ import { PalmieApiService } from '../../../services/palmie-api.service';
 import { PalmieDailyLesson, PalmiePrimeLesson } from '../../../models/palmie-course.model';
 import { first } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 import { environment } from "../../../../environments/environment";
-import { isNumber } from 'util';
 
 @UntilDestroy()
 @Component({

@@ -2,7 +2,7 @@ import { Component, Input } from "@angular/core";
 import { Chart } from 'angular-highcharts';
 import { FinancialApiService } from "../../../../services/financial-api.service";
 import { Asset } from '../../../../models/asset.model';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
 import { Subject, combineLatest } from 'rxjs';

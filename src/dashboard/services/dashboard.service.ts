@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable, defer, Subject, of, from, combineLatest, merge, concat } from 'rxjs';
 import { CurrentWaterState } from '../models/water-state.model';
-import { HubConnection, HubConnectionBuilder, HubConnectionState } from "@aspnet/signalr";
+import { HubConnection, HubConnectionBuilder, HubConnectionState, RetryContext } from "@microsoft/signalr";
 import { environment } from "../../environments/environment";
-import { map, first } from 'rxjs/operators';
+import { map, first, RetryConfig } from 'rxjs/operators';
 import { ElectricPower } from '../models/electric-power.model';
 
 
@@ -70,7 +70,7 @@ export class DashboardService {
            *
            * @returns {number | null} The amount of time in milliseconds to wait before the next reconnect attempt. `null` tells the client to stop retrying and close.
            */
-          nextRetryDelayInMilliseconds(previousRetryCount: number, elapsedMilliseconds: number): number | null {
+          nextRetryDelayInMilliseconds(retryContext: RetryContext): number | null {
             return 1000;
           }
         })

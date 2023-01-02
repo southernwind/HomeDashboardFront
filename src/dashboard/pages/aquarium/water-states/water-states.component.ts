@@ -11,7 +11,7 @@ import { Subject, combineLatest } from 'rxjs';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { Chart } from 'angular-highcharts';
 import * as moment from 'moment';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 
 @UntilDestroy()
 @Component({
@@ -55,7 +55,7 @@ export class WaterStatesComponent extends DashboardParentComponent {
                 untilDestroyed(this),
                 first()
               ).toPromise();
-        } catch{
+        } catch {
           this.message.warning("データ取得失敗");
           return;
         }
@@ -89,7 +89,10 @@ export class WaterStatesComponent extends DashboardParentComponent {
           chart: {
             ...HighchartsOptions.defaultOptions.chart,
             type: 'boxplot',
-            zoomType: "xy"
+            zooming: {
+              ...HighchartsOptions.defaultOptions.chart.zooming,
+              type: "xy"
+            }
           },
           title: {
             ...HighchartsOptions.defaultOptions.title,

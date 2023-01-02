@@ -3,7 +3,7 @@ import * as Highcharts from 'highcharts';
 import { FinancialApiService } from "../../../../services/financial-api.service";
 import * as moment from 'moment';
 import { Transaction } from '../../../../models/transaction.model';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 import { Moment } from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';

@@ -8,7 +8,7 @@ import * as moment from 'moment';
 import { PalmieApiService } from '../../../services/palmie-api.service';
 import { PalmieDailyLesson, PalmiePrimeLesson, PalmieCourses } from '../../../models/palmie-course.model';
 import { first, throttle, filter } from 'rxjs/operators';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 import { interval, Subject } from 'rxjs';
 
 @UntilDestroy()

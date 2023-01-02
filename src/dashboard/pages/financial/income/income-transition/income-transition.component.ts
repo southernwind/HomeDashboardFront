@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import * as moment from 'moment';
 import { Transaction } from '../../../../models/transaction.model';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
 import { Condition } from 'src/dashboard/models/condition.model';
@@ -54,7 +54,10 @@ export class IncomeTransitionComponent extends DashboardParentComponent {
           chart: {
             ...HighchartsOptions.defaultOptions.chart,
             type: "column",
-            zoomType: "x"
+            zooming: {
+              ...HighchartsOptions.defaultOptions.chart.zooming,
+              type: "x"
+            }
           },
           title: {
             ...HighchartsOptions.defaultOptions.title,
@@ -82,10 +85,10 @@ export class IncomeTransitionComponent extends DashboardParentComponent {
               formatter: function () {
                 if (this.value == 0) {
                   return `${this.value}円`;
-                } else if (Math.abs(this.value) >= 100000000) {
-                  return `${this.value / 100000000} 万円`
+                } else if (Math.abs(Number(this.value)) >= 100000000) {
+                  return `${Number(this.value) / 100000000} 万円`
                 } else {
-                  return `${this.value / 10000} 万円`
+                  return `${Number(this.value) / 10000} 万円`
                 }
               }
             }

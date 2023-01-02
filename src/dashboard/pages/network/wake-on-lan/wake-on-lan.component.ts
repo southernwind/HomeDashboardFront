@@ -51,7 +51,7 @@ export class WakeOnLanComponent extends DashboardParentComponent implements OnIn
         macAddress: this.addTargetForm.value.macAddress,
         deviceName: this.addTargetForm.value.deviceName
       }).toPromise();
-    } catch{
+    } catch {
       this.message.warning("登録失敗");
       return;
     }

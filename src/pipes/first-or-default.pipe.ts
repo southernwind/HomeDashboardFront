@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 
 @Pipe({
   name: 'firstOrDefaultPipe'

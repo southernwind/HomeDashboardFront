@@ -4,10 +4,10 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { InvestmentProduct, InvestmentProductAmount } from 'src/dashboard/models/investment-product.model';
 import { FinancialApiService } from 'src/dashboard/services/financial-api.service';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import * as moment from 'moment';
 import { InvestmentCurrencyUnit } from 'src/dashboard/models/investment-currency-unit.model';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 import { jpyCurrencyId } from 'src/constants/constants';
 
 @UntilDestroy()

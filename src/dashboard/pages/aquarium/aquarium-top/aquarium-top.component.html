@@ -3,16 +3,12 @@
     <current-water-states></current-water-states>
   </div>
   <nz-space>
-    <nz-space-item>
-      <nz-select style="width:120px;" [(ngModel)]="selectedTerm"
-        (ngModelChange)="selectedTermChanged()">
-        <nz-option *ngFor="let item of termCandidate" [nzValue]="item" nzLabel="{{item.value}} {{item.unit}}">
-        </nz-option>
-      </nz-select>
-    </nz-space-item>
-    <nz-space-item>
-      <aqua-period-selector [(period)]="selectedPeriod" (periodChange)="selectedPeriodChanged()"></aqua-period-selector>
-    </nz-space-item>
+    <nz-select *nzSpaceItem style="width:120px;" [(ngModel)]="selectedTerm"
+      (ngModelChange)="selectedTermChanged()">
+      <nz-option *ngFor="let item of termCandidate" [nzValue]="item" nzLabel="{{item.value}} {{item.unit}}">
+      </nz-option>
+    </nz-select>
+    <aqua-period-selector *nzSpaceItem [(period)]="selectedPeriod" (periodChange)="selectedPeriodChanged()"></aqua-period-selector>
   </nz-space>
   <div class="chart-box">
     <water-states [dateRange]="selectedDateRange" [period]="selectedPeriod"></water-states>

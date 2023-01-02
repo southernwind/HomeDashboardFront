@@ -3,7 +3,7 @@ import { DashboardParentComponent } from 'src/dashboard/components/parent/dashbo
 import { NetworkApiService } from 'src/dashboard/services/network-api.service';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { DhcpLease } from '../../../models/dhcp-lease.model';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 
 @UntilDestroy()
 @Component({
