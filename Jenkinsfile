@@ -4,12 +4,12 @@ node {
   }
 
   stage('npm install') {
-    nodejs('node12.18') {
+    nodejs('node18') {
       sh 'npm -prefix ./ install'
     }
   }
   stage('Build'){
-    nodejs('node12.18') {
+    nodejs('node18') {
       sh 'npm -prefix ./ run build -- --c=production'
     }
   }
