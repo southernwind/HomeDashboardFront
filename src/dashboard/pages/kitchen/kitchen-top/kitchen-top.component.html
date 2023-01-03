@@ -2,26 +2,28 @@
   <button nz-button (click)="addRecipeModalVisibility = true">レシピ追加</button>
   <nz-modal [(nzVisible)]="addRecipeModalVisibility" nzTitle="The first Modal" (nzOnCancel)="cancelAddRecipe()"
     (nzOnOk)="addRecipe()" [nzOkDisabled]="addRecipeForm.invalid">
-    <form nz-form [formGroup]="addRecipeForm">
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">URL</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <input nz-input formControlName="url" placeholder="https://cookpad.com/recipe/4584848" />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">タイトル</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <input nz-input formControlName="title" placeholder="入力しなければ自動取得" />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">画像URL</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <input nz-input formControlName="imageUrl" placeholder="入力しなければ自動取得" />
-        </nz-form-control>
-      </nz-form-item>
-    </form>
+    <ng-container *nzModalContent>
+      <form nz-form [formGroup]="addRecipeForm">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">URL</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <input nz-input formControlName="url" placeholder="https://cookpad.com/recipe/4584848" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">タイトル</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <input nz-input formControlName="title" placeholder="入力しなければ自動取得" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">画像URL</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <input nz-input formControlName="imageUrl" placeholder="入力しなければ自動取得" />
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </ng-container>
   </nz-modal>
 </div>
 <nz-table #recipeTable [nzData]="recipeList" nzTableLayout="fixed">

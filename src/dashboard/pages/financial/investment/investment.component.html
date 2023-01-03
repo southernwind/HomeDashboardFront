@@ -29,66 +29,69 @@
   </div>
   <nz-modal [(nzVisible)]="addInvestmentProductModalVisibility" nzTitle="投資商品情報登録モーダル" (nzOnCancel)="cancelAddInvestmentProduct()"
     (nzOnOk)="addInvestmentProduct()" [nzOkDisabled]="addInvestmentProductForm.invalid">
-    <form nz-form [formGroup]="addInvestmentProductForm">
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">名前</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <input nz-input formControlName="name" placeholder="Accenture" />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">カテゴリ</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <nz-select nzShowSearch [nzDropdownRender]="renderTemplate" formControlName="category" nzPlaceholder="米国株式" >
-            <nz-option *ngFor="let item of investmentProductCategoryList" [nzLabel]="item" [nzValue]="item"></nz-option>
-          </nz-select>
-          <ng-template #renderTemplate>
-            <div class="product-category-select-candidate">
-              <nz-divider></nz-divider>
-              <div class="container">
-                <input type="text" nz-input #inputElement />
-                <a class="add-item" (click)="investmentProductCategoryList.push(inputElement.value)"><i nz-icon nzType="plus"></i> Add item</a>
+    <ng-container *nzModalContent>
+      <form nz-form [formGroup]="addInvestmentProductForm">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">名前</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <input nz-input formControlName="name" placeholder="Accenture" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">カテゴリ</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <nz-select nzShowSearch [nzDropdownRender]="renderTemplate" formControlName="category" nzPlaceholder="米国株式" >
+              <nz-option *ngFor="let item of investmentProductCategoryList" [nzLabel]="item" [nzValue]="item"></nz-option>
+            </nz-select>
+            <ng-template #renderTemplate>
+              <div class="product-category-select-candidate">
+                <nz-divider></nz-divider>
+                <div class="container">
+                  <input type="text" nz-input #inputElement />
+                  <a class="add-item" (click)="investmentProductCategoryList.push(inputElement.value)"><i nz-icon nzType="plus"></i> Add item</a>
+                </div>
               </div>
-            </div>
-          </ng-template>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">取得方式</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <nz-select nzShowSearch [nzDropdownRender]="renderTemplate" formControlName="type" nzPlaceholder="ScrapingService.Targets.YahooFinance" >
-            <nz-option *ngFor="let item of investmentProductTypeList" [nzLabel]="item" [nzValue]="item"></nz-option>
-          </nz-select>
-          <ng-template #renderTemplate>
-            <div class="product-type-select-candidate">
-              <nz-divider></nz-divider>
-              <div class="container">
-                <input type="text" nz-input #inputElement />
-                <a class="add-item" (click)="investmentProductTypeList.push(inputElement.value)"><i nz-icon nzType="plus"></i> Add item</a>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">取得方式</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <nz-select nzShowSearch [nzDropdownRender]="renderTemplate" formControlName="type" nzPlaceholder="ScrapingService.Targets.YahooFinance" >
+              <nz-option *ngFor="let item of investmentProductTypeList" [nzLabel]="item" [nzValue]="item"></nz-option>
+            </nz-select>
+            <ng-template #renderTemplate>
+              <div class="product-type-select-candidate">
+                <nz-divider></nz-divider>
+                <div class="container">
+                  <input type="text" nz-input #inputElement />
+                  <a class="add-item" (click)="investmentProductTypeList.push(inputElement.value)"><i nz-icon nzType="plus"></i> Add item</a>
+                </div>
               </div>
-            </div>
-          </ng-template>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">通貨単位</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <nz-select formControlName="currencyUnit" placeHolder="米ドル">
-            <nz-option *ngFor="let unit of investmentCurrencyUnitList" [nzValue]="unit.id" [nzLabel]="unit.name"></nz-option>
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">キー情報</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <input nz-input formControlName="key" placeholder="ACN" />
-        </nz-form-control>
-      </nz-form-item>
-    </form>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">通貨単位</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <nz-select formControlName="currencyUnit" placeHolder="米ドル">
+              <nz-option *ngFor="let unit of investmentCurrencyUnitList" [nzValue]="unit.id" [nzLabel]="unit.name"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">キー情報</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <input nz-input formControlName="key" placeholder="ACN" />
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </ng-container>
   </nz-modal>
 
   <nz-modal [(nzVisible)]="viewingInvestmentProductDetail" nzTitle="{{viewingInvestmentProductDetail?.investmentProduct.name}}" (nzOnCancel)="closeInvestmentProductDetail()"
     (nzOnOk)="closeInvestmentProductDetail()" [nzWidth]="800">
+    <ng-container *nzModalContent>
       <button nz-button (click)="addInvestmentProductAmountModalProduct = viewingInvestmentProductDetail.investmentProduct;">取得量登録</button>
       <nz-table #investmentProductDetailAmountTable [nzData]="viewingInvestmentProductDetail?.investmentProductAmountList" nzTableLayout="fixed" [nzPageSize]="50" >
         <thead>
@@ -114,34 +117,37 @@
           </tr>
         </tbody>
       </nz-table>
+    </ng-container>
   </nz-modal>
 
   <nz-modal [(nzVisible)]="addInvestmentProductAmountModalProduct" nzTitle="投資商品取得量登録モーダル" (nzOnCancel)="cancelAddInvestmentProductAmount()"
     (nzOnOk)="addInvestmentProductAmount()" [nzOkDisabled]="addInvestmentProductAmountForm.invalid">
-    <div>
-      <span>{{addInvestmentProductAmountModalProduct?.name}}</span>
-    </div>
-    <form nz-form [formGroup]="addInvestmentProductAmountForm">
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">取得量変更日</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <nz-date-picker formControlName="date" placeholder="2021-12-31" ></nz-date-picker>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">取得量</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <input nz-input formControlName="amount" placeholder="100" />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">取得単価</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <input nz-input formControlName="price" placeholder="16.516" />
-        </nz-form-control>
-      </nz-form-item>
-      <span>金額 : {{addInvestmentProductAmountForm.value.amount * addInvestmentProductAmountForm.value.price | number}}</span>
-    </form>
+    <ng-container *nzModalContent>
+      <div>
+        <span>{{addInvestmentProductAmountModalProduct?.name}}</span>
+      </div>
+      <form nz-form [formGroup]="addInvestmentProductAmountForm">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">取得量変更日</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <nz-date-picker formControlName="date" placeholder="2021-12-31" ></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">取得量</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <input nz-input formControlName="amount" placeholder="100" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">取得単価</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <input nz-input formControlName="price" placeholder="16.516" />
+          </nz-form-control>
+        </nz-form-item>
+        <span>金額 : {{addInvestmentProductAmountForm.value.amount * addInvestmentProductAmountForm.value.price | number}}</span>
+      </form>
+    </ng-container>
   </nz-modal>
 </div>
 <nz-table #investmentProductTable [nzData]="investmentProductList" nzTableLayout="fixed" [nzPageSize]="50" >

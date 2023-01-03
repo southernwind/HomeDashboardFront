@@ -3,20 +3,22 @@
   <button nz-button (click)="addTargetModalVisibility = true">機器追加</button>
   <nz-modal [(nzVisible)]="addTargetModalVisibility" nzTitle="The first Modal" (nzOnCancel)="cancelAddTarget()"
     (nzOnOk)="addTarget()" [nzOkDisabled]="addTargetForm.invalid">
-    <form nz-form [formGroup]="addTargetForm">
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">機器名</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <input nz-input formControlName="deviceName" />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="8" [nzXs]="24">MACアドレス</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <input nz-input formControlName="macAddress" />
-        </nz-form-control>
-      </nz-form-item>
-    </form>
+    <ng-container *nzModalContent>
+      <form nz-form [formGroup]="addTargetForm">
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">機器名</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <input nz-input formControlName="deviceName" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="8" [nzXs]="24">MACアドレス</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+            <input nz-input formControlName="macAddress" />
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </ng-container>
   </nz-modal>
 </div>
 <nz-table #targetTable [nzData]="targetList" nzTableLayout="fixed">
