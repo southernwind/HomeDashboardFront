@@ -1,5 +1,11 @@
 import * as Highcharts from 'highcharts';
+const defaultHighChartsColors: string[] = ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"];
 
+export const highChartsColors = defaultHighChartsColors;
+export function getHighChartsColor(num: number): string {
+  var id = num % highChartsColors.length;
+  return highChartsColors[id];
+}
 export class HighchartsOptions {
   public static defaultOptions: Highcharts.Options = {
     chart: {
@@ -8,6 +14,7 @@ export class HighchartsOptions {
         duration: 200
       }
     },
+    colors: highChartsColors,
     time: {
       useUTC: false
     },

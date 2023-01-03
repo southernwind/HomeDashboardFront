@@ -3,14 +3,14 @@ import * as Highcharts from 'highcharts';
 import { Transaction } from '../../../../models/transaction.model';
 import Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
-import { HighchartsOptions } from 'src/utils/highcharts.options';
+import { HighchartsOptions, getHighChartsColor } from 'src/utils/highcharts.options';
 import { TransactionCondition } from 'src/dashboard/models/condition.model';
 import { Subject, combineLatestWith, map } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Chart } from 'angular-highcharts';
 import { PlotSunburstLevelsOptions } from 'highcharts';
 import { SeriesSunburstOptions } from 'highcharts/highcharts.src';
-
+import { getMfTransactionLargeCategoryId } from '../../utils/util';
 @UntilDestroy()
 @Component({
   selector: "app-expense-ratio-chart",
@@ -122,6 +122,7 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
                 return {
                   id: x.key(),
                   parent: 'root',
+                  color: getHighChartsColor(getMfTransactionLargeCategoryId(x.key())),
                   name: x.key(),
                   value: x.sum(y => -y.amount)
                 }
