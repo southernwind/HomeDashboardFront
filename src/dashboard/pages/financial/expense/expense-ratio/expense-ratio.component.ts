@@ -174,8 +174,9 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
 
     this.filterConditionSubject.pipe(combineLatestWith(this.chartLoaded)).subscribe(([condition, chart]) => {
       const series = (chart.series[0] as any);
-      if (series.idPreviousRoot === condition.largeCategory) {
+      if (series.idPreviousRoot === condition.largeCategory && condition.middleCategory === null) {
         var fc = new TransactionCondition();
+        fc.month = componentScope.latestFilterCondition.month;
         fc.month = componentScope.latestFilterCondition.month;
         componentScope.filterConditionChange.emit(fc);
         return;
