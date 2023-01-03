@@ -1,11 +1,11 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { Transaction } from '../../../../models/transaction.model';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
-import { Condition } from 'src/dashboard/models/condition.model';
-import { Subject, combineLatest } from 'rxjs';
+import { TransactionCondition } from 'src/dashboard/models/condition.model';
+import { Subject, combineLatestWith, map } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Chart } from 'angular-highcharts';
 import { PlotSunburstLevelsOptions } from 'highcharts';
@@ -28,25 +28,50 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
     this.transactionsSubject.next(value);
   }
 
+  @Input()
+  public set filterCondition(value: TransactionCondition) {
+    if (!value) {
+      return;
+    }
+    this.latestFilterCondition = value;
+    this.filterConditionSubject.next(value);
+  }
+  private nowFilterCondition: TransactionCondition = new TransactionCondition();
+  private latestFilterCondition: TransactionCondition = new TransactionCondition();
+  private filterConditionSubject = new Subject<TransactionCondition>();
+  private chartLoaded = new Subject<Highcharts.Chart>();
+
   /** フィルター条件 */
   @Output()
-  public filterConditionChange = new EventEmitter<Condition<Transaction>>();
+  public filterConditionChange = new EventEmitter<TransactionCondition>();
 
   private transactionsSubject = new Subject<Transaction[]>();
 
   constructor() {
     super();
+    this.nowFilterCondition.month = "9999-99"
     const componentScope = this;
     this.transactionsSubject
+      .pipe(combineLatestWith(this.filterConditionSubject))
       .pipe(untilDestroyed(this))
-      .subscribe(transactions => {
-
+      .subscribe(([transactions, _]) => {
+        if (this.nowFilterCondition.month === this.latestFilterCondition.month) {
+          this.nowFilterCondition = this.latestFilterCondition;
+          return;
+        }
+        this.nowFilterCondition = this.latestFilterCondition;
         const temp = Enumerable.from(transactions)
+          .where(x => this.latestFilterCondition.month === null ? true : x.date.startsWith(this.latestFilterCondition.month))
           .where(x => -x.amount > 0);
         this.chart = new Chart({
           ...HighchartsOptions.defaultOptions,
           chart: {
-            ...HighchartsOptions.defaultOptions.chart
+            ...HighchartsOptions.defaultOptions.chart,
+            events: {
+              load: function () {
+                componentScope.chartLoaded.next(this);
+              }
+            }
           },
           title: {
             ...HighchartsOptions.defaultOptions.title,
@@ -70,6 +95,23 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
           series: [{
             name: 'カテゴリ',
             type: "sunburst",
+            animation: {
+              duration: 200
+            },
+            events: {
+              click: function (event) {
+                var fc = new TransactionCondition();
+                fc.month = componentScope.latestFilterCondition.month;
+                if (event.point.options.id === "root") {
+                } else if (event.point.options.parent === "root") {
+                  fc.largeCategory = event.point.name;
+                } else {
+                  fc.largeCategory = componentScope.latestFilterCondition.largeCategory;
+                  fc.middleCategory = event.point.name;
+                }
+                componentScope.filterConditionChange.emit(fc);
+              }
+            },
             data: Enumerable.from([{
               id: 'root',
               parent: '',
@@ -127,7 +169,17 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
             } as PlotSunburstLevelsOptions]
           } as SeriesSunburstOptions] as any
         });
-        const a = 1 + 1;
       });
+
+    this.filterConditionSubject.pipe(combineLatestWith(this.chartLoaded)).subscribe(([condition, chart]) => {
+      const series = (chart.series[0] as any);
+      if (series.idPreviousRoot === condition.largeCategory) {
+        var fc = new TransactionCondition();
+        fc.month = componentScope.latestFilterCondition.month;
+        componentScope.filterConditionChange.emit(fc);
+        return;
+      }
+      series.setRootNode(condition.largeCategory !== null ? condition.largeCategory : "root");
+    });
   }
 }

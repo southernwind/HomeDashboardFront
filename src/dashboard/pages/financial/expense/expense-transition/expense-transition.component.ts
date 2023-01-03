@@ -2,11 +2,11 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import * as moment from 'moment';
 import { Transaction } from '../../../../models/transaction.model';
-import * as Enumerable from 'linq';
+import Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
-import { Condition } from 'src/dashboard/models/condition.model';
-import { combineLatest, Subject } from 'rxjs';
+import { TransactionCondition } from 'src/dashboard/models/condition.model';
+import { Subject } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Chart } from 'angular-highcharts';
 
@@ -26,9 +26,19 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
     this.transactionsSubject.next(value);
   }
 
+  @Input()
+  public set filterCondition(value: TransactionCondition) {
+    if (!value) {
+      return;
+    }
+    this.latestFilterCondition = value;
+    this.filterConditionSubject.next(value);
+  }
+  private latestFilterCondition: TransactionCondition = new TransactionCondition();
+  private filterConditionSubject = new Subject<TransactionCondition>();
   /** フィルター条件 */
   @Output()
-  public filterConditionChange = new EventEmitter<Condition<Transaction>>();
+  public filterConditionChange = new EventEmitter<TransactionCondition>();
 
   public highchartsObject: typeof Highcharts = Highcharts;
   private transactionsSubject = new Subject<Transaction[]>();
@@ -55,7 +65,16 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
           chart: {
             ...HighchartsOptions.defaultOptions.chart,
             type: "column",
-            zoomType: "x"
+            zooming: {
+              ...HighchartsOptions.defaultOptions.chart.zooming,
+              type: "x"
+            },
+            events: {
+              click: function () {
+                var fc = new TransactionCondition();
+                componentScope.filterConditionChange.emit(fc);
+              }
+            },
           },
           title: {
             ...HighchartsOptions.defaultOptions.title,
@@ -67,7 +86,14 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
             title: null,
             dateTimeLabelFormats: {
               month: '%Y/%m',
-            }
+            },
+            labels: {
+              events: {
+                click: function (event) {
+                  this;
+                }
+              }
+            } as any
           },
           yAxis: {
             ...HighchartsOptions.defaultOptions.yAxis,
@@ -83,10 +109,10 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
               formatter: function () {
                 if (this.value == 0) {
                   return `${this.value}円`;
-                } else if (Math.abs(this.value) >= 100000000) {
-                  return `${this.value / 100000000} 万円`
+                } else if (Math.abs(Number(this.value)) >= 100000000) {
+                  return `${Number(this.value) / 100000000} 万円`
                 } else {
-                  return `${this.value / 10000} 万円`
+                  return `${Number(this.value) / 10000} 万円`
                 }
               }
             }
@@ -113,9 +139,10 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
                   ...HighchartsOptions.defaultOptions.plotOptions?.series?.point?.events,
                   click: function (e) {
                     const month = moment(this.category).format("YYYY-MM");
-                    componentScope.filterConditionChange.emit({
-                      condition: x => x.date.startsWith(month) && x.largeCategory == e.point.series.name
-                    });
+                    var fc = new TransactionCondition();
+                    fc.month = month;
+                    fc.largeCategory = e.point.series.name;
+                    componentScope.filterConditionChange.emit(fc);
                   }
                 }
               }
@@ -133,6 +160,9 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
             .select((x, index) => {
               return {
                 type: 'column',
+                animation: {
+                  duration: 200
+                },
                 name: `${x.key()}`,
                 legendIndex: -index,
                 data:

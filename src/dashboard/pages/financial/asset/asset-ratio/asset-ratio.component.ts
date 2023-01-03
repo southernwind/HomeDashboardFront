@@ -72,6 +72,9 @@ export class AssetRatioComponent extends DashboardParentComponent {
           },
           series: [{
             name: 'カテゴリ',
+            animation: {
+              duration: 200
+            },
             data: temp
               .select((x, index) => {
                 return {
@@ -84,6 +87,9 @@ export class AssetRatioComponent extends DashboardParentComponent {
             size: '60%',
           } as any, {
             name: '金融機関',
+            animation: {
+              duration: 200
+            },
             data: temp
               .select(x => { return { cat: x.key(), ins: x.groupBy(a => a.institution) } })
               .select((x, index) => {

@@ -4,12 +4,13 @@ import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { FinancialApiService } from 'src/dashboard/services/financial-api.service';
 import { Transaction } from 'src/dashboard/models/transaction.model';
-import { Condition } from 'src/dashboard/models/condition.model';
+import { TransactionCondition } from 'src/dashboard/models/condition.model';
 import { CookieService } from 'ngx-cookie-service';
 import { Moment } from 'moment';
 
 @Component({
   templateUrl: "./expense.component.html",
+  styleUrls: ["./expense.component.scss"]
 })
 export class ExpenseComponent extends DashboardParentComponent {
   /**
@@ -24,7 +25,7 @@ export class ExpenseComponent extends DashboardParentComponent {
   public transactions: Transaction[];
 
   /** フィルター条件 */
-  public filterCondition: Condition<Transaction>;
+  public filterCondition: TransactionCondition;
 
   constructor(private financialApiService: FinancialApiService,
     private cookieService: CookieService) {
@@ -61,6 +62,7 @@ export class ExpenseComponent extends DashboardParentComponent {
       this.selectedDateRange = { startDate: from, endDate: to };
       await this.selectedDateChanged();
     }
+    this.filterCondition = new TransactionCondition();
   }
 
   public async selectedDateChanged(): Promise<void> {

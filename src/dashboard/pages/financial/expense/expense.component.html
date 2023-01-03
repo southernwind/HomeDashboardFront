@@ -1,15 +1,25 @@
 <div>
   <date-range-selector [(dateRange)]="selectedDateRange" (dateRangeChange)="selectedDateChanged()">
   </date-range-selector>
+  <div>
+    <div>
+      <span>フィルター条件:</span>
+    </div>
+    <div class="filterConditions">
+      <span>年月:</span><input type="text" disabled nz-input [ngModel]="filterCondition?.month"/>
+      <span>大カテゴリ:</span><input type="text" disabled nz-input [ngModel]="filterCondition?.largeCategory"/>
+      <span>中カテゴリ:</span><input type="text" disabled nz-input [ngModel]="filterCondition?.middleCategory"/>
+    </div>
+  </div>
   <div nz-row>
     <div class="chart-box" nz-col [nzSm]="{ span: 24,offset:0}" [nzXl]="{span:12}">
-      <app-expense-transition-chart [transactions]="transactions" (filterConditionChange)="filterCondition = $event">
+      <app-expense-transition-chart [transactions]="transactions" [(filterCondition)]="filterCondition">
       </app-expense-transition-chart>
     </div>
     <div class="chart-box" nz-col [nzSm]="{ span: 24,offset:0}" [nzXl]="{span:12}">
-      <app-expense-ratio-chart [transactions]="transactions" (filterConditionChange)="filterCondition = $event">
+      <app-expense-ratio-chart [transactions]="transactions" [(filterCondition)]="filterCondition">
       </app-expense-ratio-chart>
     </div>
-    <app-expense-raw-data-viewer [transactions]="transactions" [filterCondition]="filterCondition">
+    <app-expense-raw-data-viewer [transactions]="transactions" [(filterCondition)]="filterCondition">
     </app-expense-raw-data-viewer>
   </div>

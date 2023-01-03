@@ -3,7 +3,10 @@ import * as Highcharts from 'highcharts';
 export class HighchartsOptions {
   public static defaultOptions: Highcharts.Options = {
     chart: {
-      backgroundColor: "#FFF3"
+      backgroundColor: "#FFF3",
+      animation: {
+        duration: 200
+      }
     },
     time: {
       useUTC: false

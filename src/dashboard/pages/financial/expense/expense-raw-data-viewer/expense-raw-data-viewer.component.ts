@@ -8,7 +8,7 @@ import { Moment } from 'moment';
 import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
-import { Condition } from 'src/dashboard/models/condition.model';
+import { TransactionCondition } from 'src/dashboard/models/condition.model';
 
 @Component({
   selector: "app-expense-raw-data-viewer",
@@ -25,7 +25,7 @@ export class ExpenseRawDataViewerComponent extends DashboardParentComponent {
 
   /** フィルター条件 */
   @Input()
-  public set filterCondition(value: Condition<Transaction>) {
+  public set filterCondition(value: TransactionCondition) {
     this.createTableData(this._transactions, value);
   }
 
@@ -60,7 +60,7 @@ export class ExpenseRawDataViewerComponent extends DashboardParentComponent {
    * @returns {Promise<void>}
    * @memberof ExpenseRawDataViewerComponent
    */
-  private async createTableData(transactions: Transaction[], filterCondition?: Condition<Transaction>): Promise<void> {
+  private async createTableData(transactions: Transaction[], filterCondition?: TransactionCondition): Promise<void> {
     this.tableData = Enumerable.from(transactions).select(x => {
       return {
         ...x,

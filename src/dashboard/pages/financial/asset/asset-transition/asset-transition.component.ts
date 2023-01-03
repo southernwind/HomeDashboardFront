@@ -131,6 +131,9 @@ export class AssetTransitionComponent extends DashboardParentComponent {
             .select((x, index) => {
               return {
                 type: 'area',
+                animation: {
+                  duration: 200
+                },
                 name: `${x.key()}`,
                 pointInterval: 24 * 3600 * 1000,
                 pointStart: moment(dates.first()).valueOf(),
