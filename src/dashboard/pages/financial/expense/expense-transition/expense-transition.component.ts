@@ -6,7 +6,7 @@ import Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions, getHighChartsColor } from 'src/utils/highcharts.options';
 import { TransactionCondition } from 'src/dashboard/models/condition.model';
-import { Subject } from 'rxjs';
+import { Subject, take } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Chart } from 'angular-highcharts';
 import { getMfTransactionLargeCategoryId } from '../../utils/util';
@@ -73,6 +73,7 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
             events: {
               click: function () {
                 var fc = new TransactionCondition();
+                fc.largeCategories = componentScope.latestFilterCondition.largeCategories;
                 componentScope.filterConditionChange.emit(fc);
               }
             },
@@ -87,14 +88,7 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
             title: null,
             dateTimeLabelFormats: {
               month: '%Y/%m',
-            },
-            labels: {
-              events: {
-                click: function (event) {
-                  this;
-                }
-              }
-            } as any
+            }
           },
           yAxis: {
             ...HighchartsOptions.defaultOptions.yAxis,
@@ -142,10 +136,23 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
                     const month = moment(this.category).format("YYYY-MM");
                     var fc = new TransactionCondition();
                     fc.month = month;
+                    fc.largeCategories = componentScope.latestFilterCondition.largeCategories;
                     fc.largeCategory = e.point.series.name;
                     componentScope.filterConditionChange.emit(fc);
                   }
                 }
+              },
+              events: {
+                legendItemClick: function (e) {
+                  componentScope.chart.ref$.pipe(take(1)).subscribe(ref => {
+                    var fc = new TransactionCondition();
+                    fc.month = componentScope.latestFilterCondition.month;
+                    fc.largeCategories = Enumerable.from(ref.legend.allItems).where(x => e.target.name === x.name ? !x.visible : x.visible).select(x => x.name).toArray();
+                    fc.largeCategory = componentScope.latestFilterCondition.largeCategory;
+                    fc.middleCategory = componentScope.latestFilterCondition.middleCategory;
+                    componentScope.filterConditionChange.emit(fc);
+                  });
+                },
               }
             }
           },

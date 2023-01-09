@@ -55,13 +55,15 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
       .pipe(combineLatestWith(this.filterConditionSubject))
       .pipe(untilDestroyed(this))
       .subscribe(([transactions, _]) => {
-        if (this.nowFilterCondition.month === this.latestFilterCondition.month) {
+        if (this.nowFilterCondition.month === this.latestFilterCondition.month &&
+          this.nowFilterCondition.largeCategories === this.latestFilterCondition.largeCategories) {
           this.nowFilterCondition = this.latestFilterCondition;
           return;
         }
         this.nowFilterCondition = this.latestFilterCondition;
         const temp = Enumerable.from(transactions)
           .where(x => this.latestFilterCondition.month === null ? true : x.date.startsWith(this.latestFilterCondition.month))
+          .where(record => this.latestFilterCondition.largeCategories.length === 0 ? true : Enumerable.from(this.latestFilterCondition.largeCategories).any(x => x === record.largeCategory))
           .where(x => -x.amount > 0);
         this.chart = new Chart({
           ...HighchartsOptions.defaultOptions,
@@ -102,6 +104,7 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
               click: function (event) {
                 var fc = new TransactionCondition();
                 fc.month = componentScope.latestFilterCondition.month;
+                fc.largeCategories = componentScope.latestFilterCondition.largeCategories;
                 if (event.point.options.id === "root") {
                 } else if (event.point.options.parent === "root") {
                   fc.largeCategory = event.point.name;
@@ -177,7 +180,7 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
       if (series.idPreviousRoot === condition.largeCategory && condition.middleCategory === null) {
         var fc = new TransactionCondition();
         fc.month = componentScope.latestFilterCondition.month;
-        fc.month = componentScope.latestFilterCondition.month;
+        fc.largeCategories = componentScope.latestFilterCondition.largeCategories;
         componentScope.filterConditionChange.emit(fc);
         return;
       }
