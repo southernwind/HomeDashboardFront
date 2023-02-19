@@ -68,7 +68,7 @@ export class ExpenseRawDataViewerComponent extends DashboardParentComponent {
       }
     }).where(x => x.amount > 0)
       .where(x => filterCondition?.condition(x) ?? true)
-      .orderBy(x => x.date)
+      .orderByDescending(x => x.date)
       .toArray();
     this.totalAmount = Enumerable.from(this.tableData).sum(x => x.amount);
   }
