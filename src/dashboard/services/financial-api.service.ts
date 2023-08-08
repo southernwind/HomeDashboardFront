@@ -9,6 +9,7 @@ import { Transaction } from '../models/transaction.model';
 import { InvestmentProduct, InvestmentProductAmount } from '../models/investment-product.model';
 import { InvestmentCurrencyUnit } from '../models/investment-currency-unit.model';
 import { InvestmentAsset } from '../models/investment-asset.model';
+import { TradingAccount } from '../models/trading-account.model';
 
 @Injectable({
   providedIn: "root",
@@ -60,13 +61,14 @@ export class FinancialApiService {
         }).pipe(first());
   }
 
-  public PostRegisterInvestmentProductAmount(investmentProductId: number, date: Moment, amount: number, price: number): Observable<{ result: boolean }> {
+  public PostRegisterInvestmentProductAmount(investmentProductId: number, tradingAccountId: number, date: Moment, amount: number, price: number): Observable<{ result: boolean }> {
     return this
       .http
       .post<{ result: boolean }>(
         `${environment.apiUrl}api/financial-api/post-register-investment-product-amount`,
         {
           investmentProductId: investmentProductId,
+          tradingAccountId: tradingAccountId,
           date: date.format("YYYY-MM-DD"),
           amount: amount,
           price: price
@@ -116,6 +118,14 @@ export class FinancialApiService {
       .http
       .get<InvestmentAsset>(
         `${environment.apiUrl}api/financial-api/get-investment-assets?from=${from.format("YYYY-MM-DD")}&to=${to.format("YYYY-MM-DD")}`
+      ).pipe(first());
+  }
+
+  public GetTradingAccountListAsync(): Observable<TradingAccount[]> {
+    return this
+      .http
+      .get<TradingAccount[]>(
+        `${environment.apiUrl}api/financial-api/get-trading-account-list`
       ).pipe(first());
   }
 }

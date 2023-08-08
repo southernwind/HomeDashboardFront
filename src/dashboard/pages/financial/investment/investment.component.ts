@@ -6,9 +6,11 @@ import { InvestmentProduct, InvestmentProductAmount } from 'src/dashboard/models
 import { FinancialApiService } from 'src/dashboard/services/financial-api.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import * as moment from 'moment';
+import { firstValueFrom } from 'rxjs';
 import { InvestmentCurrencyUnit } from 'src/dashboard/models/investment-currency-unit.model';
 import Enumerable from 'linq';
 import { jpyCurrencyId } from 'src/constants/constants';
+import { TradingAccount } from 'src/dashboard/models/trading-account.model';
 
 @UntilDestroy()
 @Component({
@@ -36,6 +38,8 @@ export class InvestmentComponent extends DashboardParentComponent {
   public investmentProductTypeList: string[];
   /** 投資商品カテゴリーリスト */
   public investmentProductCategoryList: string[];
+  /** 口座リスト */
+  public tradingAccountList: TradingAccount[];
   public investmentCurrencyUnitList: InvestmentCurrencyUnit[];
   public addInvestmentProductAmountModalProduct: InvestmentProduct;
   public addInvestmentProductAmountForm: FormGroup;
@@ -52,6 +56,7 @@ export class InvestmentComponent extends DashboardParentComponent {
       key: new FormControl(null, [Validators.required])
     });
     this.addInvestmentProductAmountForm = formBuilder.group({
+      tradingAccount: new FormControl(null, [Validators.required]),
       date: new FormControl(null, [Validators.required]),
       amount: new FormControl(null, [Validators.required, Validators.pattern(/\d+/)]),
       price: new FormControl(null, [Validators.required, Validators.pattern(/\d+/)])
@@ -64,6 +69,7 @@ export class InvestmentComponent extends DashboardParentComponent {
         await this.getInvestmentProductList();
         this.investmentProductTypeList = await this.financialApiService.GetInvestmentProductTypeList().toPromise();
         this.investmentProductCategoryList = await this.financialApiService.GetInvestmentProductCategoryList().toPromise();
+        this.tradingAccountList = await firstValueFrom(this.financialApiService.GetTradingAccountListAsync());
       });
   }
   /**
@@ -173,6 +179,7 @@ export class InvestmentComponent extends DashboardParentComponent {
    */
   public cancelAddInvestmentProductAmount(): void {
     this.addInvestmentProductAmountForm.setValue({
+      tradingAccount: null,
       date: null,
       amount: null,
       price: null
@@ -190,6 +197,7 @@ export class InvestmentComponent extends DashboardParentComponent {
     try {
       await this.financialApiService.PostRegisterInvestmentProductAmount(
         this.addInvestmentProductAmountModalProduct.investmentProductId,
+        this.addInvestmentProductAmountForm.value.tradingAccount.tradingAccountId,
         moment(this.addInvestmentProductAmountForm.value.date),
         Number(this.addInvestmentProductAmountForm.value.amount),
         Number(this.addInvestmentProductAmountForm.value.price),
@@ -200,6 +208,7 @@ export class InvestmentComponent extends DashboardParentComponent {
     }
     this.message.success("登録成功");
     this.addInvestmentProductAmountForm.setValue({
+      tradingAccount: null,
       date: null,
       amount: null,
       price: null

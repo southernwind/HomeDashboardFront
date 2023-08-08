@@ -13,6 +13,8 @@ export interface InvestmentProduct {
 export interface InvestmentProductAmount {
   investmentProductId: number,
   investmentProductAmountId: number,
+  tradingAccountLogo: string,
+  tradingAccountName: string,
   date: string,
   amount: number,
   price: number
