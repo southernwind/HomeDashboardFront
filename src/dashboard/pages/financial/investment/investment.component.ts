@@ -229,8 +229,8 @@ export class InvestmentComponent extends DashboardParentComponent {
     }
     this.message.success("登録成功");
     this.addInvestmentProductAmountForm.setValue({
-      tradingAccount: null,
-      date: null,
+      tradingAccount: this.addInvestmentProductAmountForm.value.tradingAccount,
+      date: this.addInvestmentProductAmountForm.value.date,
       amount: null,
       price: null
     });
