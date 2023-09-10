@@ -5,7 +5,7 @@ node {
 
   stage('npm install') {
     nodejs('node18') {
-      sh 'npm -prefix ./ install'
+      sh 'npm -prefix ./ install --force'
     }
   }
   stage('Build'){

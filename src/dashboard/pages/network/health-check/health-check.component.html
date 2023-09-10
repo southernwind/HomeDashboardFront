@@ -1,0 +1,28 @@
+<h3>ヘルスステータス</h3>
+<nz-table #targetTable [nzData]="results" nzTableLayout="fixed">
+  <thead>
+    <tr>
+      <th>名前</th>
+      <th>ホスト</th>
+      <th nzWidth="80px">ステータス</th>
+      <th>ステータス変化時間</th>
+      <th>備考</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of targetTable.data">
+      <td>{{ item.name }}</td>
+      <td>{{ item.host }}</td>
+      <td>
+        <ng-container *ngIf="item.state">
+          <span nz-icon nzType="warning" nzTheme="fill" style="color:#c41a52"></span>
+        </ng-container>
+        <ng-container *ngIf="!item.state">
+          <span nz-icon nzType="check-circle" nzTheme="fill" style="color:#52c41a"></span>
+        </ng-container>
+      </td>
+      <td>{{ item.dateTime }}</td>
+      <td>{{ item.reason }}</td>
+    </tr>
+  </tbody>
+</nz-table>

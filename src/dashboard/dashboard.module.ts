@@ -56,6 +56,7 @@ import { InvestmentComponent } from "./pages/financial/investment/investment.com
 import { ValueDisplayComponent } from "./pages/financial/investment/value-display/value-display.component";
 import { InvestmentPortfolioComponent } from "./pages/financial/investment/investment-portfolio/investment-portfolio.component";
 import { InvestmentAssetTransitionComponent } from "./pages/financial/investment/investment-asset-transition/investment-asset-transition.component";
+import { HealthCheckComponent } from "./pages/network/health-check/health-check.component";
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -93,6 +94,7 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(
     WakeOnLanComponent,
     DhcpLeasesComponent,
     NetworkDiagramComponent,
+    HealthCheckComponent,
     KitchenComponent,
     KitchenTopComponent,
     AquariumComponent,

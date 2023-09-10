@@ -5,6 +5,7 @@ import { first } from "rxjs/operators";
 import { environment } from "../../environments/environment";
 import { WakeOnLanTarget } from '../models/wake-on-lan-target.model';
 import { DhcpLease } from '../models/dhcp-lease.model';
+import { HealthCheckResult } from '../models/health-check-result.model';
 
 @Injectable({
   providedIn: "root",
@@ -29,5 +30,9 @@ export class NetworkApiService {
 
   public GetDhcpLeases(): Observable<DhcpLease[]> {
     return this.http.get<DhcpLease[]>(`${environment.apiUrl}api/network-api/get-dhcp-leases`).pipe(first());
+  }
+
+  public GetLatestResult(): Observable<HealthCheckResult[]> {
+    return this.http.get<HealthCheckResult[]>(`${environment.apiUrl}api/health-check-api/get-latest-result`).pipe(first());
   }
 }

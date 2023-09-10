@@ -26,6 +26,7 @@ import { ElectricPowerComponent } from './pages/electric-power/electric-power.co
 import { ElectricPowerPastComponent } from './pages/electric-power/electric-power-past/electric-power-past.component';
 import { DashboardTopComponent } from './dashboard-top.component';
 import { InvestmentComponent } from './pages/financial/investment/investment.component';
+import { HealthCheckComponent } from "./pages/network/health-check/health-check.component";
 
 const routes: Routes = [
   {
@@ -129,6 +130,10 @@ const routes: Routes = [
           {
             path: "wake-on-lan",
             component: WakeOnLanComponent,
+          },
+          {
+            path: "health-check",
+            component: HealthCheckComponent
           },
           {
             path: "diagram",
