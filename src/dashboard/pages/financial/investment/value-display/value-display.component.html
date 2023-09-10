@@ -37,3 +37,7 @@
     <span class="down">{{value | number: digitsInfo  }} %</span>
   </ng-container>
 </ng-container>
+
+<ng-container *ngIf="type === 'amount'">
+  <span class="stay">{{value | number: digitsInfo  }}</span>
+</ng-container>

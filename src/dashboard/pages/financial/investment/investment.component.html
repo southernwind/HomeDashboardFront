@@ -1,102 +1,112 @@
-<div class="table-operations">
-  <div class="header">
-    <div class="buttons">
-      <button nz-button (click)="addInvestmentProductModalVisibility = true">投資商品追加</button>
-    </div>
-    <div class="summary">
-      <div>
-        収益額: <app-value-display [value]="totalProfit" [investmentCurrencyUnit]="yenCurrency"></app-value-display>
-      </div>
-      <div>
-        収益率: <app-value-display [value]="rateOfReturn" [type]="'percent'" [investmentCurrencyUnit]="yenCurrency"></app-value-display>
-      </div>
-      <div>
-        評価額: <app-value-display [value]="totalValuation" [type]="'static-price'" [investmentCurrencyUnit]="yenCurrency"></app-value-display>
-      </div>
-    </div>
-  </div>
-  <div nz-row>
-    <div nz-col [nzSm]="{ span: 24,offset:0}" [nzXl]="{span:12}">
-      <div class="transition">
-        <app-investment-portfolio-chart [investmentProductList]="investmentProductList" [investmentCurrencyUnitList]="investmentCurrencyUnitList"></app-investment-portfolio-chart>
-      </div>
-    </div>
-    <div nz-col [nzSm]="{ span: 24,offset:0}" [nzXl]="{span:12}">
-      <div class="portfolio">
-        <app-investment-asset-transition-chart></app-investment-asset-transition-chart>
-      </div>
-    </div>
-  </div>
-  <nz-modal [(nzVisible)]="addInvestmentProductModalVisibility" nzTitle="投資商品情報登録モーダル" (nzOnCancel)="cancelAddInvestmentProduct()"
-    (nzOnOk)="addInvestmentProduct()" [nzOkDisabled]="addInvestmentProductForm.invalid">
-    <ng-container *nzModalContent>
-      <form nz-form [formGroup]="addInvestmentProductForm">
-        <nz-form-item>
-          <nz-form-label [nzSm]="8" [nzXs]="24">名前</nz-form-label>
-          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-            <input nz-input formControlName="name" placeholder="Accenture" />
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-          <nz-form-label [nzSm]="8" [nzXs]="24">カテゴリ</nz-form-label>
-          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-            <nz-select nzShowSearch [nzDropdownRender]="renderTemplate" formControlName="category" nzPlaceholder="米国株式" >
-              <nz-option *ngFor="let item of investmentProductCategoryList" [nzLabel]="item" [nzValue]="item"></nz-option>
-            </nz-select>
-            <ng-template #renderTemplate>
-              <div class="product-category-select-candidate">
-                <nz-divider></nz-divider>
-                <div class="container">
-                  <input type="text" nz-input #inputElement />
-                  <a class="add-item" (click)="investmentProductCategoryList.push(inputElement.value)"><i nz-icon nzType="plus"></i> Add item</a>
-                </div>
-              </div>
-            </ng-template>
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-          <nz-form-label [nzSm]="8" [nzXs]="24">取得方式</nz-form-label>
-          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-            <nz-select nzShowSearch [nzDropdownRender]="renderTemplate" formControlName="type" nzPlaceholder="ScrapingService.Targets.YahooFinance" >
-              <nz-option *ngFor="let item of investmentProductTypeList" [nzLabel]="item" [nzValue]="item"></nz-option>
-            </nz-select>
-            <ng-template #renderTemplate>
-              <div class="product-type-select-candidate">
-                <nz-divider></nz-divider>
-                <div class="container">
-                  <input type="text" nz-input #inputElement />
-                  <a class="add-item" (click)="investmentProductTypeList.push(inputElement.value)"><i nz-icon nzType="plus"></i> Add item</a>
-                </div>
-              </div>
-            </ng-template>
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-          <nz-form-label [nzSm]="8" [nzXs]="24">通貨単位</nz-form-label>
-          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-            <nz-select formControlName="currencyUnit" placeHolder="米ドル">
-              <nz-option *ngFor="let unit of investmentCurrencyUnitList" [nzValue]="unit.id" [nzLabel]="unit.name"></nz-option>
-            </nz-select>
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-          <nz-form-label [nzSm]="8" [nzXs]="24">キー情報</nz-form-label>
-          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-            <input nz-input formControlName="key" placeholder="ACN" />
-          </nz-form-control>
-        </nz-form-item>
-      </form>
-    </ng-container>
-  </nz-modal>
+<nz-radio-group [(ngModel)]="viewType">
+  <label nz-radio-button nzValue="product">Product</label>
+  <label nz-radio-button nzValue="account">Account</label>
+</nz-radio-group>
 
-  <nz-modal [(nzVisible)]="viewingInvestmentProductDetail" nzTitle="{{viewingInvestmentProductDetail?.investmentProduct.name}}" (nzOnCancel)="closeInvestmentProductDetail()"
-    (nzOnOk)="closeInvestmentProductDetail()" [nzWidth]="800">
-    <ng-container *nzModalContent>
-      <button nz-button (click)="addInvestmentProductAmountModalProduct = viewingInvestmentProductDetail.investmentProduct;">取得量登録</button>
-      <nz-table #investmentProductDetailAmountTable [nzData]="viewingInvestmentProductDetail?.investmentProductAmountList" nzTableLayout="fixed" [nzPageSize]="50" >
+<ng-container *ngIf="viewType === 'product'">
+  <div class="table-operations">
+    <div class="header">
+      <div class="buttons">
+        <button nz-button (click)="addInvestmentProductModalVisibility = true">投資商品追加</button>
+      </div>
+      <div class="summary">
+        <div>
+          収益額: <app-value-display [value]="totalProfit" [investmentCurrencyUnit]="yenCurrency"></app-value-display>
+        </div>
+        <div>
+          収益率: <app-value-display [value]="rateOfReturn" [type]="'percent'" [investmentCurrencyUnit]="yenCurrency"></app-value-display>
+        </div>
+        <div>
+          評価額: <app-value-display [value]="totalValuation" [type]="'static-price'" [investmentCurrencyUnit]="yenCurrency"></app-value-display>
+        </div>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col [nzSm]="{ span: 24,offset:0}" [nzXl]="{span:12}">
+        <div class="transition">
+          <app-investment-portfolio-chart [investmentProductList]="investmentProductList" [investmentCurrencyUnitList]="investmentCurrencyUnitList"></app-investment-portfolio-chart>
+        </div>
+      </div>
+      <div nz-col [nzSm]="{ span: 24,offset:0}" [nzXl]="{span:12}">
+        <div class="portfolio">
+          <app-investment-asset-transition-chart></app-investment-asset-transition-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-table #investmentProductTable [nzData]="investmentProductList" nzTableLayout="fixed" [nzPageSize]="50" >
+    <thead>
+      <tr>
+        <th>名前</th>
+        <th [nzWidth]="'130px'">評価額</th>
+        <th [nzWidth]="'130px'">現在値<br>取得平均単価</th>
+        <th [nzWidth]="'130px'">損益額<br>(損益率)</th>
+        <th [nzWidth]="'130px'">詳細</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of investmentProductTable.data">
+        <td>{{item.name}}</td>
+        <td>
+          <app-value-display [value]="item.latestRate * item.amount" [type]="'static-price-with-yen'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
+        </td>
+        <td>
+          <app-value-display [value]="item.latestRate" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display><br>
+          <app-value-display [value]="item.averageRate" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [adjustNumberOfDecimalPoint]="2"></app-value-display>
+        </td>
+        <td>
+          <app-value-display [value]="(item.latestRate - item.averageRate) * item.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display><br>
+          <app-value-display [value]="(item.latestRate / item.averageRate) * 100 - 100" [type]="'percent'"></app-value-display>
+        </td>
+        <td><button nz-button (click)="openInvestmentProductDetailModal(item)">詳細</button></td>
+      </tr>
+    </tbody>
+  </nz-table>
+</ng-container>
+
+<ng-container *ngIf="viewType === 'account'">
+  <div nz-row>
+    <div nz-col [nzXl]="{span:4}">
+      <nz-radio-group [(ngModel)]="selectedAccountId" (ngModelChange)="getTradingAccountDetail($event)">
+        <ng-container *ngFor="let account of tradingAccountList">
+          <label nz-radio-button nzValue="{{account.tradingAccountId}}">{{ account.name}}</label>
+        </ng-container>
+      </nz-radio-group>
+    </div>
+    <div nz-col [nzXl]="{span:20}" *ngIf="selectedAccount">
+      <div>
+        <img src="{{selectedAccount.tradingAccountLogo}}" title="{{selectedAccount.tradingAccountName}}" style="max-width:200px; max-height:60px;"/>
+      </div>
+      <h2>サマリー</h2>
+      <nz-table #accountInvestmentProductTable [nzData]="selectedAccount.tradingAccountDetailAmountSummaryList" nzTableLayout="fixed" [nzPageSize]="50" >
         <thead>
           <tr>
-            <th [nzWidth]="'130px'">証券口座</th>
+            <th>名前</th>
+            <th [nzWidth]="'130px'">購入量</th>
+            <th [nzWidth]="'130px'">評価額</th>
+            <th [nzWidth]="'130px'">損益額</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of accountInvestmentProductTable.data">
+            <td>{{item.name}}</td>
+            <td>
+              <app-value-display [value]="item.amount" [type]="'amount'" [adjustNumberOfDecimalPoint]="4"></app-value-display>
+            </td>
+            <td>
+              <app-value-display [value]="item.latestRate * item.amount" [type]="'static-price-with-yen'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
+            </td>
+            <td>
+              <app-value-display [value]="(item.latestRate - item.averageRate) * item.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+      <h2>履歴</h2>
+      <nz-table #accountAmountListTable [nzData]="selectedAccount.tradingAccountDetailAmountList" nzTableLayout="fixed" [nzPageSize]="50" >
+        <thead>
+          <tr>
+            <th>名前</th>
             <th [nzWidth]="'130px'">日付</th>
             <th [nzWidth]="'130px'">取得単価</th>
             <th [nzWidth]="'130px'">取得量</th>
@@ -104,87 +114,154 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of investmentProductDetailAmountTable.data">
-            <td><img src="{{item.tradingAccountLogo}}" title="{{item.tradingAccountName}}" style="max-width:100px; max-height:30px;"/></td>
+          <tr *ngFor="let item of accountAmountListTable.data">
+            <td>{{item.investmentProductName}}</td>
             <td>{{item.date | datetimeFormatPipe: 'YYYY-MM-DD'}}</td>
             <td>
-              <app-value-display [value]="item.price" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail.investmentProduct.currencyUnitId " [adjustNumberOfDecimalPoint]="2"></app-value-display>
+              <app-value-display [value]="item.price" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId" [adjustNumberOfDecimalPoint]="2"></app-value-display>
             </td>
             <td>
               {{item.amount | number}}
             </td>
             <td>
-              <app-value-display [value]="item.price * item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail.investmentProduct.currencyUnitId "></app-value-display>
+              <app-value-display [value]="item.price * item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId"></app-value-display>
             </td>
           </tr>
         </tbody>
       </nz-table>
-    </ng-container>
-  </nz-modal>
+    </div>
+  </div>
+</ng-container>
 
-  <nz-modal [(nzVisible)]="addInvestmentProductAmountModalProduct" nzTitle="投資商品取得量登録モーダル" (nzOnCancel)="cancelAddInvestmentProductAmount()"
-    (nzOnOk)="addInvestmentProductAmount()" [nzOkDisabled]="addInvestmentProductAmountForm.invalid">
-    <ng-container *nzModalContent>
-      <div>
-        <span>{{addInvestmentProductAmountModalProduct?.name}}</span>
-      </div>
-      <form nz-form [formGroup]="addInvestmentProductAmountForm">
-        <nz-form-item>
-          <nz-form-label [nzSm]="8" [nzXs]="24">口座</nz-form-label>
-          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-            <nz-select formControlName="tradingAccount" nzPlaceholder="SBI証券" >
-              <nz-option *ngFor="let item of tradingAccountList" [nzLabel]="item.name" [nzValue]="item"></nz-option>
-            </nz-select>
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-          <nz-form-label [nzSm]="8" [nzXs]="24">取得量変更日</nz-form-label>
-          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-            <nz-date-picker formControlName="date" placeholder="2021-12-31" ></nz-date-picker>
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-          <nz-form-label [nzSm]="8" [nzXs]="24">取得量</nz-form-label>
-          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-            <input nz-input formControlName="amount" placeholder="100" />
-          </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
-          <nz-form-label [nzSm]="8" [nzXs]="24">取得単価</nz-form-label>
-          <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-            <input nz-input formControlName="price" placeholder="16.516" />
-          </nz-form-control>
-        </nz-form-item>
-        <span>金額 : {{addInvestmentProductAmountForm.value.amount * addInvestmentProductAmountForm.value.price | number}}</span>
-      </form>
-    </ng-container>
-  </nz-modal>
-</div>
-<nz-table #investmentProductTable [nzData]="investmentProductList" nzTableLayout="fixed" [nzPageSize]="50" >
-  <thead>
-    <tr>
-      <th>名前</th>
-      <th [nzWidth]="'130px'">評価額</th>
-      <th [nzWidth]="'130px'">現在値<br>取得平均単価</th>
-      <th [nzWidth]="'130px'">損益額<br>(損益率)</th>
-      <th [nzWidth]="'130px'">詳細</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let item of investmentProductTable.data">
-      <td>{{item.name}}</td>
-      <td>
-        <app-value-display [value]="item.latestRate * item.amount" [type]="'static-price-with-yen'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
-      </td>
-      <td>
-        <app-value-display [value]="item.latestRate" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display><br>
-        <app-value-display [value]="item.averageRate" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [adjustNumberOfDecimalPoint]="2"></app-value-display>
-      </td>
-      <td>
-        <app-value-display [value]="(item.latestRate - item.averageRate) * item.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display><br>
-        <app-value-display [value]="(item.latestRate / item.averageRate) * 100 - 100" [type]="'percent'"></app-value-display>
-      </td>
-      <td><button nz-button (click)="openInvestmentProductDetailModal(item)">詳細</button></td>
-    </tr>
-  </tbody>
-</nz-table>
+<nz-modal [(nzVisible)]="addInvestmentProductModalVisibility" nzTitle="投資商品情報登録モーダル" (nzOnCancel)="cancelAddInvestmentProduct()"
+  (nzOnOk)="addInvestmentProduct()" [nzOkDisabled]="addInvestmentProductForm.invalid">
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="addInvestmentProductForm">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">名前</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <input nz-input formControlName="name" placeholder="Accenture" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">カテゴリ</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <nz-select nzShowSearch [nzDropdownRender]="renderTemplate" formControlName="category" nzPlaceholder="米国株式" >
+            <nz-option *ngFor="let item of investmentProductCategoryList" [nzLabel]="item" [nzValue]="item"></nz-option>
+          </nz-select>
+          <ng-template #renderTemplate>
+            <div class="product-category-select-candidate">
+              <nz-divider></nz-divider>
+              <div class="container">
+                <input type="text" nz-input #inputElement />
+                <a class="add-item" (click)="investmentProductCategoryList.push(inputElement.value)"><i nz-icon nzType="plus"></i> Add item</a>
+              </div>
+            </div>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">取得方式</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <nz-select nzShowSearch [nzDropdownRender]="renderTemplate" formControlName="type" nzPlaceholder="ScrapingService.Targets.YahooFinance" >
+            <nz-option *ngFor="let item of investmentProductTypeList" [nzLabel]="item" [nzValue]="item"></nz-option>
+          </nz-select>
+          <ng-template #renderTemplate>
+            <div class="product-type-select-candidate">
+              <nz-divider></nz-divider>
+              <div class="container">
+                <input type="text" nz-input #inputElement />
+                <a class="add-item" (click)="investmentProductTypeList.push(inputElement.value)"><i nz-icon nzType="plus"></i> Add item</a>
+              </div>
+            </div>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">通貨単位</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <nz-select formControlName="currencyUnit" placeHolder="米ドル">
+            <nz-option *ngFor="let unit of investmentCurrencyUnitList" [nzValue]="unit.id" [nzLabel]="unit.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">キー情報</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <input nz-input formControlName="key" placeholder="ACN" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="viewingInvestmentProductDetail" nzTitle="{{viewingInvestmentProductDetail?.investmentProduct.name}}" (nzOnCancel)="closeInvestmentProductDetail()"
+  (nzOnOk)="closeInvestmentProductDetail()" [nzWidth]="800">
+  <ng-container *nzModalContent>
+    <button nz-button (click)="addInvestmentProductAmountModalProduct = viewingInvestmentProductDetail.investmentProduct;">取得量登録</button>
+    <nz-table #investmentProductDetailAmountTable [nzData]="viewingInvestmentProductDetail?.investmentProductAmountList" nzTableLayout="fixed" [nzPageSize]="50" >
+      <thead>
+        <tr>
+          <th [nzWidth]="'130px'">証券口座</th>
+          <th [nzWidth]="'130px'">日付</th>
+          <th [nzWidth]="'130px'">取得単価</th>
+          <th [nzWidth]="'130px'">取得量</th>
+          <th [nzWidth]="'130px'">取得額</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of investmentProductDetailAmountTable.data">
+          <td><img src="{{item.tradingAccountLogo}}" title="{{item.tradingAccountName}}" style="max-width:100px; max-height:30px;"/></td>
+          <td>{{item.date | datetimeFormatPipe: 'YYYY-MM-DD'}}</td>
+          <td>
+            <app-value-display [value]="item.price" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail.investmentProduct.currencyUnitId " [adjustNumberOfDecimalPoint]="2"></app-value-display>
+          </td>
+          <td>
+            {{item.amount | number}}
+          </td>
+          <td>
+            <app-value-display [value]="item.price * item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail.investmentProduct.currencyUnitId "></app-value-display>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="addInvestmentProductAmountModalProduct" nzTitle="投資商品取得量登録モーダル" (nzOnCancel)="cancelAddInvestmentProductAmount()"
+  (nzOnOk)="addInvestmentProductAmount()" [nzOkDisabled]="addInvestmentProductAmountForm.invalid">
+  <ng-container *nzModalContent>
+    <div>
+      <span>{{addInvestmentProductAmountModalProduct?.name}}</span>
+    </div>
+    <form nz-form [formGroup]="addInvestmentProductAmountForm">
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">口座</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <nz-select formControlName="tradingAccount" nzPlaceholder="SBI証券" >
+            <nz-option *ngFor="let item of tradingAccountList" [nzLabel]="item.name" [nzValue]="item"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">取得量変更日</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <nz-date-picker formControlName="date" placeholder="2021-12-31" ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">取得量</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <input nz-input formControlName="amount" placeholder="100" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">取得単価</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+          <input nz-input formControlName="price" placeholder="16.516" />
+        </nz-form-control>
+      </nz-form-item>
+      <span>金額 : {{addInvestmentProductAmountForm.value.amount * addInvestmentProductAmountForm.value.price | number}}</span>
+    </form>
+  </ng-container>
+</nz-modal>

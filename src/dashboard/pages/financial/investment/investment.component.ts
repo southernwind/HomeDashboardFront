@@ -11,6 +11,7 @@ import { InvestmentCurrencyUnit } from 'src/dashboard/models/investment-currency
 import Enumerable from 'linq';
 import { jpyCurrencyId } from 'src/constants/constants';
 import { TradingAccount } from 'src/dashboard/models/trading-account.model';
+import { TradingAccountDetail } from 'src/dashboard/models/trading-account-detail.model';
 
 @UntilDestroy()
 @Component({
@@ -43,6 +44,14 @@ export class InvestmentComponent extends DashboardParentComponent {
   public investmentCurrencyUnitList: InvestmentCurrencyUnit[];
   public addInvestmentProductAmountModalProduct: InvestmentProduct;
   public addInvestmentProductAmountForm: FormGroup;
+  /** 表示タイプ */
+  public viewType: "account" | "product"
+
+  /** 表示アカウントID */
+  public selectedAccountId: number;
+  /** 表示アカウント */
+  public selectedAccount: TradingAccountDetail;
+
   constructor(
     private financialApiService: FinancialApiService,
     private message: NzMessageService,
@@ -70,6 +79,8 @@ export class InvestmentComponent extends DashboardParentComponent {
         this.investmentProductTypeList = await this.financialApiService.GetInvestmentProductTypeList().toPromise();
         this.investmentProductCategoryList = await this.financialApiService.GetInvestmentProductCategoryList().toPromise();
         this.tradingAccountList = await firstValueFrom(this.financialApiService.GetTradingAccountListAsync());
+
+        this.viewType = "product";
       });
   }
   /**
@@ -142,6 +153,16 @@ export class InvestmentComponent extends DashboardParentComponent {
     this.rateOfReturn = this.totalProfit / (this.totalValuation - this.totalProfit) * 100;
   }
 
+
+  /**
+   * 口座情報取得取得
+   *
+   * @returns {Promise<void>}
+   * @memberof InvestmentComponent
+   */
+  public async getTradingAccountDetail(selectedAccount: number): Promise<void> {
+    this.selectedAccount = await firstValueFrom(this.financialApiService.getTradingAccountDetail(selectedAccount).pipe(untilDestroyed(this)));
+  }
 
   /**
    * 投資商品詳細表示

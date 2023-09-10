@@ -18,7 +18,7 @@ export class ValueDisplayComponent extends DashboardParentComponent {
   public investmentCurrencyUnit: InvestmentCurrencyUnit;
 
   @Input()
-  public type: 'price' | 'static-price' | 'percent' | 'static-price-with-yen' = 'price';
+  public type: 'price' | 'static-price' | 'percent' | 'static-price-with-yen' | 'amount' = 'price';
 
   @Input()
   public adjustNumberOfDecimalPoint: number = 0;
@@ -31,6 +31,8 @@ export class ValueDisplayComponent extends DashboardParentComponent {
     let numberOfDecimalPoint: number;
     if (this.type === 'percent') {
       numberOfDecimalPoint = 3 + this.adjustNumberOfDecimalPoint;
+    } else if (this.type === 'amount') {
+      numberOfDecimalPoint = this.adjustNumberOfDecimalPoint;
     } else {
       numberOfDecimalPoint = this.investmentCurrencyUnit?.numberOfDecimalPoint + this.adjustNumberOfDecimalPoint;
     }

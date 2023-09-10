@@ -10,6 +10,7 @@ import { InvestmentProduct, InvestmentProductAmount } from '../models/investment
 import { InvestmentCurrencyUnit } from '../models/investment-currency-unit.model';
 import { InvestmentAsset } from '../models/investment-asset.model';
 import { TradingAccount } from '../models/trading-account.model';
+import { TradingAccountDetail } from '../models/trading-account-detail.model';
 
 @Injectable({
   providedIn: "root",
@@ -126,6 +127,13 @@ export class FinancialApiService {
       .http
       .get<TradingAccount[]>(
         `${environment.apiUrl}api/financial-api/get-trading-account-list`
+      ).pipe(first());
+  }
+  public getTradingAccountDetail(tradingAccountId: number): Observable<TradingAccountDetail> {
+    return this
+      .http
+      .get<TradingAccountDetail>(
+        `${environment.apiUrl}api/financial-api/get-trading-account-detail?tradingAccountId=${tradingAccountId}`
       ).pipe(first());
   }
 }

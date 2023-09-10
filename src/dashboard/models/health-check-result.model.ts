@@ -5,7 +5,7 @@ export interface HealthCheckResult {
   isEnable: boolean;
   checkType: number;
   healthCheckResultId: number;
-  dateTime: string;
+  dateTime: Date;
   state: boolean;
   reason: string;
 }
