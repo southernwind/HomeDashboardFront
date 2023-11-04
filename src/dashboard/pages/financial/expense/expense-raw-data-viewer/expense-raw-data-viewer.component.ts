@@ -49,7 +49,7 @@ export class ExpenseRawDataViewerComponent extends DashboardParentComponent {
     width: null
   }, {
     name: "メモ",
-    width: "80px"
+    width: "150px"
   }];
 
   /**
