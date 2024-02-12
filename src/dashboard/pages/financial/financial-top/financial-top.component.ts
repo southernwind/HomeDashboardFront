@@ -17,7 +17,7 @@ export class FinancialTopComponent extends DashboardParentComponent {
    * @type {DateRange}
    * @memberof FinancialTopComponent
    */
-  public selectedDateRange: DateRange = null;
+  public selectedDateRange: DateRange | null = null;
 
   constructor(private cookieService: CookieService) {
     super();
@@ -48,6 +48,9 @@ export class FinancialTopComponent extends DashboardParentComponent {
   }
 
   public selectedDateChanged(): void {
+    if (this.selectedDateRange === null) {
+      return;
+    }
     this.cookieService.set("startDateForUpdate", this.selectedDateRange.startDate.format("YYYY-MM-DD"), undefined, "/");
     this.cookieService.set("endDateForUpdate", this.selectedDateRange.endDate.format("YYYY-MM-DD") === moment().format("YYYY-MM-DD") ? "today" : this.selectedDateRange.endDate.format("YYYY-MM-DD"), undefined, "/");
   }

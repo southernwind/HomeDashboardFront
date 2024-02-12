@@ -15,19 +15,19 @@ import { ResizedEvent } from 'angular-resize-event';
   templateUrl: "./electric-power-chart.component.html"
 })
 export class ElectricPowerChartComponent extends DashboardParentComponent {
-  public chart: Chart;
+  public chart: Chart | undefined = undefined;
   @Input()
   public set chartData(electricPowers: ElectricPower[] | Observable<ElectricPower>) {
     if ((electricPowers as ElectricPower[])?.values) {
-      this.chart.removeSeries(0);
+      this.chart?.removeSeries(0);
       this.addSeries();
       for (const electricPower of electricPowers as ElectricPower[]) {
-        this.chart.addPoint([moment(electricPower.timeStamp).toDate().getTime(), electricPower.electricPower], 0, false, false);
+        this.chart?.addPoint([moment(electricPower.timeStamp).toDate().getTime(), electricPower.electricPower], 0, false, false);
       }
-      this.chart.ref.reflow();
+      this.chart?.ref?.reflow();
     } else if ((electricPowers as Observable<ElectricPower>)?.subscribe) {
       (electricPowers as Observable<ElectricPower>).subscribe(x => {
-        this.chart.addPoint([moment(x.timeStamp).toDate().getTime(), x.electricPower], 0, true, false);
+        this.chart?.addPoint([moment(x.timeStamp).toDate().getTime(), x.electricPower], 0, true, false);
       });
     }
   }
@@ -53,7 +53,7 @@ export class ElectricPowerChartComponent extends DashboardParentComponent {
         tooltip: {
           ...HighchartsOptions.defaultOptions.tooltip,
           formatter: function () {
-            return `<span style="font-size:10px">${$this.chart.ref.time.dateFormat("%Y/%m/%d %H:%M:%S", Number(this.key))}<span><br><span style="fill:${this.color}">●</span><span>${this.series.name} :</span> <span style="font-weight:bold">${this.y}</span> W`;
+            return `<span style="font-size:10px">${$this.chart?.ref?.time.dateFormat("%Y/%m/%d %H:%M:%S", Number(this.key))}<span><br><span style="fill:${this.color}">●</span><span>${this.series.name} :</span> <span style="font-weight:bold">${this.y}</span> W`;
           }
         },
         yAxis: [{
@@ -84,10 +84,14 @@ export class ElectricPowerChartComponent extends DashboardParentComponent {
   }
 
   private addSeries(): void {
-    this.chart.addSeries({
+    const colors = Highcharts.getOptions().colors;
+    if (colors === undefined) {
+      return;
+    }
+    this.chart?.addSeries({
       name: '消費電力',
       yAxis: 0,
-      color: Highcharts.getOptions().colors[0],
+      color: colors[0],
       data: []
     } as any, false, false);
   }

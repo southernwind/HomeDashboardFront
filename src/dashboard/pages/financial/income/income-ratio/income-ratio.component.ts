@@ -15,7 +15,7 @@ import { Chart } from 'angular-highcharts';
   templateUrl: "./income-ratio.component.html",
 })
 export class IncomeRatioComponent extends DashboardParentComponent {
-  public chart: Chart;
+  public chart: Chart | undefined = undefined;
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
@@ -55,7 +55,7 @@ export class IncomeRatioComponent extends DashboardParentComponent {
           plotOptions: {
             ...HighchartsOptions.defaultOptions.plotOptions,
             pie: {
-              ...HighchartsOptions.defaultOptions.plotOptions.pie,
+              ...HighchartsOptions.defaultOptions.plotOptions?.pie,
               shadow: false,
               center: ['50%', '50%']
             },
@@ -77,14 +77,16 @@ export class IncomeRatioComponent extends DashboardParentComponent {
           tooltip: {
             ...HighchartsOptions.defaultOptions.tooltip,
             formatter: function () {
-              return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円<br>(${this.percentage.toFixed(3)}%`;
+              return `${this.key}<br>${Highcharts.numberFormat(this.y ?? 0, 0, '', ',')}円<br>(${this.percentage.toFixed(3)}%`;
             }
           },
           legend: {
             ...HighchartsOptions.defaultOptions.legend,
             labelFormatter: function () {
-              return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(this.y, 0, '', ',')}円)</span>`;
-            } as Highcharts.FormatterCallbackFunction<Highcharts.Point>,
+              if (this instanceof Highcharts.Point) {
+                return `${this.name}<br/><span style="font-size:0.6rem">(${Highcharts.numberFormat(this.y ?? 0, 0, '', ',')}円)</span>`;
+              }
+            } as Highcharts.FormatterCallbackFunction<Highcharts.Point | Highcharts.Series>,
             enabled: true,
             align: "right",
             layout: "vertical",

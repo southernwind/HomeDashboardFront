@@ -11,9 +11,9 @@ import { KitchenApiService } from 'src/dashboard/services/kitchen-api.service';
   templateUrl: "./kitchen-top.component.html"
 })
 export class KitchenTopComponent extends DashboardParentComponent {
-  public addRecipeModalVisibility: boolean;
+  public addRecipeModalVisibility: boolean | undefined = undefined;
   public addRecipeForm: FormGroup;
-  public recipeList: Recipe[];
+  public recipeList: Recipe[] = [];
   constructor(
     private kitchenApiService: KitchenApiService,
     private message: NzMessageService,
@@ -51,7 +51,7 @@ export class KitchenTopComponent extends DashboardParentComponent {
         imageUrl: this.addRecipeForm.value.imageUrl,
         title: this.addRecipeForm.value.title
       }).toPromise();
-    } catch{
+    } catch {
       this.message.warning("登録失敗");
       return;
     }
@@ -71,6 +71,6 @@ export class KitchenTopComponent extends DashboardParentComponent {
   }
 
   public async getRecipeList(): Promise<void> {
-    this.recipeList = await this.kitchenApiService.GetRecipeList().toPromise();
+    this.recipeList = (await this.kitchenApiService.GetRecipeList().toPromise()) ?? [];
   }
 }

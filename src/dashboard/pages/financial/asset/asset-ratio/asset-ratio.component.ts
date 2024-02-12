@@ -5,7 +5,7 @@ import { Asset } from '../../../../models/asset.model';
 import Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
-import { Subject, combineLatest } from 'rxjs';
+import { Subject, combineLatest, lastValueFrom } from 'rxjs';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { DateRange } from '../../../../models/date-range.model';
 import * as Highcharts from 'highcharts';
@@ -17,10 +17,10 @@ import * as Highcharts from 'highcharts';
 })
 export class AssetRatioComponent extends DashboardParentComponent {
   /** 資産割合生データ */
-  public assets: Asset[];
+  public assets: Asset[] = [];
 
   /** 資産割合チャート */
-  public chart: Chart;
+  public chart: Chart | undefined = undefined;
 
   private dateRangeSubject = new Subject<DateRange>();
 
@@ -40,12 +40,16 @@ export class AssetRatioComponent extends DashboardParentComponent {
         const startDate = dateRange.startDate;
         const endDate = dateRange.endDate;
 
-        this.assets = await this.financialApiService.GetLatestAsset(startDate, endDate).toPromise();
+        this.assets = await lastValueFrom(this.financialApiService.GetLatestAsset(startDate, endDate));
 
         const temp = Enumerable.from(this.assets)
           .where(x => x.amount > 0)
           .groupBy(x => x.category)
           .orderBy(x => x.sum(a => a.amount));
+        const colors = Highcharts.getOptions().colors;
+        if (colors === undefined) {
+          return;
+        }
         this.chart = new Chart({
           ...HighchartsOptions.defaultOptions,
           chart: {
@@ -59,7 +63,7 @@ export class AssetRatioComponent extends DashboardParentComponent {
           plotOptions: {
             ...HighchartsOptions.defaultOptions.plotOptions,
             pie: {
-              ...HighchartsOptions.defaultOptions.plotOptions.pie,
+              ...HighchartsOptions.defaultOptions.plotOptions?.pie,
               shadow: false,
               center: ['50%', '50%']
             }
@@ -67,7 +71,7 @@ export class AssetRatioComponent extends DashboardParentComponent {
           tooltip: {
             ...HighchartsOptions.defaultOptions.tooltip,
             formatter: function () {
-              return `${this.key}<br>${Highcharts.numberFormat(this.y, 0, '', ',')}円<br>(${this.percentage.toFixed(3)}%`;
+              return `${this.key}<br>${Highcharts.numberFormat(this.y ?? 0, 0, '', ',')}円<br>(${this.percentage.toFixed(3)}%`;
             }
           },
           series: [{
@@ -80,7 +84,7 @@ export class AssetRatioComponent extends DashboardParentComponent {
                 return {
                   name: x.key(),
                   y: x.sum(a => a.amount),
-                  color: Highcharts.getOptions().colors[index]
+                  color: colors[index]
                 };
               }).toArray()
             ,
@@ -97,7 +101,7 @@ export class AssetRatioComponent extends DashboardParentComponent {
                   return {
                     name: i.key(),
                     y: i.sum(a => a.amount),
-                    color: Highcharts.color(Highcharts.getOptions().colors[index]).brighten(0.2 - (index2 / x.ins.count()) / 5).get()
+                    color: Highcharts.color(colors[index]).brighten(0.2 - (index2 / x.ins.count()) / 5).get()
                   }
                 })
               }).selectMany(x => x).toArray(),

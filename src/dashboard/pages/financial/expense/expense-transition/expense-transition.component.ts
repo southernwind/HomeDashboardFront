@@ -17,7 +17,7 @@ import { getMfTransactionLargeCategoryId } from '../../utils/util';
   templateUrl: "./expense-transition.component.html",
 })
 export class ExpenseTransitionComponent extends DashboardParentComponent {
-  public chart: Chart;
+  public chart: Chart | undefined = undefined;
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
@@ -67,7 +67,7 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
             ...HighchartsOptions.defaultOptions.chart,
             type: "column",
             zooming: {
-              ...HighchartsOptions.defaultOptions.chart.zooming,
+              ...HighchartsOptions.defaultOptions.chart?.zooming,
               type: "x"
             },
             events: {
@@ -85,14 +85,14 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
           xAxis: {
             ...HighchartsOptions.defaultOptions.xAxis,
             type: 'datetime',
-            title: null,
+            title: undefined,
             dateTimeLabelFormats: {
               month: '%Y/%m',
             }
           },
           yAxis: {
             ...HighchartsOptions.defaultOptions.yAxis,
-            title: null,
+            title: undefined,
             stackLabels: {
               enabled: true,
               formatter: function () {
@@ -144,7 +144,7 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
               },
               events: {
                 legendItemClick: function (e) {
-                  componentScope.chart.ref$.pipe(take(1)).subscribe(ref => {
+                  componentScope.chart?.ref$.pipe(take(1)).subscribe(ref => {
                     var fc = new TransactionCondition();
                     fc.month = componentScope.latestFilterCondition.month;
                     fc.largeCategories = Enumerable.from(ref.legend.allItems).where(x => e.target.name === x.name ? !x.visible : x.visible).select(x => x.name).toArray();
@@ -159,7 +159,7 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
           tooltip: {
             ...HighchartsOptions.defaultOptions.tooltip,
             formatter: function () {
-              return `${moment(this.x).format("YYYY年MM月")}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
+              return `${moment(this.x).format("YYYY年MM月")}<br>${this.series.name} : ${Highcharts.numberFormat(this.y ?? 0, 0, '', ',')}円`
             }
           },
           series: temp

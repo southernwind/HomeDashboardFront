@@ -5,9 +5,9 @@ export interface Condition<T> {
 }
 
 export class TransactionCondition implements Condition<Transaction> {
-  month?: string = null;
-  largeCategory?: string = null;
-  middleCategory?: string = null;
+  month: string | null = null;
+  largeCategory: string | null = null;
+  middleCategory: string | null = null;
   largeCategories: string[] = [];
   condition(value: Transaction) {
     return (

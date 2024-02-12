@@ -11,8 +11,8 @@ import { ElectricPower } from '../models/electric-power.model';
   providedIn: "root",
 })
 export class DashboardService {
-  private signalRConnection: HubConnection = null;
-  public get signalRConnectionId(): string {
+  private signalRConnection: HubConnection | null = null;
+  public get signalRConnectionId(): string | null | undefined {
     return this.signalRConnection?.connectionId;
   }
 
@@ -20,7 +20,7 @@ export class DashboardService {
   }
   private signalrConnectedSubject = new Subject<void>();
   public signalrConnected: Observable<void> = defer(() => {
-    if (this.signalRConnection.state === HubConnectionState.Connected) {
+    if (this.signalRConnection?.state === HubConnectionState.Connected) {
       return of(void 0);
     } else {
       return this.signalrConnectedSubject.pipe(first());
@@ -31,7 +31,7 @@ export class DashboardService {
     return defer(() => {
       this.createSignalRConnection();
       const subject = new Subject<CurrentWaterState>();
-      this.signalRConnection.on("aqua-state-changed", (timeStamp: string, waterTemperature: number, humidity: number, temperature: number) => {
+      this.signalRConnection?.on("aqua-state-changed", (timeStamp: string, waterTemperature: number, humidity: number, temperature: number) => {
         subject.next({
           timeStamp,
           waterTemperature,
@@ -47,7 +47,7 @@ export class DashboardService {
     return defer(() => {
       this.createSignalRConnection();
       const subject = new Subject<ElectricPower>();
-      this.signalRConnection.on("electric-power-received", (timeStamp: string, electricPower: number) => {
+      this.signalRConnection?.on("electric-power-received", (timeStamp: string, electricPower: number) => {
         subject.next({
           timeStamp,
           electricPower

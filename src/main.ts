@@ -3,6 +3,7 @@ import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 
 import { AppModule } from "./app/app.module";
 import { environment } from "./environments/environment";
+import { bootstrapApplication } from "@angular/platform-browser";
 
 if (environment.production) {
   enableProdMode();
@@ -10,10 +11,4 @@ if (environment.production) {
 
 platformBrowserDynamic()
   .bootstrapModule(AppModule)
-  .then((ref) => {
-    if (window["ngRef"]) {
-      window["ngRef"].destroy();
-    }
-    window["ngRef"] = ref;
-  })
   .catch((err) => console.error(err));

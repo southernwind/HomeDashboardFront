@@ -10,7 +10,7 @@ import Enumerable from 'linq';
   templateUrl: "./dhcp-leases.component.html",
 })
 export class DhcpLeasesComponent extends DashboardParentComponent {
-  public dhcpLeases: DhcpLease[];
+  public dhcpLeases: DhcpLease[] = [];
   constructor(
     private networkApiService: NetworkApiService) {
     super();

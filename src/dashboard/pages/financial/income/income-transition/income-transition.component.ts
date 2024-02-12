@@ -16,7 +16,7 @@ import { Chart } from 'angular-highcharts';
   templateUrl: "./income-transition.component.html",
 })
 export class IncomeTransitionComponent extends DashboardParentComponent {
-  public chart: Chart;
+  public chart: Chart | undefined = undefined;
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
@@ -55,7 +55,7 @@ export class IncomeTransitionComponent extends DashboardParentComponent {
             ...HighchartsOptions.defaultOptions.chart,
             type: "column",
             zooming: {
-              ...HighchartsOptions.defaultOptions.chart.zooming,
+              ...HighchartsOptions.defaultOptions.chart?.zooming,
               type: "x"
             }
           },
@@ -66,14 +66,14 @@ export class IncomeTransitionComponent extends DashboardParentComponent {
           xAxis: {
             ...HighchartsOptions.defaultOptions.xAxis,
             type: 'datetime',
-            title: null,
+            title: undefined,
             dateTimeLabelFormats: {
               month: '%Y/%m',
             }
           },
           yAxis: {
             ...HighchartsOptions.defaultOptions.yAxis,
-            title: null,
+            title: undefined,
             stackLabels: {
               enabled: true,
               formatter: function () {
@@ -125,7 +125,7 @@ export class IncomeTransitionComponent extends DashboardParentComponent {
           },
           tooltip: {
             formatter: function () {
-              return `${moment(this.x).format("YYYY年MM月")}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
+              return `${moment(this.x).format("YYYY年MM月")}<br>${this.series.name} : ${Highcharts.numberFormat(this.y ?? 0, 0, '', ',')}円`
             }
           },
           series: temp

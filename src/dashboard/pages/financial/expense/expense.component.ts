@@ -7,6 +7,7 @@ import { Transaction } from 'src/dashboard/models/transaction.model';
 import { TransactionCondition } from 'src/dashboard/models/condition.model';
 import { CookieService } from 'ngx-cookie-service';
 import { Moment } from 'moment';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   templateUrl: "./expense.component.html",
@@ -19,13 +20,13 @@ export class ExpenseComponent extends DashboardParentComponent {
    * @type {DateRange}
    * @memberof AssetComponent
    */
-  public selectedDateRange: DateRange = null;
+  public selectedDateRange: DateRange | null = null;
 
   /** 取引履歴生データ */
-  public transactions: Transaction[];
+  public transactions: Transaction[] = [];
 
   /** フィルター条件 */
-  public filterCondition: TransactionCondition;
+  public filterCondition: TransactionCondition | undefined = undefined;
 
   constructor(private financialApiService: FinancialApiService,
     private cookieService: CookieService) {
@@ -66,7 +67,10 @@ export class ExpenseComponent extends DashboardParentComponent {
   }
 
   public async selectedDateChanged(): Promise<void> {
-    this.transactions = await this.financialApiService.GetTransactions(this.selectedDateRange.startDate, this.selectedDateRange.endDate).toPromise();
+    if (this.selectedDateRange === null) {
+      return;
+    }
+    this.transactions = await lastValueFrom(this.financialApiService.GetTransactions(this.selectedDateRange.startDate, this.selectedDateRange.endDate));
     this.cookieService.set("startDate", this.selectedDateRange.startDate.format("YYYY-MM-DD"), undefined, "/");
     this.cookieService.set("endDate", this.selectedDateRange.endDate.format("YYYY-MM-DD") === moment().format("YYYY-MM-DD") ? "today" : this.selectedDateRange.endDate.format("YYYY-MM-DD"), undefined, "/");
   }

@@ -12,8 +12,8 @@ import { environment } from "../../../../environments/environment";
   templateUrl: "./electric-power-top.component.html"
 })
 export class ElectricPowerTopComponent extends DashboardParentComponent {
-  public currentValue: number;
-  public currentTime: string;
+  public currentValue: number | undefined = undefined;
+  public currentTime: string | undefined = undefined;
   public chartDataAsObservable: Observable<ElectricPower>;
   public get kwhPrice(): number {
     return environment.kwhPrice;

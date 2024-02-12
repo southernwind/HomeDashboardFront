@@ -19,9 +19,9 @@ import Enumerable from 'linq';
   templateUrl: "./water-states.component.html"
 })
 export class WaterStatesComponent extends DashboardParentComponent {
-  public chart: Chart;
+  public chart: Chart | undefined = undefined;
 
-  public waterStateList: WaterState[];
+  public waterStateList: WaterState[] = [];
   private dateRangeSubject = new Subject<DateRange>();
   private periodSubject = new Subject<number>();
 
@@ -54,7 +54,7 @@ export class WaterStatesComponent extends DashboardParentComponent {
               .pipe(
                 untilDestroyed(this),
                 first()
-              ).toPromise();
+              ).toPromise() ?? [];
         } catch {
           this.message.warning("データ取得失敗");
           return;
@@ -84,13 +84,18 @@ export class WaterStatesComponent extends DashboardParentComponent {
           return a;
         };
 
+        const colors = Highcharts.getOptions().colors;
+        if (colors === undefined) {
+          return;
+        }
+
         this.chart = new Chart({
           ...HighchartsOptions.defaultOptions,
           chart: {
             ...HighchartsOptions.defaultOptions.chart,
             type: 'boxplot',
             zooming: {
-              ...HighchartsOptions.defaultOptions.chart.zooming,
+              ...HighchartsOptions.defaultOptions.chart?.zooming,
               type: "xy"
             }
           },
@@ -105,7 +110,7 @@ export class WaterStatesComponent extends DashboardParentComponent {
           xAxis: {
             ...HighchartsOptions.defaultOptions.xAxis,
             type: 'datetime',
-            title: null,
+            title: undefined,
             dateTimeLabelFormats: {
               year: '%Y',
               month: '%Y/%m',
@@ -162,21 +167,21 @@ export class WaterStatesComponent extends DashboardParentComponent {
               pointInterval: period * 1000,
               pointStart: moment(this.waterStateList[0].time).valueOf(),
               data: createFunc(x => [x.minHumidity, x.lowerQuartileHumidity, x.medianHumidity, x.upperQuartileHumidity, x.maxHumidity]),
-              color: Highcharts.getOptions().colors[0],
+              color: colors[0],
             } as Highcharts.SeriesBoxplotOptions,
             {
               name: '気温',
               pointInterval: period * 1000,
               pointStart: moment(this.waterStateList[0].time).valueOf(),
               data: createFunc(x => [x.minTemperature, x.lowerQuartileTemperature, x.medianTemperature, x.upperQuartileTemperature, x.maxTemperature]),
-              color: Highcharts.getOptions().colors[3],
+              color: colors[3],
             } as Highcharts.SeriesBoxplotOptions,
             {
               name: '水温',
               pointInterval: period * 1000,
               pointStart: moment(this.waterStateList[0].time).valueOf(),
               data: createFunc(x => [x.minWaterTemperature, x.lowerQuartileWaterTemperature, x.medianWaterTemperature, x.upperQuartileWaterTemperature, x.maxWaterTemperature]),
-              color: Highcharts.getOptions().colors[2],
+              color: colors[2],
             } as Highcharts.SeriesBoxplotOptions,
             {
               name: '湿度',
@@ -185,7 +190,7 @@ export class WaterStatesComponent extends DashboardParentComponent {
               pointInterval: period * 1000,
               pointStart: moment(this.waterStateList[0].time).valueOf(),
               data: createFunc(x => x.medianHumidity),
-              color: Highcharts.getOptions().colors[0],
+              color: colors[0],
             },
             {
               name: '気温',
@@ -193,7 +198,7 @@ export class WaterStatesComponent extends DashboardParentComponent {
               pointInterval: period * 1000,
               pointStart: moment(this.waterStateList[0].time).valueOf(),
               data: createFunc(x => x.medianTemperature),
-              color: Highcharts.getOptions().colors[3],
+              color: colors[3],
             },
             {
               name: '水温',
@@ -201,7 +206,7 @@ export class WaterStatesComponent extends DashboardParentComponent {
               pointInterval: period * 1000,
               pointStart: moment(this.waterStateList[0].time).valueOf(),
               data: createFunc(x => x.medianWaterTemperature),
-              color: Highcharts.getOptions().colors[2],
+              color: colors[2],
             }
           ]
         });

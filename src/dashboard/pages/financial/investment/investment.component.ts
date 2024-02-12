@@ -6,7 +6,7 @@ import { InvestmentProduct, InvestmentProductAmount } from 'src/dashboard/models
 import { FinancialApiService } from 'src/dashboard/services/financial-api.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import * as moment from 'moment';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, last, lastValueFrom } from 'rxjs';
 import { InvestmentCurrencyUnit } from 'src/dashboard/models/investment-currency-unit.model';
 import Enumerable from 'linq';
 import { jpyCurrencyId } from 'src/constants/constants';
@@ -23,34 +23,34 @@ export class InvestmentComponent extends DashboardParentComponent {
   public viewingInvestmentProductDetail: {
     investmentProduct: InvestmentProduct,
     investmentProductAmountList: InvestmentProductAmount[]
-  };
-  public addInvestmentProductModalVisibility: boolean;
+  } | null = null;
+  public addInvestmentProductModalVisibility: boolean = false;
   public addInvestmentProductForm: FormGroup;
-  public investmentProductList: InvestmentProduct[];
+  public investmentProductList: InvestmentProduct[] = [];
   /** 評価額 */
-  public totalValuation: number;
+  public totalValuation: number | null = null;
   /** 収益率 */
-  public rateOfReturn: number;
+  public rateOfReturn: number | null = null;
   /** 収益額 */
-  public totalProfit: number;
+  public totalProfit: number | null = null;
   /** 日本円単位 */
-  public yenCurrency: InvestmentCurrencyUnit;
+  public yenCurrency: InvestmentCurrencyUnit | undefined = undefined;
   /** 投資商品タイプリスト */
-  public investmentProductTypeList: string[];
+  public investmentProductTypeList: string[] = [];
   /** 投資商品カテゴリーリスト */
-  public investmentProductCategoryList: string[];
+  public investmentProductCategoryList: string[] = [];
   /** 口座リスト */
-  public tradingAccountList: TradingAccount[];
-  public investmentCurrencyUnitList: InvestmentCurrencyUnit[];
-  public addInvestmentProductAmountModalProduct: InvestmentProduct;
+  public tradingAccountList: TradingAccount[] = [];
+  public investmentCurrencyUnitList: InvestmentCurrencyUnit[] = [];
+  public addInvestmentProductAmountModalProduct: InvestmentProduct | null = null;
   public addInvestmentProductAmountForm: FormGroup;
   /** 表示タイプ */
-  public viewType: "account" | "product"
+  public viewType: "account" | "product" = "product"
 
   /** 表示アカウントID */
-  public selectedAccountId: number;
+  public selectedAccountId: number | null = null;
   /** 表示アカウント */
-  public selectedAccount: TradingAccountDetail;
+  public selectedAccount: TradingAccountDetail | undefined = undefined;
 
   constructor(
     private financialApiService: FinancialApiService,
@@ -73,14 +73,12 @@ export class InvestmentComponent extends DashboardParentComponent {
     this.onInit
       .pipe(untilDestroyed(this))
       .subscribe(async () => {
-        this.investmentCurrencyUnitList = await this.financialApiService.GetInvestmentCurrencyUnitList().pipe(untilDestroyed(this)).toPromise();
-        this.yenCurrency = this.investmentCurrencyUnitList.find(x => x.id === jpyCurrencyId);
+        this.investmentCurrencyUnitList = await lastValueFrom(this.financialApiService.GetInvestmentCurrencyUnitList().pipe(untilDestroyed(this)));
+        this.yenCurrency = Enumerable.from(this.investmentCurrencyUnitList).first(x => x.id === jpyCurrencyId);
         await this.getInvestmentProductList();
-        this.investmentProductTypeList = await this.financialApiService.GetInvestmentProductTypeList().toPromise();
-        this.investmentProductCategoryList = await this.financialApiService.GetInvestmentProductCategoryList().toPromise();
-        this.tradingAccountList = await firstValueFrom(this.financialApiService.GetTradingAccountListAsync());
-
-        this.viewType = "product";
+        this.investmentProductTypeList = (await this.financialApiService.GetInvestmentProductTypeList().toPromise()) ?? [];
+        this.investmentProductCategoryList = (await this.financialApiService.GetInvestmentProductCategoryList().toPromise()) ?? [];
+        this.tradingAccountList = (await firstValueFrom(this.financialApiService.GetTradingAccountListAsync())) ?? [];
       });
   }
   /**
@@ -138,17 +136,17 @@ export class InvestmentComponent extends DashboardParentComponent {
    * @memberof InvestmentComponent
    */
   public async getInvestmentProductList(): Promise<void> {
-    this.investmentProductList = await this.financialApiService.GetInvestmentProductList().pipe(untilDestroyed(this)).toPromise();
+    this.investmentProductList = await lastValueFrom(this.financialApiService.GetInvestmentProductList().pipe(untilDestroyed(this)));
     var list =
       Enumerable
         .from(this.investmentProductList);
     this.totalValuation =
       list
-        .select(x => x.latestRate * x.amount * this.investmentCurrencyUnitList.find(icu => icu.id == x.currencyUnitId).latestRate)
+        .select(x => x.latestRate * x.amount * Enumerable.from(this.investmentCurrencyUnitList).first(icu => icu.id == x.currencyUnitId).latestRate)
         .sum();
     this.totalProfit =
       list
-        .select(x => (x.latestRate - x.averageRate) * x.amount * this.investmentCurrencyUnitList.find(icu => icu.id == x.currencyUnitId).latestRate)
+        .select(x => (x.latestRate - x.averageRate) * x.amount * Enumerable.from(this.investmentCurrencyUnitList).first(icu => icu.id == x.currencyUnitId).latestRate)
         .sum();
     this.rateOfReturn = this.totalProfit / (this.totalValuation - this.totalProfit) * 100;
   }
@@ -171,12 +169,10 @@ export class InvestmentComponent extends DashboardParentComponent {
    * @memberof InvestmentComponent
    */
   public async openInvestmentProductDetailModal(investmentProduct: InvestmentProduct): Promise<void> {
-    const investmentProductAmountList =
-      await
-        this.financialApiService
-          .getInvestmentProductAmountList(investmentProduct.investmentProductId)
-          .pipe(untilDestroyed(this))
-          .toPromise();
+    const investmentProductAmountList = await lastValueFrom(
+      this.financialApiService
+        .getInvestmentProductAmountList(investmentProduct.investmentProductId)
+        .pipe(untilDestroyed(this)))
     this.viewingInvestmentProductDetail = {
       investmentProduct: investmentProduct,
       investmentProductAmountList: investmentProductAmountList
@@ -215,6 +211,9 @@ export class InvestmentComponent extends DashboardParentComponent {
    * @memberof InvestmentComponent
    */
   public async addInvestmentProductAmount(): Promise<void> {
+    if (this.addInvestmentProductAmountModalProduct === null) {
+      return;
+    }
     try {
       await this.financialApiService.PostRegisterInvestmentProductAmount(
         this.addInvestmentProductAmountModalProduct.investmentProductId,

@@ -21,10 +21,10 @@ import { delay, map } from "rxjs/operators";
 })
 export class InvestmentAssetTransitionComponent extends DashboardParentComponent {
   /** 資産推移生データ */
-  public assets: InvestmentAsset;
+  public assets: InvestmentAsset | null = null;
 
   /** 資産推移チャート */
-  public chart: Chart;
+  public chart: Chart | undefined = undefined;
 
   private dateRangeSubject = new Subject<DateRange>();
 
@@ -39,7 +39,10 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
         const startDate = dateRange.startDate;
         const endDate = dateRange.endDate;
 
-        this.assets = await this.financialApiService.GetInvestmentAssets(startDate, endDate).toPromise();
+        this.assets = (await this.financialApiService.GetInvestmentAssets(startDate, endDate).toPromise()) ?? null;
+        if (this.assets === null) {
+          return;
+        }
         const dates = this.assets.investmentAssetProducts[0].dailyRates.map(x => x.date);
         const datesCount = dates.length;
         this.chart = new Chart({
@@ -48,7 +51,7 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
             ...HighchartsOptions.defaultOptions.chart,
             type: "area",
             zooming: {
-              ...HighchartsOptions.defaultOptions.chart.zooming,
+              ...HighchartsOptions.defaultOptions.chart?.zooming,
               type: "x"
             }
           },
@@ -59,7 +62,7 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
           xAxis: {
             ...HighchartsOptions.defaultOptions.xAxis,
             type: 'datetime',
-            title: null,
+            title: undefined,
             dateTimeLabelFormats: {
               year: '%Y',
               month: '%Y/%m',
@@ -69,7 +72,7 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
           },
           yAxis: {
             ...HighchartsOptions.defaultOptions.yAxis,
-            title: null,
+            title: undefined,
             labels: {
               ...(HighchartsOptions.defaultOptions.yAxis as Highcharts.YAxisOptions).labels,
               formatter: function () {
@@ -86,19 +89,19 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
           tooltip: {
             ...HighchartsOptions.defaultOptions.tooltip,
             formatter: function () {
-              return `${Highcharts.dateFormat("%Y/%m/%d", Number(this.key))}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
+              return `${Highcharts.dateFormat("%Y/%m/%d", Number(this.key))}<br>${this.series.name} : ${Highcharts.numberFormat(this.y ?? 0, 0, '', ',')}円`
             }
           },
           plotOptions: {
             ...HighchartsOptions.defaultOptions.plotOptions,
             series: {
-              ...HighchartsOptions.defaultOptions.plotOptions.series,
+              ...HighchartsOptions.defaultOptions.plotOptions?.series,
               dataLabels: {
-                ...HighchartsOptions.defaultOptions.plotOptions.series.dataLabels,
+                ...HighchartsOptions.defaultOptions.plotOptions?.series?.dataLabels,
                 shape: 'callout',
                 backgroundColor: '#0007',
                 formatter: function () {
-                  return `最終値:${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
+                  return `最終値:${Highcharts.numberFormat(this.y ?? 0, 0, '', ',')}円`;
                 }
               }
             }
@@ -141,8 +144,8 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
                 legendIndex: -1000000,
                 data:
                   Enumerable.from(dates).select(date =>
-                    Enumerable.from(this.assets.investmentAssetProducts).sum(x => {
-                      const rate = x.dailyRates.find(dr => dr.date === date);
+                    Enumerable.from(this.assets?.investmentAssetProducts ?? []).sum(x => {
+                      const rate = Enumerable.from(x.dailyRates).first(dr => dr.date === date);
                       return rate.rate * rate.amount * this.getRate(x.currencyUnitId, date);
                     })
                   ).select((x, index) =>
@@ -187,9 +190,12 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
    * @memberof InvestmentAssetTransitionComponent
    */
   private getRate(currencyId: number, date: string): number {
+    if (this.assets === null) {
+      throw new Error();
+    }
     if (currencyId === jpyCurrencyId) {
       return 1;
     }
-    return Enumerable.from(this.assets.currencyRates).firstOrDefault(c => c.id === currencyId && c.date === date)?.latestRate;
+    return Enumerable.from(this.assets.currencyRates).first(c => c.id === currencyId && c.date === date).latestRate;
   }
 }

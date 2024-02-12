@@ -9,11 +9,11 @@ import { WakeOnLanTarget } from '../../../models/wake-on-lan-target.model';
   templateUrl: "./wake-on-lan.component.html"
 })
 export class WakeOnLanComponent extends DashboardParentComponent implements OnInit {
-  public targetMacAddress: string;
+  public targetMacAddress: string | undefined = undefined;
 
-  public addTargetModalVisibility: boolean;
+  public addTargetModalVisibility: boolean | undefined = undefined;
   public addTargetForm: FormGroup;
-  public targetList: WakeOnLanTarget[];
+  public targetList: WakeOnLanTarget[] = [];
   constructor(
     private networkApiService: NetworkApiService,
     private message: NzMessageService,
@@ -30,6 +30,9 @@ export class WakeOnLanComponent extends DashboardParentComponent implements OnIn
   }
 
   public async sendMagicPacket(): Promise<void> {
+    if (this.targetMacAddress === undefined) {
+      return;
+    }
     if (await this.networkApiService.SendMagicPacket(this.targetMacAddress).toPromise()) {
       this.message.success("送信成功");
     } else {
@@ -70,6 +73,6 @@ export class WakeOnLanComponent extends DashboardParentComponent implements OnIn
   }
 
   public async getTargetList(): Promise<void> {
-    this.targetList = await this.networkApiService.GetWakeOnLanTarget().toPromise();
+    this.targetList = await this.networkApiService.GetWakeOnLanTarget().toPromise() ?? [];
   }
 }

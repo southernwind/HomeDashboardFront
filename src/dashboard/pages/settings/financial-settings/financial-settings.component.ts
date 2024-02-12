@@ -32,6 +32,9 @@ export class FinancialSettingsComponent extends DashboardParentComponent impleme
 
   public async ngOnInit(): Promise<void> {
     const settings = await this.settingsApiService.GetSettings().toPromise();
+    if (settings === undefined) {
+      return;
+    }
     this.form.patchValue({
       mail: settings.moneyForwardId,
       password: null

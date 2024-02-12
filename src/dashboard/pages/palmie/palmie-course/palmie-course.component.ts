@@ -14,14 +14,14 @@ import { environment } from "../../../../environments/environment";
   styleUrls: ["./palmie-course.component.scss"]
 })
 export class PalmieCourseComponent extends DashboardParentComponent {
-  public lesson: PalmieDailyLesson | PalmiePrimeLesson;
-  public dailyLesson: PalmieDailyLesson;
-  public primeLesson: PalmiePrimeLesson;
-  public primeLessons: PalmiePrimeLesson[];
-  public videoUrl: string;
+  public lesson: PalmieDailyLesson | PalmiePrimeLesson | undefined = undefined;
+  public dailyLesson: PalmieDailyLesson | undefined = undefined;
+  public primeLesson: PalmiePrimeLesson | undefined = undefined;
+  public primeLessons: PalmiePrimeLesson[] = [];
+  public videoUrl: string | undefined = undefined;
 
   @ViewChild("video")
-  public video: ElementRef;
+  public video: ElementRef | undefined;
   public playbackRate: number = 1;
   public get documentsUrl(): string {
     return environment.palmieDocumentsUrl;
@@ -33,6 +33,9 @@ export class PalmieCourseComponent extends DashboardParentComponent {
       .pipe(first(), untilDestroyed(this))
       .subscribe(async () => {
         var palmieCourses = await this.palmieApiService.GetSearchResult(`${courseId},`).toPromise();
+        if (palmieCourses === undefined) {
+          return;
+        }
         this.lesson = Enumerable.from(palmieCourses.courses).where(x => x.course.id === courseId).firstOrDefault();
         if ((this.lesson as PalmieDailyLesson)?.dailyLessons) {
           this.dailyLesson = this.lesson as PalmieDailyLesson;
@@ -46,7 +49,10 @@ export class PalmieCourseComponent extends DashboardParentComponent {
       });
   }
 
-  public setVideo(videoId: string): void {
+  public setVideo(videoId: string | undefined): void {
+    if (videoId === undefined) {
+      return;
+    }
     this.videoUrl = `${environment.palmieVideoUrl}${videoId}.mp4`;
   }
 
@@ -55,6 +61,9 @@ export class PalmieCourseComponent extends DashboardParentComponent {
   }
   public playbackRateChange(playbackRate: string): void {
     try {
+      if (this.video === undefined) {
+        return;
+      }
       this.video.nativeElement.playbackRate = Number(playbackRate);
     } catch (e) {
       console.log(e);

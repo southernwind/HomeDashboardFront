@@ -17,9 +17,9 @@ import { interval, Subject } from 'rxjs';
   styleUrls: ["./palmie-top.component.scss"]
 })
 export class PalmieTopComponent extends DashboardParentComponent {
-  public dailyLessons: PalmieDailyLesson[];
-  public primeLessons: PalmiePrimeLesson[];
-  public searchWord: string;
+  public dailyLessons: PalmieDailyLesson[] = [];
+  public primeLessons: PalmiePrimeLesson[] = [];
+  public searchWord: string = "";
   public searchWordUpdated = new Subject<string>();
   constructor(private palmieApiService: PalmieApiService) {
     super();
@@ -41,6 +41,9 @@ export class PalmieTopComponent extends DashboardParentComponent {
       = word.length === 0 ?
         await this.palmieApiService.GetCourses().toPromise() :
         await this.palmieApiService.GetSearchResult(word).toPromise();
+    if (palmieCourses === undefined) {
+      return;
+    }
     this.dailyLessons = palmieCourses.courses.filter(x => (x as PalmieDailyLesson)?.dailyLessons).map(x => x as PalmieDailyLesson);
     this.primeLessons = Enumerable.from(palmieCourses.courses).where(x => (x as PalmiePrimeLesson)?.primeLessons !== undefined).distinct(x => x.course.id).select(x => x as PalmiePrimeLesson).toArray();
   }

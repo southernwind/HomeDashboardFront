@@ -17,7 +17,7 @@ import { getMfTransactionLargeCategoryId } from '../../utils/util';
   templateUrl: "./expense-ratio.component.html",
 })
 export class ExpenseRatioComponent extends DashboardParentComponent {
-  public chart: Chart;
+  public chart: Chart | undefined = undefined;
 
   /** 取引履歴生データ */
   @Input()
@@ -82,7 +82,7 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
           plotOptions: {
             ...HighchartsOptions.defaultOptions.plotOptions,
             pie: {
-              ...HighchartsOptions.defaultOptions.plotOptions.pie,
+              ...HighchartsOptions.defaultOptions.plotOptions?.pie,
               shadow: false,
               center: ['50%', '50%']
             }
@@ -129,7 +129,7 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
                   name: x.key(),
                   value: x.sum(y => -y.amount)
                 }
-              }).orderByDescending(x => x.value)).concat(
+              }).orderByDescending(x => x.value) as any).concat(
                 temp.groupBy(x => `${x.largeCategory}_${x.middleCategory}`).select(x => {
                   return {
                     id: x.key(),
@@ -137,7 +137,7 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
                     name: x.first().middleCategory,
                     value: x.sum(y => -y.amount)
                   }
-                })
+                }) as any
               ).toArray(),
             allowDrillToNode: true,
             cursor: 'pointer',

@@ -9,7 +9,7 @@ import { firstValueFrom } from 'rxjs';
   styleUrls: ["./health-check.component.scss"]
 })
 export class HealthCheckComponent extends DashboardParentComponent implements OnInit {
-  public results: HealthCheckResult[];
+  public results: HealthCheckResult[] = [];
   constructor(
     private networkApiService: NetworkApiService) {
     super();

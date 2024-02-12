@@ -15,7 +15,7 @@ import { Condition } from 'src/dashboard/models/condition.model';
   templateUrl: "./income-raw-data-viewer.component.html",
 })
 export class IncomeRawDataViewerComponent extends DashboardParentComponent {
-  private _transactions: Transaction[];
+  private _transactions: Transaction[] = [];
   /** 取引履歴生データ */
   @Input()
   public set transactions(value: Transaction[]) {
@@ -29,8 +29,8 @@ export class IncomeRawDataViewerComponent extends DashboardParentComponent {
     this.createTableData(this._transactions, value);
   }
 
-  public tableData: Transaction[];
-  public totalAmount: number;
+  public tableData: Transaction[] = [];
+  public totalAmount: number | null = null;
 
   public tableColumns = [{
     name: "日付",

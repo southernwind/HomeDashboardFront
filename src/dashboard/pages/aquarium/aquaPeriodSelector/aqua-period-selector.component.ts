@@ -7,7 +7,7 @@ import { DashboardParentComponent } from 'src/dashboard/components/parent/dashbo
   styleUrls: ["aqua-period-selector.component.scss"]
 })
 export class AquaPeriodSelectorComponent extends DashboardParentComponent {
-  public selectedPeriod: number = null;
+  public selectedPeriod: number | null = null;
 
   public candidate = [
     { label: "10秒", value: 10 },
@@ -52,6 +52,9 @@ export class AquaPeriodSelectorComponent extends DashboardParentComponent {
   public periodChange = new EventEmitter<number>();
 
   public selectedPeriodChange(): void {
+    if (this.selectedPeriod === null) {
+      return;
+    }
     this.periodChange.emit(this.selectedPeriod);
   }
 }

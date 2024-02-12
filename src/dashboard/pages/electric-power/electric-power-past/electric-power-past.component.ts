@@ -7,6 +7,7 @@ import { Moment } from 'moment';
 import * as moment from 'moment';
 import { ElectricPower } from '../../../models/electric-power.model';
 import { ElectricPowerApiService } from '../../../services/electric-power.service';
+import { lastValueFrom } from 'rxjs';
 
 @UntilDestroy()
 @Component({
@@ -19,7 +20,7 @@ export class ElectricPowerPastComponent extends DashboardParentComponent {
    * @type {DateRange}
    * @memberof ElectricPowerPastComponent
    */
-  public selectedDateRange: DateRange = null;
+  public selectedDateRange: DateRange | null = null;
 
   /**
    * 選択中ピリオド
@@ -27,7 +28,7 @@ export class ElectricPowerPastComponent extends DashboardParentComponent {
    * @type {number}
    * @memberof ElectricPowerPastComponent
    */
-  public selectedPeriod: number = null;
+  public selectedPeriod: number | null = null;
 
   /**
    * チャートデータ
@@ -35,7 +36,7 @@ export class ElectricPowerPastComponent extends DashboardParentComponent {
    * @type {ElectricPower[]}
    * @memberof ElectricPowerPastComponent
    */
-  public chartData: ElectricPower[];
+  public chartData: ElectricPower[] = [];
   constructor(private cookieService: CookieService, private electricPowerApiService: ElectricPowerApiService) {
     super();
     this.onInit
@@ -70,11 +71,17 @@ export class ElectricPowerPastComponent extends DashboardParentComponent {
   }
 
   public async selectedDateChanged(): Promise<void> {
-    this.chartData = await this.electricPowerApiService.getElectricPowerConsumptionList(this.selectedDateRange.startDate.format("YYYY-MM-DD HH:mm:ss"), this.selectedDateRange.endDate.format("YYYY-MM-DD HH:mm:ss")).pipe(untilDestroyed(this)).toPromise();
+    if (this.selectedPeriod === null || this.selectedDateRange === null) {
+      return;
+    }
+    this.chartData = await lastValueFrom(this.electricPowerApiService.getElectricPowerConsumptionList(this.selectedDateRange.startDate.format("YYYY-MM-DD HH:mm:ss"), this.selectedDateRange.endDate.format("YYYY-MM-DD HH:mm:ss")).pipe(untilDestroyed(this)));
     this.cookieService.set("electricPowerPastStartDate", this.selectedDateRange.startDate.format("YYYY-MM-DD HH:mm:ss"), undefined, "/");
     this.cookieService.set("electricPowerPastEndDate", this.selectedDateRange.endDate.format("YYYY-MM-DD HH:mm:ss"), undefined, "/");
   }
   public selectedPeriodChanged(): void {
+    if (this.selectedPeriod === null) {
+      return;
+    }
     this.cookieService.set("electricPowerPastPeriod", this.selectedPeriod.toString(), undefined, "/");
   }
 }

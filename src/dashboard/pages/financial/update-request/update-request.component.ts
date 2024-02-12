@@ -13,7 +13,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 })
 export class UpdateRequestComponent extends DashboardParentComponent {
   @Input()
-  public dateRange: DateRange;
+  public dateRange: DateRange | undefined = undefined;
   @Output()
   public onUpdated = new EventEmitter();
 
@@ -21,7 +21,7 @@ export class UpdateRequestComponent extends DashboardParentComponent {
   constructor(private financialApiService: FinancialApiService) { super(); }
 
   public async UpdateRequest(): Promise<void> {
-    if (this.dateRange === null) {
+    if (this.dateRange === undefined) {
       return;
     }
     // 更新リクエスト・更新キーの取得
@@ -36,6 +36,9 @@ export class UpdateRequestComponent extends DashboardParentComponent {
             map(x => x.key)
           ).toPromise();
 
+    if (key === undefined) {
+      return;
+    }
     const subscription = interval(500)
       .pipe(
         untilDestroyed(this)
@@ -48,6 +51,9 @@ export class UpdateRequestComponent extends DashboardParentComponent {
               .financialApiService
               .GetUpdateStatus(key)
               .toPromise();
+        if (result === undefined) {
+          return;
+        }
         this.progress = result.progress;
         if (this.progress === 100) {
           this.onUpdated.emit();

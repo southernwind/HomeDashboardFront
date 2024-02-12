@@ -17,7 +17,7 @@ export class AquariumPastComponent extends DashboardParentComponent {
    * @type {DateRange}
    * @memberof AquariumPastComponent
    */
-  public selectedDateRange: DateRange = null;
+  public selectedDateRange: DateRange | null = null;
 
   /**
    * 選択中ピリオド
@@ -25,7 +25,7 @@ export class AquariumPastComponent extends DashboardParentComponent {
    * @type {number}
    * @memberof AquariumPastComponent
    */
-  public selectedPeriod: number = null;
+  public selectedPeriod: number | null = null;
 
   constructor(private cookieService: CookieService) {
     super();
@@ -61,10 +61,16 @@ export class AquariumPastComponent extends DashboardParentComponent {
   }
 
   public selectedDateChanged(): void {
+    if (this.selectedDateRange === null) {
+      return;
+    }
     this.cookieService.set("aquaStartDate", this.selectedDateRange.startDate.format("YYYY-MM-DD HH:mm:ss"), undefined, "/");
     this.cookieService.set("aquaEndDate", this.selectedDateRange.endDate.format("YYYY-MM-DD HH:mm:ss"), undefined, "/");
   }
   public selectedPeriodChanged(): void {
+    if (this.selectedPeriod === null) {
+      return;
+    }
     this.cookieService.set("aquaPastPeriod", this.selectedPeriod.toString(), undefined, "/");
   }
 }

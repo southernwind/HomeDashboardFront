@@ -18,10 +18,10 @@ import { Chart } from 'angular-highcharts';
 })
 export class AssetTransitionComponent extends DashboardParentComponent {
   /** 資産推移生データ */
-  public assets: Asset[];
+  public assets: Asset[] = [];
 
   /** 資産推移チャート */
-  public chart: Chart;
+  public chart: Chart | undefined = undefined;
 
   private dateRangeSubject = new Subject<DateRange>();
 
@@ -41,7 +41,7 @@ export class AssetTransitionComponent extends DashboardParentComponent {
         const startDate = dateRange.startDate;
         const endDate = dateRange.endDate;
 
-        this.assets = await this.financialApiService.GetAssets(startDate, endDate).toPromise();
+        this.assets = (await this.financialApiService.GetAssets(startDate, endDate).toPromise()) ?? [];
         const temp = Enumerable
           .from(this.assets)
           .select(x => {
@@ -58,7 +58,7 @@ export class AssetTransitionComponent extends DashboardParentComponent {
             ...HighchartsOptions.defaultOptions.chart,
             type: "area",
             zooming: {
-              ...HighchartsOptions.defaultOptions.chart.zooming,
+              ...HighchartsOptions.defaultOptions.chart?.zooming,
               type: "x"
             }
           },
@@ -69,7 +69,7 @@ export class AssetTransitionComponent extends DashboardParentComponent {
           xAxis: {
             ...HighchartsOptions.defaultOptions.xAxis,
             type: 'datetime',
-            title: null,
+            title: undefined,
             dateTimeLabelFormats: {
               year: '%Y',
               month: '%Y/%m',
@@ -79,7 +79,7 @@ export class AssetTransitionComponent extends DashboardParentComponent {
           },
           yAxis: {
             ...HighchartsOptions.defaultOptions.yAxis,
-            title: null,
+            title: undefined,
             labels: {
               ...(HighchartsOptions.defaultOptions.yAxis as Highcharts.YAxisOptions).labels,
               formatter: function () {
@@ -96,19 +96,19 @@ export class AssetTransitionComponent extends DashboardParentComponent {
           tooltip: {
             ...HighchartsOptions.defaultOptions.tooltip,
             formatter: function () {
-              return `${Highcharts.dateFormat("%Y/%m/%d", Number(this.key))}<br>${this.series.name} : ${Highcharts.numberFormat(this.y, 0, '', ',')}円`
+              return `${Highcharts.dateFormat("%Y/%m/%d", Number(this.key))}<br>${this.series.name} : ${Highcharts.numberFormat(this.y ?? 0, 0, '', ',')}円`
             }
           },
           plotOptions: {
             ...HighchartsOptions.defaultOptions.plotOptions,
             series: {
-              ...HighchartsOptions.defaultOptions.plotOptions.series,
+              ...HighchartsOptions.defaultOptions.plotOptions?.series,
               dataLabels: {
-                ...HighchartsOptions.defaultOptions.plotOptions.series.dataLabels,
+                ...HighchartsOptions.defaultOptions.plotOptions?.series?.dataLabels,
                 shape: 'callout',
                 backgroundColor: '#0007',
                 formatter: function () {
-                  return `最終値:${Highcharts.numberFormat(this.y, 0, '', ',')}円`;
+                  return `最終値:${Highcharts.numberFormat(this.y ?? 0, 0, '', ',')}円`;
                 }
               }
             }
@@ -127,7 +127,7 @@ export class AssetTransitionComponent extends DashboardParentComponent {
           },
           series: temp
             .groupBy(x => x.institution)
-            .orderBy(x => Math.abs(x.lastOrDefault().amount))
+            .orderBy(x => Math.abs(x.last().amount))
             .select((x, index) => {
               return {
                 type: 'area',

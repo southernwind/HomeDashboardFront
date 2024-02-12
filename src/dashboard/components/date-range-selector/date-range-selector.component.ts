@@ -50,7 +50,7 @@ export class DateRangeSelectorComponent extends DashboardParentComponent {
    * @type {Date[]}
    * @memberof DateRangeSelectorComponent
    */
-  public selectedDate: Date[] = null;
+  public selectedDate: Date[] | null = null;
 
   /**
    * Ng-Zorroのカレンダーの本日以降の日付を無効にする

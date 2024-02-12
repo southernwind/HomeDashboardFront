@@ -5,7 +5,7 @@ import Enumerable from 'linq';
   name: 'firstOrDefaultPipe'
 })
 export class FirstOrDefaultPipe implements PipeTransform {
-  transform<T>(array: T[], key: string, value: any): T {
-    return Enumerable.from(array).firstOrDefault(x => x[key] === value);
+  transform<T>(array: T[], key: string, value: any): T | undefined {
+    return Enumerable.from(array).firstOrDefault(x => (x as any)[key] === value);
   }
 }

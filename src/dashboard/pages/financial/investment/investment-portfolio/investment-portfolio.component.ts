@@ -19,7 +19,7 @@ import { SeriesSunburstOptions } from 'highcharts/highcharts.src';
   templateUrl: "./investment-portfolio.component.html",
 })
 export class InvestmentPortfolioComponent extends DashboardParentComponent {
-  public chart: Chart;
+  public chart: Chart | undefined;
 
   /** 生データ */
   @Input()
@@ -50,7 +50,7 @@ export class InvestmentPortfolioComponent extends DashboardParentComponent {
         const investmentCurrencyUnitList = s[1];
         const temp = Enumerable.from(investmentProductList)
           .select(x => {
-            const currency = investmentCurrencyUnitList.find(icu => icu.id === x.currencyUnitId);
+            const currency = Enumerable.from(investmentCurrencyUnitList).first(icu => icu.id === x.currencyUnitId);
             return {
               category: x.category,
               name: x.name,
@@ -67,12 +67,12 @@ export class InvestmentPortfolioComponent extends DashboardParentComponent {
           },
           title: {
             ...HighchartsOptions.defaultOptions.title,
-            text: null
+            text: undefined
           },
           plotOptions: {
             ...HighchartsOptions.defaultOptions.plotOptions,
             pie: {
-              ...HighchartsOptions.defaultOptions.plotOptions.pie,
+              ...HighchartsOptions.defaultOptions.plotOptions?.pie,
               shadow: false,
               center: ['50%', '50%']
             }

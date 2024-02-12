@@ -6,6 +6,11 @@ import { CookieService } from 'ngx-cookie-service';
 import { Moment } from 'moment';
 import * as moment from 'moment';
 
+
+interface Term {
+  value: string;
+  unit: moment.unitOfTime.DurationConstructor;
+}
 @UntilDestroy()
 @Component({
   templateUrl: "./aquarium-top.component.html"
@@ -17,12 +22,9 @@ export class AquariumTopComponent extends DashboardParentComponent {
    * @type {DateRange}
    * @memberof AquariumTopComponent
    */
-  public selectedDateRange: DateRange = null;
+  public selectedDateRange: DateRange | null = null;
 
-  public selectedTerm: {
-    value: string,
-    unit: moment.unitOfTime.DurationConstructor
-  } = null;
+  public selectedTerm: Term | null = null;
 
   public termCandidate: {
     value: string,
@@ -48,7 +50,7 @@ export class AquariumTopComponent extends DashboardParentComponent {
    * @type {number}
    * @memberof AquariumTopComponent
    */
-  public selectedPeriod: number = null;
+  public selectedPeriod: number | null = null;
 
   constructor(private cookieService: CookieService) {
     super();
@@ -56,9 +58,9 @@ export class AquariumTopComponent extends DashboardParentComponent {
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         if (this.selectedTerm === null) {
-          const term = {
-            value: null,
-            unit: null
+          const term: Term = {
+            value: "2",
+            unit: "days"
           };
           if (this.cookieService.check("aquaTermValue")) {
             term.value = this.cookieService.get("aquaTermValue");
@@ -66,12 +68,12 @@ export class AquariumTopComponent extends DashboardParentComponent {
             term.value = "2";
           }
           if (this.cookieService.check("aquaTermUnit")) {
-            term.unit = this.cookieService.get("aquaTermUnit");
+            term.unit = this.cookieService.get("aquaTermUnit") as moment.unitOfTime.DurationConstructor;
           } else {
             term.unit = "days";
           }
 
-          this.selectedTerm = this.termCandidate.find(x => x.value == term.value && x.unit == term.unit);
+          this.selectedTerm = this.termCandidate.find(x => x.value == term.value && x.unit == term.unit) ?? null;
           this.selectedTermChanged();
         }
         if (this.selectedPeriod === null) {
@@ -85,14 +87,20 @@ export class AquariumTopComponent extends DashboardParentComponent {
   }
 
   public selectedTermChanged(): void {
-    this.cookieService.set("aquaTermValue", this.selectedTerm?.value, undefined, "/");
-    this.cookieService.set("aquaTermUnit", this.selectedTerm?.unit, undefined, "/");
+    if (this.selectedTerm === null) {
+      return;
+    }
+    this.cookieService.set("aquaTermValue", this.selectedTerm.value, undefined, "/");
+    this.cookieService.set("aquaTermUnit", this.selectedTerm.unit, undefined, "/");
     this.selectedDateRange = {
       startDate: moment().add(`-${this.selectedTerm.value}`, this.selectedTerm.unit),
       endDate: moment()
     }
   }
   public selectedPeriodChanged(): void {
+    if (this.selectedPeriod === null) {
+      return;
+    }
     this.cookieService.set("aquaPeriod", this.selectedPeriod.toString(), undefined, "/");
   }
 }

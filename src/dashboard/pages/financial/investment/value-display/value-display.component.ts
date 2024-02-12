@@ -12,10 +12,10 @@ import { jpyCurrencyId } from '../../../../../constants/constants';
 })
 export class ValueDisplayComponent extends DashboardParentComponent {
   @Input()
-  public value: number;
+  public value: number | undefined = undefined;
 
   @Input()
-  public investmentCurrencyUnit: InvestmentCurrencyUnit;
+  public investmentCurrencyUnit: InvestmentCurrencyUnit | null = null;
 
   @Input()
   public type: 'price' | 'static-price' | 'percent' | 'static-price-with-yen' | 'amount' = 'price';
@@ -34,7 +34,7 @@ export class ValueDisplayComponent extends DashboardParentComponent {
     } else if (this.type === 'amount') {
       numberOfDecimalPoint = this.adjustNumberOfDecimalPoint;
     } else {
-      numberOfDecimalPoint = this.investmentCurrencyUnit?.numberOfDecimalPoint + this.adjustNumberOfDecimalPoint;
+      numberOfDecimalPoint = (this.investmentCurrencyUnit?.numberOfDecimalPoint ?? 0) + this.adjustNumberOfDecimalPoint;
     }
     return `1.${numberOfDecimalPoint}-${numberOfDecimalPoint}`;
   }
