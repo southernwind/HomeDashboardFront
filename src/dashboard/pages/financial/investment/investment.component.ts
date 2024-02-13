@@ -23,7 +23,7 @@ export class InvestmentComponent extends DashboardParentComponent {
   public viewingInvestmentProductDetail: {
     investmentProduct: InvestmentProduct,
     investmentProductAmountList: InvestmentProductAmount[]
-  } | null = null;
+  } | undefined = undefined;
   public addInvestmentProductModalVisibility: boolean = false;
   public addInvestmentProductForm: FormGroup;
   public investmentProductList: InvestmentProduct[] = [];
@@ -42,7 +42,7 @@ export class InvestmentComponent extends DashboardParentComponent {
   /** 口座リスト */
   public tradingAccountList: TradingAccount[] = [];
   public investmentCurrencyUnitList: InvestmentCurrencyUnit[] = [];
-  public addInvestmentProductAmountModalProduct: InvestmentProduct | null = null;
+  public addInvestmentProductAmountModalProduct: InvestmentProduct | undefined = undefined;
   public addInvestmentProductAmountForm: FormGroup;
   /** 表示タイプ */
   public viewType: "account" | "product" = "product"
@@ -186,7 +186,7 @@ export class InvestmentComponent extends DashboardParentComponent {
    * @memberof InvestmentComponent
    */
   public closeInvestmentProductDetail(): void {
-    this.viewingInvestmentProductDetail = null;
+    this.viewingInvestmentProductDetail = undefined;
   }
 
   /**
@@ -201,7 +201,7 @@ export class InvestmentComponent extends DashboardParentComponent {
       amount: null,
       price: null
     });
-    this.addInvestmentProductAmountModalProduct = null;
+    this.addInvestmentProductAmountModalProduct = undefined;
   }
 
   /**
@@ -211,7 +211,7 @@ export class InvestmentComponent extends DashboardParentComponent {
    * @memberof InvestmentComponent
    */
   public async addInvestmentProductAmount(): Promise<void> {
-    if (this.addInvestmentProductAmountModalProduct === null) {
+    if (this.addInvestmentProductAmountModalProduct === undefined) {
       return;
     }
     try {
@@ -233,6 +233,6 @@ export class InvestmentComponent extends DashboardParentComponent {
       amount: null,
       price: null
     });
-    this.addInvestmentProductAmountModalProduct = null;
+    this.addInvestmentProductAmountModalProduct = undefined;
   }
 }

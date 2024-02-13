@@ -13,7 +13,7 @@ import { environment } from "../../../../environments/environment";
   templateUrl: "./electric-power-current.component.html"
 })
 export class ElectricPowerCurrentComponent extends DashboardParentComponent {
-  public currentValue: number | undefined = undefined;
+  public currentValue: number = NaN;
   public currentTime: string | undefined = undefined;
   public chartDataAsObservable: Observable<ElectricPower>;
   public get kwhPrice(): number {

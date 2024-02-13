@@ -198,7 +198,7 @@
 <nz-modal [(nzVisible)]="viewingInvestmentProductDetail" nzTitle="{{viewingInvestmentProductDetail?.investmentProduct.name}}" (nzOnCancel)="closeInvestmentProductDetail()"
   (nzOnOk)="closeInvestmentProductDetail()" [nzWidth]="800">
   <ng-container *nzModalContent>
-    <button nz-button (click)="addInvestmentProductAmountModalProduct = viewingInvestmentProductDetail.investmentProduct;">取得量登録</button>
+    <button nz-button (click)="addInvestmentProductAmountModalProduct = viewingInvestmentProductDetail?.investmentProduct;">取得量登録</button>
     <nz-table #investmentProductDetailAmountTable [nzData]="viewingInvestmentProductDetail?.investmentProductAmountList" nzTableLayout="fixed" [nzPageSize]="50" >
       <thead>
         <tr>
@@ -214,13 +214,13 @@
           <td><img src="{{item.tradingAccountLogo}}" title="{{item.tradingAccountName}}" style="max-width:100px; max-height:30px;"/></td>
           <td>{{item.date | datetimeFormatPipe: 'YYYY-MM-DD'}}</td>
           <td>
-            <app-value-display [value]="item.price" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail.investmentProduct.currencyUnitId " [adjustNumberOfDecimalPoint]="2"></app-value-display>
+            <app-value-display [value]="item.price" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail?.investmentProduct.currencyUnitId " [adjustNumberOfDecimalPoint]="2"></app-value-display>
           </td>
           <td>
             {{item.amount | number}}
           </td>
           <td>
-            <app-value-display [value]="item.price * item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail.investmentProduct.currencyUnitId "></app-value-display>
+            <app-value-display [value]="item.price * item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail?.investmentProduct.currencyUnitId "></app-value-display>
           </td>
         </tr>
       </tbody>

@@ -12,7 +12,7 @@ import { jpyCurrencyId } from '../../../../../constants/constants';
 })
 export class ValueDisplayComponent extends DashboardParentComponent {
   @Input()
-  public value: number | undefined = undefined;
+  public value: number = NaN;
 
   @Input()
   public investmentCurrencyUnit: InvestmentCurrencyUnit | null = null;
