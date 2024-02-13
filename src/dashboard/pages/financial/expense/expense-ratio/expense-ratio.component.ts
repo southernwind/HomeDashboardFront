@@ -5,7 +5,7 @@ import Enumerable from 'linq';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions, getHighChartsColor } from 'src/utils/highcharts.options';
 import { TransactionCondition } from 'src/dashboard/models/condition.model';
-import { Subject, combineLatestWith, map } from 'rxjs';
+import { Subject, combineLatestWith, map, pairwise } from 'rxjs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Chart } from 'angular-highcharts';
 import { PlotSunburstLevelsOptions } from 'highcharts';
@@ -175,9 +175,9 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
         });
       });
 
-    this.filterConditionSubject.pipe(combineLatestWith(this.chartLoaded)).subscribe(([condition, chart]) => {
+    this.filterConditionSubject.pipe(pairwise()).pipe(combineLatestWith(this.chartLoaded)).subscribe(([[previousCondition, condition], chart]) => {
       const series = (chart.series[0] as any);
-      if (series.idPreviousRoot === condition.largeCategory && condition.middleCategory === null) {
+      if (previousCondition.largeCategory === condition.largeCategory && condition.middleCategory === null) {
         var fc = new TransactionCondition();
         fc.month = componentScope.latestFilterCondition.month;
         fc.largeCategories = componentScope.latestFilterCondition.largeCategories;
