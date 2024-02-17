@@ -50,7 +50,7 @@ export class InvestmentComponent extends DashboardParentComponent {
   /** 表示アカウントID */
   public selectedAccountId: number | null = null;
   /** 表示アカウント */
-  public selectedAccount: TradingAccountDetail | undefined = undefined;
+  public selectedAccount: TradingAccountDetailWithSummary | undefined = undefined;
 
   constructor(
     private financialApiService: FinancialApiService,
@@ -159,7 +159,21 @@ export class InvestmentComponent extends DashboardParentComponent {
    * @memberof InvestmentComponent
    */
   public async getTradingAccountDetail(selectedAccount: number): Promise<void> {
-    this.selectedAccount = await firstValueFrom(this.financialApiService.getTradingAccountDetail(selectedAccount).pipe(untilDestroyed(this)));
+    this.selectedAccount = await firstValueFrom(this.financialApiService.getTradingAccountDetail(selectedAccount).pipe(untilDestroyed(this))) as TradingAccountDetailWithSummary;
+
+    var list =
+      Enumerable
+        .from(this.selectedAccount.tradingAccountDetailAmountSummaryList);
+    this.selectedAccount.totalValuation =
+      list
+        .select(x => x.latestRate * x.amount * Enumerable.from(this.investmentCurrencyUnitList).first(icu => icu.id == x.currencyUnitId).latestRate)
+        .sum();
+    this.selectedAccount.totalProfit =
+      list
+        .select(x => (x.latestRate - x.averageRate) * x.amount * Enumerable.from(this.investmentCurrencyUnitList).first(icu => icu.id == x.currencyUnitId).latestRate)
+        .sum();
+    this.selectedAccount.rateOfReturn = this.selectedAccount.totalProfit / (this.selectedAccount.totalValuation - this.selectedAccount.totalProfit) * 100;
+
   }
 
   /**
@@ -235,4 +249,19 @@ export class InvestmentComponent extends DashboardParentComponent {
     });
     this.addInvestmentProductAmountModalProduct = undefined;
   }
+
+  public expandSet = new Set<number>();
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
+  }
+}
+
+interface TradingAccountDetailWithSummary extends TradingAccountDetail {
+  totalValuation: number;
+  totalProfit: number;
+  rateOfReturn: number;
 }

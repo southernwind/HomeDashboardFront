@@ -16,9 +16,11 @@ export interface TradingAccountDetailAmountSummary {
   amount: number;
   averageRate: number;
   latestRate: number;
+  tradingAccountCategoryDetailAmountList: TradingAccountCategoryDetailAmount[];
 }
 
 export interface TradingAccountDetailAmount {
+  tradingAccountCategoryName: string;
   investmentProductId: number;
   investmentProductName: string;
   investmentProductAmountId: number;
@@ -26,4 +28,10 @@ export interface TradingAccountDetailAmount {
   date: Date;
   amount: number;
   price: number;
+}
+
+export interface TradingAccountCategoryDetailAmount {
+  tradingAccountCategoryName: string;
+  amount: number;
+  averageRate: number;
 }

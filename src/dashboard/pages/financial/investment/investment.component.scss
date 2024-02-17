@@ -3,9 +3,14 @@
   display: flex;
   justify-content: space-between;
 
+  img,
   .buttons,
   .summary {
     display: inline-block;
+  }
+
+  img{
+    height: 100%;
   }
 }
 
@@ -52,4 +57,9 @@ nz-radio-group {
   label{
     margin: 5px;
   }
+}
+
+.child-row{
+  -webkit-backdrop-filter: brightness(1.5);
+  backdrop-filter: brightness(1.5);
 }

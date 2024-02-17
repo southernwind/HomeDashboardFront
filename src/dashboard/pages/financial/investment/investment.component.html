@@ -74,8 +74,19 @@
       </nz-radio-group>
     </div>
     <div nz-col [nzXl]="{span:20}" *ngIf="selectedAccount">
-      <div>
+      <div class="header">
         <img src="{{selectedAccount.tradingAccountLogo}}" title="{{selectedAccount.tradingAccountName}}" style="max-width:200px; max-height:60px;"/>
+        <div class="summary">
+          <div>
+            収益額: <app-value-display [value]="selectedAccount.totalProfit" [investmentCurrencyUnit]="yenCurrency"></app-value-display>
+          </div>
+          <div>
+            収益率: <app-value-display [value]="selectedAccount.rateOfReturn" [type]="'percent'" [investmentCurrencyUnit]="yenCurrency"></app-value-display>
+          </div>
+          <div>
+            評価額: <app-value-display [value]="selectedAccount.totalValuation" [type]="'static-price'" [investmentCurrencyUnit]="yenCurrency"></app-value-display>
+          </div>
+        </div>
       </div>
       <h2>サマリー</h2>
       <nz-table #accountInvestmentProductTable [nzData]="selectedAccount.tradingAccountDetailAmountSummaryList" nzTableLayout="fixed" [nzPageSize]="50" >
@@ -88,24 +99,44 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of accountInvestmentProductTable.data">
-            <td>{{item.name}}</td>
-            <td>
-              <app-value-display [value]="item.amount" [type]="'amount'" [adjustNumberOfDecimalPoint]="4"></app-value-display>
-            </td>
-            <td>
-              <app-value-display [value]="item.latestRate * item.amount" [type]="'static-price-with-yen'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
-            </td>
-            <td>
-              <app-value-display [value]="(item.latestRate - item.averageRate) * item.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
-            </td>
-          </tr>
+          <ng-container *ngFor="let item of accountInvestmentProductTable.data">
+            <tr *ngIf="(item.parent && item.parent.expand) || !item.parent" (click)="onExpandChange(item.investmentProductId, !expandSet.has(item.investmentProductId))">
+              <td
+                [nzShowExpand]="item.tradingAccountCategoryDetailAmountList.length > 0"
+                [nzExpand]="expandSet.has(item.investmentProductId)"
+              >{{ item.name }}</td>
+              <td>
+                <app-value-display [value]="item.amount" [type]="'amount'" [adjustNumberOfDecimalPoint]="4"></app-value-display>
+              </td>
+              <td>
+                <app-value-display [value]="item.latestRate * item.amount" [type]="'static-price-with-yen'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
+              </td>
+              <td>
+                <app-value-display [value]="(item.latestRate - item.averageRate) * item.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
+              </td>
+            </tr>
+            <ng-container *ngIf="expandSet.has(item.investmentProductId)">
+              <tr *ngFor="let child of item.tradingAccountCategoryDetailAmountList" class="child-row">
+                <td [nzIndentSize]="30">{{ child.tradingAccountCategoryName }}</td>
+                <td>
+                  <app-value-display [value]="child.amount" [type]="'amount'" [adjustNumberOfDecimalPoint]="4"></app-value-display>
+                </td>
+                <td>
+                  <app-value-display [value]="item.latestRate * child.amount" [type]="'static-price-with-yen'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
+                </td>
+                <td>
+                  <app-value-display [value]="(item.latestRate - item.averageRate) * child.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
         </tbody>
       </nz-table>
       <h2>履歴</h2>
       <nz-table #accountAmountListTable [nzData]="selectedAccount.tradingAccountDetailAmountList" nzTableLayout="fixed" [nzPageSize]="50" >
         <thead>
           <tr>
+            <th [nzWidth]="'130px'">預り区分</th>
             <th>名前</th>
             <th [nzWidth]="'130px'">日付</th>
             <th [nzWidth]="'130px'">取得単価</th>
@@ -115,6 +146,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of accountAmountListTable.data">
+            <td>{{item.tradingAccountCategoryName}}</td>
             <td>{{item.investmentProductName}}</td>
             <td>{{item.date | datetimeFormatPipe: 'YYYY-MM-DD'}}</td>
             <td>
