@@ -173,7 +173,7 @@ export class InvestmentComponent extends DashboardParentComponent {
         .select(x => (x.latestRate - x.averageRate) * x.amount * Enumerable.from(this.investmentCurrencyUnitList).first(icu => icu.id == x.currencyUnitId).latestRate)
         .sum();
     this.selectedAccount.rateOfReturn = this.selectedAccount.totalProfit / (this.selectedAccount.totalValuation - this.selectedAccount.totalProfit) * 100;
-
+    this.expandSet.clear();
   }
 
   /**
