@@ -22,6 +22,7 @@ import { delay, map } from "rxjs/operators";
 export class InvestmentAssetTransitionComponent extends DashboardParentComponent {
   /** 資産推移生データ */
   public assets: InvestmentAsset | null = null;
+  public dates: string[] = [];
 
   /** 資産推移チャート */
   public chart: Chart | undefined = undefined;
@@ -30,6 +31,14 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
 
   public resizedEventSubject = new Subject<void>();
   private chartCreatedSubject = new Subject<void>();
+
+  public chartType = [
+    { label: "全部", value: "all", icon: "plus-circle" },
+    { label: "利益のみ", value: "profit", icon: "plus-circle" },
+    { label: "元本のみ", value: "principal", icon: "plus-circle" }
+  ];
+  public selectedChartTypeIndex = 0;
+  public selectedChartTypeChanged = new Subject<void>();
 
   constructor(private financialApiService: FinancialApiService, elementRef: ElementRef) {
     super();
@@ -43,8 +52,8 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
         if (this.assets === null) {
           return;
         }
-        const dates = this.assets.investmentAssetProducts[0].dailyRates.map(x => x.date);
-        const datesCount = dates.length;
+        this.dates = this.assets.investmentAssetProducts[0].dailyRates.map(x => x.date);
+        const datesCount = this.dates.length;
         this.chart = new Chart({
           ...HighchartsOptions.defaultOptions,
           chart: {
@@ -100,6 +109,8 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
                 ...HighchartsOptions.defaultOptions.plotOptions?.series?.dataLabels,
                 shape: 'callout',
                 backgroundColor: '#0007',
+                x: -40,
+                y: -40,
                 formatter: function () {
                   return `最終値:${Highcharts.numberFormat(this.y ?? 0, 0, '', ',')}円`;
                 }
@@ -118,47 +129,7 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
               }
             }
           },
-          series: Enumerable.from(this.assets.investmentAssetProducts)
-            .orderBy(x => {
-              const latestRate = x.dailyRates[datesCount - 1];
-              return latestRate.amount * latestRate.rate * this.getRate(x.currencyUnitId, latestRate.date);
-            })
-            .select((x, index) => {
-              return {
-                type: 'area',
-                name: `${x.name}`,
-                pointInterval: 24 * 3600 * 1000,
-                pointStart: moment(Enumerable.from(x.dailyRates).firstOrDefault(dr => dr.rate !== 0)?.date ?? dates[0]).valueOf(),
-                legendIndex: -index,
-                data:
-                  Enumerable.from(x.dailyRates).skipWhile(r => r.rate === 0).select(r => r.amount * r.rate * this.getRate(x.currencyUnitId, r.date)).toArray()
-              } as Highcharts.SeriesAreaOptions | Highcharts.SeriesLineOptions
-            })
-            .concat([
-              {
-                type: 'line',
-                name: `計`,
-                zIndex: 10000,
-                pointInterval: 24 * 3600 * 1000,
-                pointStart: moment(dates[0]).valueOf(),
-                legendIndex: -1000000,
-                data:
-                  Enumerable.from(dates).select(date =>
-                    Enumerable.from(this.assets?.investmentAssetProducts ?? []).sum(x => {
-                      const rate = Enumerable.from(x.dailyRates).first(dr => dr.date === date);
-                      return rate.rate * rate.amount * this.getRate(x.currencyUnitId, date);
-                    })
-                  ).select((x, index) =>
-                    index !== datesCount - 1 ? x : {
-                      y: x,
-                      dataLabels: {
-                        enabled: true,
-                        align: 'right'
-                      }
-                    }
-                  ).toArray()
-              } as Highcharts.SeriesLineOptions
-            ]).toArray()
+          series: this.getChartSeries()
         });
         this.chart.ref$.subscribe(_ => {
           this.chartCreatedSubject.next();
@@ -178,8 +149,61 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
       ]).pipe(delay(500)).subscribe(x => {
         this.chart?.ref?.reflow();
       });
+
+    this.selectedChartTypeChanged.subscribe(_ =>
+      this.chart?.ref?.update({
+        series: this.getChartSeries()
+      })
+    );
   }
 
+  private getChartSeries(): Highcharts.SeriesOptionsType[] {
+    if (this.assets === null) {
+      return [];
+    }
+    return Enumerable.from(this.assets.investmentAssetProducts)
+      .orderBy(x => {
+        const latestRate = x.dailyRates[this.dates.length - 1];
+        return latestRate.amount * latestRate.rate * this.getRate(x.currencyUnitId, latestRate.date);
+      })
+      .select((x, index) => {
+        const data = Enumerable.from(x.dailyRates).skipWhile(r => r.rate === 0).select(r => r.amount * (this.chartType[this.selectedChartTypeIndex].value === "all" ? r.rate : this.chartType[this.selectedChartTypeIndex].value === "principal" ? r.averageRate : r.rate - r.averageRate) * this.getRate(x.currencyUnitId, r.date)).toArray();
+        return {
+          type: 'area',
+          name: `${x.name}`,
+          pointInterval: 24 * 3600 * 1000,
+          pointStart: moment(Enumerable.from(x.dailyRates).firstOrDefault(dr => dr.rate !== 0)?.date ?? this.dates[0]).valueOf(),
+          legendIndex: -index,
+          stack: Enumerable.from(data).sum() > 0 ? 0 : 1,
+          data: data
+        } as Highcharts.SeriesAreaOptions | Highcharts.SeriesLineOptions
+      })
+      .concat([
+        {
+          type: 'line',
+          name: `計`,
+          zIndex: 10000,
+          pointInterval: 24 * 3600 * 1000,
+          pointStart: moment(this.dates[0]).valueOf(),
+          legendIndex: -1000000,
+          data:
+            Enumerable.from(this.dates).select(date =>
+              Enumerable.from(this.assets?.investmentAssetProducts ?? []).sum(x => {
+                const rate = Enumerable.from(x.dailyRates).first(dr => dr.date === date);
+                return (this.chartType[this.selectedChartTypeIndex].value === "all" ? rate.rate : this.chartType[this.selectedChartTypeIndex].value === "principal" ? rate.averageRate : rate.rate - rate.averageRate) * rate.amount * this.getRate(x.currencyUnitId, date);
+              })
+            ).select((x, index) =>
+              index !== this.dates.length - 1 ? x : {
+                y: x,
+                dataLabels: {
+                  enabled: true,
+                  align: 'right'
+                }
+              }
+            ).toArray()
+        } as Highcharts.SeriesLineOptions
+      ]).toArray();
+  }
   /**
    * 当日レートの取得
    *
