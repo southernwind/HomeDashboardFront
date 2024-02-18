@@ -3,5 +3,6 @@ export interface InvestmentProductAmount {
   investmentProductAmountId: number,
   date: Date,
   amount: number,
-  price: number
+  price: number,
+  latestRate: number
 }

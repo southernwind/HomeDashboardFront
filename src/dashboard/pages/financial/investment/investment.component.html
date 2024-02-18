@@ -142,6 +142,7 @@
             <th [nzWidth]="'130px'">取得単価</th>
             <th [nzWidth]="'130px'">取得量</th>
             <th [nzWidth]="'130px'">取得額</th>
+            <th [nzWidth]="'130px'">現在価格<br>損益額<br>(損益率)</th>
           </tr>
         </thead>
         <tbody>
@@ -157,6 +158,11 @@
             </td>
             <td>
               <app-value-display [value]="item.price * item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId"></app-value-display>
+            </td>
+            <td>
+              <app-value-display [value]="item.latestRate * item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId"></app-value-display><br>
+              <app-value-display [value]="(item.latestRate - item.price) * item.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display><br>
+              <app-value-display [value]="(item.latestRate / item.price) * 100 - 100" [type]="'percent'"></app-value-display>
             </td>
           </tr>
         </tbody>
@@ -239,6 +245,7 @@
           <th [nzWidth]="'130px'">取得単価</th>
           <th [nzWidth]="'130px'">取得量</th>
           <th [nzWidth]="'130px'">取得額</th>
+          <th [nzWidth]="'130px'">現在価格<br>損益額<br>(損益率)</th>
         </tr>
       </thead>
       <tbody>
@@ -246,13 +253,18 @@
           <td><img src="{{item.tradingAccountLogo}}" title="{{item.tradingAccountName}}" style="max-width:100px; max-height:30px;"/></td>
           <td>{{item.date | datetimeFormatPipe: 'YYYY-MM-DD'}}</td>
           <td>
-            <app-value-display [value]="item.price" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail?.investmentProduct.currencyUnitId " [adjustNumberOfDecimalPoint]="2"></app-value-display>
+            <app-value-display [value]="item.price" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail?.investmentProduct.currencyUnitId " [adjustNumberOfDecimalPoint]="2"></app-value-display>
           </td>
           <td>
             {{item.amount | number}}
           </td>
           <td>
-            <app-value-display [value]="item.price * item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId " [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail?.investmentProduct.currencyUnitId "></app-value-display>
+            <app-value-display [value]="item.price * item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail?.investmentProduct.currencyUnitId "></app-value-display>
+          </td>
+          <td>
+            <app-value-display [value]="item.latestRate * item.amount" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail?.investmentProduct.currencyUnitId"></app-value-display><br>
+            <app-value-display [value]="(item.latestRate - item.price) * item.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': viewingInvestmentProductDetail?.investmentProduct.currencyUnitId "></app-value-display><br>
+            <app-value-display [value]="(item.latestRate / item.price) * 100 - 100" [type]="'percent'"></app-value-display>
           </td>
         </tr>
       </tbody>
