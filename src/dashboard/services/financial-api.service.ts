@@ -62,7 +62,7 @@ export class FinancialApiService {
         }).pipe(first());
   }
 
-  public PostRegisterInvestmentProductAmount(investmentProductId: number, tradingAccountId: number, date: Moment, amount: number, price: number): Observable<{ result: boolean }> {
+  public PostRegisterInvestmentProductAmount(investmentProductId: number, tradingAccountId: number, tradingAccountCategoryId: number, date: Moment, amount: number, price: number): Observable<{ result: boolean }> {
     return this
       .http
       .post<{ result: boolean }>(
@@ -70,6 +70,7 @@ export class FinancialApiService {
         {
           investmentProductId: investmentProductId,
           tradingAccountId: tradingAccountId,
+          tradingAccountCategoryId: tradingAccountCategoryId,
           date: date.format("YYYY-MM-DD"),
           amount: amount,
           price: price

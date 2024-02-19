@@ -12,6 +12,7 @@ import Enumerable from 'linq';
 import { jpyCurrencyId } from 'src/constants/constants';
 import { TradingAccount } from 'src/dashboard/models/trading-account.model';
 import { TradingAccountDetail } from 'src/dashboard/models/trading-account-detail.model';
+import { TradingAccountCategory } from '../../../models/trading-account.model';
 
 @UntilDestroy()
 @Component({
@@ -66,6 +67,7 @@ export class InvestmentComponent extends DashboardParentComponent {
     });
     this.addInvestmentProductAmountForm = formBuilder.group({
       tradingAccount: new FormControl(null, [Validators.required]),
+      tradingAccountCategory: new FormControl(null, [Validators.required]),
       date: new FormControl(null, [Validators.required]),
       amount: new FormControl(null, [Validators.required, Validators.pattern(/\d+/)]),
       price: new FormControl(null, [Validators.required, Validators.pattern(/\d+/)])
@@ -80,6 +82,13 @@ export class InvestmentComponent extends DashboardParentComponent {
         this.investmentProductCategoryList = (await this.financialApiService.GetInvestmentProductCategoryList().toPromise()) ?? [];
         this.tradingAccountList = (await firstValueFrom(this.financialApiService.GetTradingAccountListAsync())) ?? [];
       });
+    this.addInvestmentProductAmountForm.get("tradingAccount")?.valueChanges.subscribe(async (value) => {
+      if (!value) {
+        return;
+      }
+      const defaultCategory = Enumerable.from((value as TradingAccount).tradingAccountCategories).firstOrDefault(x => x.defaultFlag);
+      this.addInvestmentProductAmountForm.get("tradingAccountCategory")?.setValue(defaultCategory);
+    });
   }
   /**
    * 商品情報登録キャンセル
@@ -211,6 +220,7 @@ export class InvestmentComponent extends DashboardParentComponent {
   public cancelAddInvestmentProductAmount(): void {
     this.addInvestmentProductAmountForm.setValue({
       tradingAccount: null,
+      tradingAccountCategory: null,
       date: null,
       amount: null,
       price: null
@@ -232,6 +242,7 @@ export class InvestmentComponent extends DashboardParentComponent {
       await this.financialApiService.PostRegisterInvestmentProductAmount(
         this.addInvestmentProductAmountModalProduct.investmentProductId,
         this.addInvestmentProductAmountForm.value.tradingAccount.tradingAccountId,
+        this.addInvestmentProductAmountForm.value.tradingAccountCategory.tradingAccountCategoryId,
         moment(this.addInvestmentProductAmountForm.value.date),
         Number(this.addInvestmentProductAmountForm.value.amount),
         Number(this.addInvestmentProductAmountForm.value.price),
@@ -243,6 +254,7 @@ export class InvestmentComponent extends DashboardParentComponent {
     this.message.success("登録成功");
     this.addInvestmentProductAmountForm.setValue({
       tradingAccount: this.addInvestmentProductAmountForm.value.tradingAccount,
+      tradingAccountCategory: this.addInvestmentProductAmountForm.value.tradingAccountCategory,
       date: this.addInvestmentProductAmountForm.value.date,
       amount: null,
       price: null

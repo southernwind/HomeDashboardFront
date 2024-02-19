@@ -281,27 +281,35 @@
     <form nz-form [formGroup]="addInvestmentProductAmountForm">
       <nz-form-item>
         <nz-form-label [nzSm]="8" [nzXs]="24">口座</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
-          <nz-select formControlName="tradingAccount" nzPlaceholder="SBI証券" >
+        <nz-form-control [nzSm]="16" [nzXs]="24">
+          <nz-select formControlName="tradingAccount" nzPlaceholder="SBI証券">
             <nz-option *ngFor="let item of tradingAccountList" [nzLabel]="item.name" [nzValue]="item"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24">預り区分</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24">
+          <nz-select formControlName="tradingAccountCategory" nzPlaceholder="投資信託（金額/NISA預り（つみたて投資枠））" [nzDisabled]="!addInvestmentProductAmountForm.value.tradingAccount">
+            <nz-option *ngFor="let item of addInvestmentProductAmountForm.value.tradingAccount?.tradingAccountCategories" [nzLabel]="item.tradingAccountCategoryName" [nzValue]="item"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
         <nz-form-label [nzSm]="8" [nzXs]="24">取得量変更日</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+        <nz-form-control [nzSm]="16" [nzXs]="24">
           <nz-date-picker formControlName="date" placeholder="2021-12-31" ></nz-date-picker>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
         <nz-form-label [nzSm]="8" [nzXs]="24">取得量</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+        <nz-form-control [nzSm]="16" [nzXs]="24">
           <input nz-input formControlName="amount" placeholder="100" />
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
         <nz-form-label [nzSm]="8" [nzXs]="24">取得単価</nz-form-label>
-        <nz-form-control [nzSm]="16" [nzXs]="24" nzSpan="1-24">
+        <nz-form-control [nzSm]="16" [nzXs]="24">
           <input nz-input formControlName="price" placeholder="16.516" />
         </nz-form-control>
       </nz-form-item>
