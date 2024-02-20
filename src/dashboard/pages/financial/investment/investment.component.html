@@ -94,8 +94,10 @@
           <tr>
             <th>名前</th>
             <th [nzWidth]="'130px'">購入量</th>
+            <th [nzWidth]="'130px'">取得平均額</th>
+            <th [nzWidth]="'130px'">現在価格</th>
             <th [nzWidth]="'130px'">評価額</th>
-            <th [nzWidth]="'130px'">損益額</th>
+            <th [nzWidth]="'130px'">損益額<br>(損益率)</th>
           </tr>
         </thead>
         <tbody>
@@ -109,10 +111,17 @@
                 <app-value-display [value]="item.amount" [type]="'amount'" [adjustNumberOfDecimalPoint]="4"></app-value-display>
               </td>
               <td>
+                <app-value-display [value]="item.averageRate" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
+              </td>
+              <td>
+                <app-value-display [value]="item.latestRate" [type]="'static-price-with-yen'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId"></app-value-display>
+              </td>
+              <td>
                 <app-value-display [value]="item.latestRate * item.amount" [type]="'static-price-with-yen'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
               </td>
               <td>
-                <app-value-display [value]="(item.latestRate - item.averageRate) * item.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
+                <app-value-display [value]="(item.latestRate - item.averageRate) * item.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display><br>
+                <app-value-display [value]="(item.latestRate / item.averageRate) * 100 - 100" [type]="'percent'"></app-value-display>
               </td>
             </tr>
             <ng-container *ngIf="expandSet.has(item.investmentProductId)">
@@ -122,10 +131,17 @@
                   <app-value-display [value]="child.amount" [type]="'amount'" [adjustNumberOfDecimalPoint]="4"></app-value-display>
                 </td>
                 <td>
+                  <app-value-display [value]="child.averageRate" [type]="'static-price'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
+                </td>
+                <td>
+                  <app-value-display [value]="item.latestRate" [type]="'static-price-with-yen'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId"></app-value-display>
+                </td>
+                <td>
                   <app-value-display [value]="item.latestRate * child.amount" [type]="'static-price-with-yen'" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
                 </td>
                 <td>
-                  <app-value-display [value]="(item.latestRate - item.averageRate) * child.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display>
+                  <app-value-display [value]="(item.latestRate - child.averageRate) * child.amount" [investmentCurrencyUnit]="investmentCurrencyUnitList | firstOrDefaultPipe : 'id': item.currencyUnitId "></app-value-display><br>
+                  <app-value-display [value]="(item.latestRate / child.averageRate) * 100 - 100" [type]="'percent'"></app-value-display>
                 </td>
               </tr>
             </ng-container>

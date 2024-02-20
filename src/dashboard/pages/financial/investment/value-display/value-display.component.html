@@ -1,12 +1,12 @@
 <ng-container *ngIf="type === 'price'">
   <ng-container *ngIf="value > 0">
-    <span class="up">+{{value | number: digitsInfo }}</span>
+    <span class="up">{{investmentCurrencyUnit?.unit}}+{{value | number: digitsInfo }}</span>
   </ng-container>
   <ng-container *ngIf="value === 0">
-    <span class="stay">0</span>
+    <span class="stay">{{investmentCurrencyUnit?.unit}}0</span>
   </ng-container>
   <ng-container *ngIf="value < 0">
-    <span class="down">{{value | number: digitsInfo  }}</span>
+    <span class="down">{{investmentCurrencyUnit?.unit}}{{value | number: digitsInfo  }}</span>
   </ng-container>
 </ng-container>
 
