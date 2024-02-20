@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { InvestmentProduct, InvestmentProductAmount } from 'src/dashboard/models/investment-product.model';
+import { InvestmentProduct, InvestmentProductAmount, InvestmentProductRate } from 'src/dashboard/models/investment-product.model';
 import { FinancialApiService } from 'src/dashboard/services/financial-api.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import * as moment from 'moment';
@@ -23,7 +23,8 @@ export class InvestmentComponent extends DashboardParentComponent {
   /** 詳細表示中の投資商品 */
   public viewingInvestmentProductDetail: {
     investmentProduct: InvestmentProduct,
-    investmentProductAmountList: InvestmentProductAmount[]
+    investmentProductAmountList: InvestmentProductAmount[],
+    investmentProductRateList: InvestmentProductRate[]
   } | undefined = undefined;
   public addInvestmentProductModalVisibility: boolean = false;
   public addInvestmentProductForm: FormGroup;
@@ -88,6 +89,20 @@ export class InvestmentComponent extends DashboardParentComponent {
       }
       const defaultCategory = Enumerable.from((value as TradingAccount).tradingAccountCategories).firstOrDefault(x => x.defaultFlag);
       this.addInvestmentProductAmountForm.get("tradingAccountCategory")?.setValue(defaultCategory);
+    });
+
+    // 金額自動入力
+    this.addInvestmentProductAmountForm.get("date")?.valueChanges.subscribe((value) => {
+      if (!this.viewingInvestmentProductDetail) {
+        return;
+      }
+      if (this.addInvestmentProductAmountForm.value.price) {
+        return;
+      }
+      var rate = Enumerable.from(this.viewingInvestmentProductDetail.investmentProductRateList).firstOrDefault(x => moment(x.date).format("YYYY-MM-DD") === moment(value).format("YYYY-MM-DD"))?.rate;
+      this.addInvestmentProductAmountForm.patchValue({
+        price: rate
+      });
     });
   }
   /**
@@ -192,13 +207,14 @@ export class InvestmentComponent extends DashboardParentComponent {
    * @memberof InvestmentComponent
    */
   public async openInvestmentProductDetailModal(investmentProduct: InvestmentProduct): Promise<void> {
-    const investmentProductAmountList = await lastValueFrom(
+    const investmentProductDetail = await lastValueFrom(
       this.financialApiService
-        .getInvestmentProductAmountList(investmentProduct.investmentProductId)
+        .getInvestmentProductDetail(investmentProduct.investmentProductId)
         .pipe(untilDestroyed(this)))
     this.viewingInvestmentProductDetail = {
-      investmentProduct: investmentProduct,
-      investmentProductAmountList: investmentProductAmountList
+      investmentProduct: investmentProductDetail,
+      investmentProductAmountList: investmentProductDetail.investmentProductAmountList,
+      investmentProductRateList: investmentProductDetail.investmentProductRateList
     };
   }
 

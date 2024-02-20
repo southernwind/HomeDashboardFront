@@ -10,6 +10,11 @@ export interface InvestmentProduct {
   amount: number,
   averageRate: number
 }
+
+export interface InvestmentProductDetail extends InvestmentProduct {
+  investmentProductAmountList: InvestmentProductAmount[],
+  investmentProductRateList: InvestmentProductRate[]
+}
 export interface InvestmentProductAmount {
   investmentProductId: number,
   investmentProductAmountId: number,
@@ -19,8 +24,8 @@ export interface InvestmentProductAmount {
   amount: number,
   price: number
 }
+
 export interface InvestmentProductRate {
-  investmentProductId: number,
   date: string,
-  value: number
+  rate: number
 }
