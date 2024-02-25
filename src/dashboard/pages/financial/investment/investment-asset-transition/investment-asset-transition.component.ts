@@ -88,7 +88,7 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
                 if (this.value == 0) {
                   return `${this.value}円`;
                 } else if (Math.abs(Number(this.value)) >= 100000000) {
-                  return `${Number(this.value) / 100000000} 万円`
+                  return `${Number(this.value) / 100000000} 億円`
                 } else {
                   return `${Number(this.value) / 10000} 万円`
                 }
