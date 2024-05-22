@@ -96,9 +96,6 @@ export class InvestmentComponent extends DashboardParentComponent {
       if (!this.viewingInvestmentProductDetail) {
         return;
       }
-      if (this.addInvestmentProductAmountForm.value.price) {
-        return;
-      }
       var rate = Enumerable.from(this.viewingInvestmentProductDetail.investmentProductRateList).firstOrDefault(x => moment(x.date).format("YYYY-MM-DD") === moment(value).format("YYYY-MM-DD"))?.rate;
       this.addInvestmentProductAmountForm.patchValue({
         price: rate
@@ -273,7 +270,7 @@ export class InvestmentComponent extends DashboardParentComponent {
       tradingAccountCategory: this.addInvestmentProductAmountForm.value.tradingAccountCategory,
       date: this.addInvestmentProductAmountForm.value.date,
       amount: null,
-      price: null
+      price: this.addInvestmentProductAmountForm.value.price
     });
     this.addInvestmentProductAmountModalProduct = undefined;
   }
