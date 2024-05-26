@@ -176,6 +176,12 @@ export class ExpenseRatioComponent extends DashboardParentComponent {
       });
 
     this.filterConditionSubject.pipe(pairwise()).pipe(combineLatestWith(this.chartLoaded)).subscribe(([[previousCondition, condition], chart]) => {
+      if (previousCondition.month === condition.month &&
+        previousCondition.largeCategories === condition.largeCategories &&
+        previousCondition.largeCategory === condition.largeCategory &&
+        previousCondition.middleCategory === condition.middleCategory) {
+        return;
+      }
       const series = (chart.series[0] as any);
       if (previousCondition.largeCategory === condition.largeCategory && condition.middleCategory === null) {
         var fc = new TransactionCondition();
