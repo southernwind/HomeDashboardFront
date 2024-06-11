@@ -9,11 +9,7 @@ export interface InvestmentAsset {
       rate: number;
       amount: number;
       averageRate: number;
+      currencyRate: number;
     }[];
-  }[];
-  currencyRates: {
-    date: string;
-    id: number,
-    latestRate: number
   }[];
 }

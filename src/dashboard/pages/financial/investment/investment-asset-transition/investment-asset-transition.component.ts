@@ -7,7 +7,7 @@ import { DateRange } from 'src/dashboard/models/date-range.model';
 import { DashboardParentComponent } from 'src/dashboard/components/parent/dashboard-parent.component';
 import { HighchartsOptions } from 'src/utils/highcharts.options';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { Subject, combineLatest } from 'rxjs';
+import { Subject, combineLatest, lastValueFrom } from 'rxjs';
 import { Chart } from 'angular-highcharts';
 import { InvestmentAsset } from '../../../../models/investment-asset.model';
 import { jpyCurrencyId } from '../../../../../constants/constants';
@@ -48,12 +48,11 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
         const startDate = dateRange.startDate;
         const endDate = dateRange.endDate;
 
-        this.assets = (await this.financialApiService.GetInvestmentAssets(startDate, endDate).toPromise()) ?? null;
+        this.assets = await lastValueFrom(this.financialApiService.GetInvestmentAssets(startDate, endDate)) ?? null;
         if (this.assets === null) {
           return;
         }
         this.dates = this.assets.investmentAssetProducts[0].dailyRates.map(x => x.date);
-        const datesCount = this.dates.length;
         this.chart = new Chart({
           ...HighchartsOptions.defaultOptions,
           chart: {
@@ -163,11 +162,14 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
     }
     return Enumerable.from(this.assets.investmentAssetProducts)
       .orderBy(x => {
+        if (x.dailyRates.length === 0) {
+          return 0;
+        }
         const latestRate = x.dailyRates[this.dates.length - 1];
-        return latestRate.amount * latestRate.rate * this.getRate(x.currencyUnitId, latestRate.date);
+        return latestRate?.amount * latestRate?.rate * latestRate?.currencyRate;
       })
       .select((x, index) => {
-        const data = Enumerable.from(x.dailyRates).skipWhile(r => r.rate === 0).select(r => r.amount * (this.chartType[this.selectedChartTypeIndex].value === "all" ? r.rate : this.chartType[this.selectedChartTypeIndex].value === "principal" ? r.averageRate : r.rate - r.averageRate) * this.getRate(x.currencyUnitId, r.date)).toArray();
+        const data = Enumerable.from(x.dailyRates).skipWhile(r => r.rate === 0).select(r => r.amount * (this.chartType[this.selectedChartTypeIndex].value === "all" ? r.rate : this.chartType[this.selectedChartTypeIndex].value === "principal" ? r.averageRate : r.rate - r.averageRate) * r.currencyRate).toArray();
         return {
           type: 'area',
           name: `${x.name}`,
@@ -189,8 +191,11 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
           data:
             Enumerable.from(this.dates).select(date =>
               Enumerable.from(this.assets?.investmentAssetProducts ?? []).sum(x => {
-                const rate = Enumerable.from(x.dailyRates).first(dr => dr.date === date);
-                return (this.chartType[this.selectedChartTypeIndex].value === "all" ? rate.rate : this.chartType[this.selectedChartTypeIndex].value === "principal" ? rate.averageRate : rate.rate - rate.averageRate) * rate.amount * this.getRate(x.currencyUnitId, date);
+                const rate = Enumerable.from(x.dailyRates).firstOrDefault(dr => dr.date === date) ?? null;
+                if (rate === null) {
+                  return 0;
+                }
+                return (this.chartType[this.selectedChartTypeIndex].value === "all" ? rate.rate : this.chartType[this.selectedChartTypeIndex].value === "principal" ? rate.averageRate : rate.rate - rate.averageRate) * rate.amount * rate.currencyRate;
               })
             ).select((x, index) =>
               index !== this.dates.length - 1 ? x : {
@@ -203,23 +208,5 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
             ).toArray()
         } as Highcharts.SeriesLineOptions
       ]).toArray();
-  }
-  /**
-   * 当日レートの取得
-   *
-   * @private
-   * @param {number} currencyId
-   * @param {string} date
-   * @returns {number}
-   * @memberof InvestmentAssetTransitionComponent
-   */
-  private getRate(currencyId: number, date: string): number {
-    if (this.assets === null) {
-      throw new Error();
-    }
-    if (currencyId === jpyCurrencyId) {
-      return 1;
-    }
-    return Enumerable.from(this.assets.currencyRates).first(c => c.id === currencyId && c.date === date).latestRate;
   }
 }
