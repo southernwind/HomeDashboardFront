@@ -136,7 +136,7 @@ export class AssetTransitionComponent extends DashboardParentComponent {
                 },
                 name: `${x.key()}`,
                 pointInterval: 24 * 3600 * 1000,
-                pointStart: moment(dates.first()).valueOf(),
+                pointStart: moment(dates.first()).add(9, 'h').valueOf(),
                 stack: x.sum(x => x.amount) > 0 ? 0 : 1,
                 legendIndex: -index,
                 data:
@@ -156,7 +156,7 @@ export class AssetTransitionComponent extends DashboardParentComponent {
                 name: `計`,
                 zIndex: 10000,
                 pointInterval: 24 * 3600 * 1000,
-                pointStart: moment(dates.first()).valueOf(),
+                pointStart: moment(dates.first()).add(9, 'h').valueOf(),
                 legendIndex: -1000000,
                 data: temp
                   .groupBy(x => x.date)

@@ -37,8 +37,15 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
     { label: "利益のみ", value: "profit", icon: "plus-circle" },
     { label: "元本のみ", value: "principal", icon: "plus-circle" }
   ];
+  public chartUnit = [
+    { label: "日", value: "day", icon: "plus-circle" },
+    { label: "月", value: "month", icon: "plus-circle" },
+    { label: "年", value: "year", icon: "plus-circle" }
+  ];
   public selectedChartTypeIndex = 0;
   public selectedChartTypeChanged = new Subject<void>();
+  public selectedChartUnitIndex = 0;
+  public selectedChartUnitChanged = new Subject<void>();
 
   constructor(private financialApiService: FinancialApiService, elementRef: ElementRef) {
     super();
@@ -52,7 +59,6 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
         if (this.assets === null) {
           return;
         }
-        this.dates = this.assets.investmentAssetProducts[0].dailyRates.map(x => x.date);
         this.chart = new Chart({
           ...HighchartsOptions.defaultOptions,
           chart: {
@@ -154,27 +160,40 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
         series: this.getChartSeries()
       })
     );
+    this.selectedChartUnitChanged.subscribe(_ =>
+      this.chart?.ref?.update({
+        series: this.getChartSeries()
+      })
+    )
   }
 
   private getChartSeries(): Highcharts.SeriesOptionsType[] {
     if (this.assets === null) {
       return [];
     }
+    this.dates = this.assets.investmentAssetProducts[0].dailyRates.filter(x => this.chartUnit[this.selectedChartUnitIndex].value === "day" ? true : this.chartUnit[this.selectedChartUnitIndex].value === "month" ? moment(x.date).date() === 1 : moment(x.date).dayOfYear() === 1).map(x => x.date);
     return Enumerable.from(this.assets.investmentAssetProducts)
       .orderBy(x => {
         if (x.dailyRates.length === 0) {
           return 0;
         }
-        const latestRate = x.dailyRates[this.dates.length - 1];
+        const latestRate = x.dailyRates[this.assets!.investmentAssetProducts[0].dailyRates.length - 1];
         return latestRate?.amount * latestRate?.rate * latestRate?.currencyRate;
       })
       .select((x, index) => {
-        const data = Enumerable.from(x.dailyRates).skipWhile(r => r.rate === 0).select(r => r.amount * (this.chartType[this.selectedChartTypeIndex].value === "all" ? r.rate : this.chartType[this.selectedChartTypeIndex].value === "principal" ? r.averageRate : r.rate - r.averageRate) * r.currencyRate).toArray();
+        if(this.selectedChartUnitIndex !== 0){
+          return {
+            data: [] as number[]
+          } as Highcharts.SeriesAreaOptions | Highcharts.SeriesLineOptions;
+        }
+        const data = Enumerable.from(x.dailyRates).skipWhile(r => r.rate === 0).where(x => this.dates.includes(x.date))
+          .select(r => r.amount * (this.chartType[this.selectedChartTypeIndex].value === "all" ? r.rate : this.chartType[this.selectedChartTypeIndex].value === "principal" ? r.averageRate : r.rate - r.averageRate) * r.currencyRate).toArray();
         return {
           type: 'area',
           name: `${x.name}`,
-          pointInterval: 24 * 3600 * 1000,
-          pointStart: moment(Enumerable.from(x.dailyRates).firstOrDefault(dr => dr.rate !== 0)?.date ?? this.dates[0]).valueOf(),
+          pointInterval: 1,
+          pointIntervalUnit: this.chartUnit[this.selectedChartUnitIndex].value,
+          pointStart: moment(Enumerable.from(x.dailyRates).where(x => this.dates.includes(x.date)).firstOrDefault(dr => dr.rate !== 0)?.date ?? this.dates[0]).add(9, 'h').valueOf(),
           legendIndex: -index,
           stack: Enumerable.from(data).sum() > 0 ? 0 : 1,
           data: data
@@ -185,11 +204,13 @@ export class InvestmentAssetTransitionComponent extends DashboardParentComponent
           type: 'line',
           name: `計`,
           zIndex: 10000,
-          pointInterval: 24 * 3600 * 1000,
-          pointStart: moment(this.dates[0]).valueOf(),
+          pointInterval: 1,
+          pointIntervalUnit: this.chartUnit[this.selectedChartUnitIndex].value,
+          pointStart: moment(this.dates[0]).add(9, 'h').valueOf(),
           legendIndex: -1000000,
           data:
-            Enumerable.from(this.dates).select(date =>
+            Enumerable.from(this.dates)
+              .select(date =>
               Enumerable.from(this.assets?.investmentAssetProducts ?? []).sum(x => {
                 const rate = Enumerable.from(x.dailyRates).firstOrDefault(dr => dr.date === date) ?? null;
                 if (rate === null) {

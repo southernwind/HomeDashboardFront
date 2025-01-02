@@ -4,3 +4,8 @@
   [(ngModel)]="selectedChartTypeIndex"
   (ngModelChange)="selectedChartTypeChanged.next($event)">
 </nz-segmented>
+<nz-segmented
+  [nzOptions]="chartUnit"
+  [(ngModel)]="selectedChartUnitIndex"
+  (ngModelChange)="selectedChartUnitChanged.next($event)">
+</nz-segmented>

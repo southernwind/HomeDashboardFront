@@ -69,7 +69,7 @@ export class WaterStatesComponent extends DashboardParentComponent {
         const maxDate = Enumerable.from(this.waterStateList).orderByDescending(x => x.time).first().time;
 
         // 値の数
-        const dateCount = ((moment(maxDate).valueOf() - moment(minDate).valueOf()) / (period * 1000)) + 1;
+        const dateCount = ((moment(maxDate).add(9, 'h').valueOf() - moment(minDate).add(9, 'h').valueOf()) / (period * 1000)) + 1;
 
         const dates = Enumerable.range(0, dateCount, period).select(x => moment(minDate).add(x, "seconds").format("YYYY-MM-DD HH:mm:ss"));
 
@@ -165,21 +165,21 @@ export class WaterStatesComponent extends DashboardParentComponent {
               name: '湿度',
               yAxis: 1,
               pointInterval: period * 1000,
-              pointStart: moment(this.waterStateList[0].time).valueOf(),
+              pointStart: moment(this.waterStateList[0].time).add(9, 'h').valueOf(),
               data: createFunc(x => [x.minHumidity, x.lowerQuartileHumidity, x.medianHumidity, x.upperQuartileHumidity, x.maxHumidity]),
               color: colors[0],
             } as Highcharts.SeriesBoxplotOptions,
             {
               name: '気温',
               pointInterval: period * 1000,
-              pointStart: moment(this.waterStateList[0].time).valueOf(),
+              pointStart: moment(this.waterStateList[0].time).add(9, 'h').valueOf(),
               data: createFunc(x => [x.minTemperature, x.lowerQuartileTemperature, x.medianTemperature, x.upperQuartileTemperature, x.maxTemperature]),
               color: colors[3],
             } as Highcharts.SeriesBoxplotOptions,
             {
               name: '水温',
               pointInterval: period * 1000,
-              pointStart: moment(this.waterStateList[0].time).valueOf(),
+              pointStart: moment(this.waterStateList[0].time).add(9, 'h').valueOf(),
               data: createFunc(x => [x.minWaterTemperature, x.lowerQuartileWaterTemperature, x.medianWaterTemperature, x.upperQuartileWaterTemperature, x.maxWaterTemperature]),
               color: colors[2],
             } as Highcharts.SeriesBoxplotOptions,
@@ -188,7 +188,7 @@ export class WaterStatesComponent extends DashboardParentComponent {
               type: 'line',
               yAxis: 1,
               pointInterval: period * 1000,
-              pointStart: moment(this.waterStateList[0].time).valueOf(),
+              pointStart: moment(this.waterStateList[0].time).add(9, 'h').valueOf(),
               data: createFunc(x => x.medianHumidity),
               color: colors[0],
             },
@@ -196,7 +196,7 @@ export class WaterStatesComponent extends DashboardParentComponent {
               name: '気温',
               type: 'line',
               pointInterval: period * 1000,
-              pointStart: moment(this.waterStateList[0].time).valueOf(),
+              pointStart: moment(this.waterStateList[0].time).add(9, 'h').valueOf(),
               data: createFunc(x => x.medianTemperature),
               color: colors[3],
             },
@@ -204,7 +204,7 @@ export class WaterStatesComponent extends DashboardParentComponent {
               name: '水温',
               type: 'line',
               pointInterval: period * 1000,
-              pointStart: moment(this.waterStateList[0].time).valueOf(),
+              pointStart: moment(this.waterStateList[0].time).add(9, 'h').valueOf(),
               data: createFunc(x => x.medianWaterTemperature),
               color: colors[2],
             }

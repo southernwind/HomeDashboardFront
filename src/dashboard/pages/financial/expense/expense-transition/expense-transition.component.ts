@@ -181,7 +181,7 @@ export class ExpenseTransitionComponent extends DashboardParentComponent {
                       data: x?.sum(ax => ax.amount)
                     }
                   }
-                  ), month => month, a => a.month, (month, a) => [moment(`${month}-01`).valueOf(), a?.firstOrDefault()?.data ?? null]).toArray()
+                  ), month => month, a => a.month, (month, a) => [moment(`${month}-01`).add(9, 'h').valueOf(), a?.firstOrDefault()?.data ?? null]).toArray()
               } as Highcharts.SeriesColumnOptions
             }).toArray()
         });
